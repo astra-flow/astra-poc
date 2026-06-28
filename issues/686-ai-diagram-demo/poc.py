@@ -73,7 +73,7 @@ class PocImageGen(PocBase[ImageGenConfig]):
                 "https://ark.cn-beijing.volces.com/api/plan/v3",
             ),
             model=os.getenv("ARK_MODEL", "doubao-seedream-5.0-lite"),
-            vision_api_key=os.getenv("VISION_API_KEY", ""),
+            vision_api_key=os.getenv("VISION_API_KEY") or os.getenv("ARK_API_KEY", ""),
             vision_model=os.getenv("VISION_MODEL", "doubao-seed-2.0-pro"),
             vision_base_url=os.getenv(
                 "VISION_BASE_URL",

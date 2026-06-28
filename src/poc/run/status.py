@@ -64,12 +64,14 @@ def check_poc_status(poc_dir: Path, poc_cls: type[PocBase]) -> dict:
             if has_report and has_root_report:
                 try:
                     data = json.loads(root_report.read_text())
-                    # 扁平列表结构：统计含 vision_llm 的条目
+                    # 统计含 VisionLLMSingleEvaluator.verdict 的条目
                     vision_llm_count = sum(
                         1
                         for e in data
                         if isinstance(e, dict)
-                        and "verdict" in e
+                        and "VisionLLMSingleEvaluator" in e
+                        and isinstance(e["VisionLLMSingleEvaluator"], dict)
+                        and "verdict" in e["VisionLLMSingleEvaluator"]
                     )
                 except Exception:
                     pass

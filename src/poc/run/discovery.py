@@ -36,7 +36,7 @@ def discover_pocs(poc_root: Path) -> dict[int, type[PocBase]]:
     if not poc_root.is_dir():
         raise ValueError(f"POC 根目录不存在: {poc_root}")
 
-    from poc.base.poc_base import PocBase  # noqa: F811
+    from poc.base.poc import PocBase  # noqa: F811
 
     registry: dict[int, type[PocBase]] = {}
 

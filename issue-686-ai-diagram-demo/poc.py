@@ -17,12 +17,12 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 from poc.base.evaluator import CompositeEvaluator
-from poc.base.poc_base import PocBase
+from poc.base.poc import PocBase
 from poc.base.result import BatchResult, PocResult
 
 from config import ImageGenConfig
-from evaluators.pillow_evaluator import PillowSingleEvaluator
-from evaluators.vision_llm_evaluator import VisionLLMSingleEvaluator
+from evaluate.pillow import PillowSingleEvaluator
+from evaluate.vision import VisionLLMSingleEvaluator
 
 # ── Socket 级全局超时兜底 ──
 _DEFAULT_TIMEOUT: float = 180.0
@@ -97,18 +97,18 @@ class PocImageGen(PocBase[ImageGenConfig]):
 
     def run(self) -> PocResult:
         """遍历所有批次，调用 ARK API 生成图片。"""
-        from batches.batch_1 import get_batch_1
-        from batches.batch_2 import get_batch_2
-        from batches.batch_3 import get_batch_3
-        from batches.batch_4 import get_batch_4
-        from batches.batch_5 import get_batch_5
+        from batch.core import get_batch_core
+        from batch.extended import get_batch_extended
+        from batch.specialized import get_batch_specialized
+        from batch.retest import get_batch_retest
+        from batch.stability import get_batch_stability
 
         batches: dict[str, tuple[str, list]] = {
-            "batch_1": ("P0 图表", get_batch_1()),
-            "batch_2": ("P1 图表", get_batch_2()),
-            "batch_3": ("P2 图表", get_batch_3()),
-            "batch_4": ("稳定性重测", get_batch_4()),
-            "batch_5": ("多轮稳定性测试", get_batch_5()),
+            "batch_1": ("P0 图表", get_batch_core()),
+            "batch_2": ("P1 图表", get_batch_extended()),
+            "batch_3": ("P2 图表", get_batch_specialized()),
+            "batch_4": ("稳定性重测", get_batch_retest()),
+            "batch_5": ("多轮稳定性测试", get_batch_stability()),
         }
 
         results: list[BatchResult] = []

@@ -2,11 +2,11 @@
 Batch 2: P1 图表 - 产品经理 + 效能教练中频场景
 使用设计 Token 和 Prompt Builder
 """
-from .design_tokens import color_hex, token, MORANDI, SLATE, ROLE
-from .prompt_builder import base_style, build_prompt, title, no_line, card
+from .design.tokens import color_hex, token, MORANDI, SLATE, ROLE
+from .design.prompts import base_style, build_prompt, title, no_line, card
 
 
-def get_batch_2():
+def get_batch_extended():
     return [
         # ===== 测试 1: 服务蓝图 =====
         {

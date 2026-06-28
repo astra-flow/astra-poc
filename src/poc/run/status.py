@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from poc.base.poc_base import PocBase
+    from poc.base.poc import PocBase
 
 
 def check_poc_status(poc_dir: Path, poc_cls: type[PocBase]) -> dict:

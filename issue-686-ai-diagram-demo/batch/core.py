@@ -2,14 +2,14 @@
 Batch 1: P0 图表 - 产品经理 + 效能教练最高频场景
 使用设计 Token 和 Prompt Builder 保证一致性
 """
-from .design_tokens import color_hex, token, MORANDI, SLATE, ROLE, BRANCH, STAGE
-from .prompt_builder import (
+from .design.tokens import color_hex, token, MORANDI, SLATE, ROLE, BRANCH, STAGE
+from .design.prompts import (
     base_style, build_prompt, title, no_line,
     card, tag, container_box, section_header,
 )
 
 
-def get_batch_1():
+def get_batch_core():
     return [
         # ===== 测试 1: 客户旅程地图 =====
         # 变体 A: 莫兰迪色系 / 变体 B: Slate 色系

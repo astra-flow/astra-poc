@@ -2,11 +2,11 @@
 Batch 3: P2 图表 - 产品经理 + 效能教练低频但重要场景
 使用设计 Token 和 Prompt Builder
 """
-from .design_tokens import color_hex, token, MORANDI, SLATE, EVENT
-from .prompt_builder import base_style, build_prompt, title, no_line
+from .design.tokens import color_hex, token, MORANDI, SLATE, EVENT
+from .design.prompts import base_style, build_prompt, title, no_line
 
 
-def get_batch_3():
+def get_batch_specialized():
     return [
         # ===== 测试 1: 事件风暴 =====
         {

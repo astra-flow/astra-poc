@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from poc.base.config import PocConfig
 
 
+@dataclass(frozen=True)
 class ImageGenConfig(PocConfig):
     """AI 绘图大模型 POC 配置。
 

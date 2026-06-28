@@ -33,9 +33,65 @@ def _cmd_run(args: argparse.Namespace, poc_root: Path) -> None:
         sys.exit(1)
 
     poc_cls = registry[args.issue]
-    # 子类通过实现类方法 from_issue() 提供工厂能力
+
+    # --clean：清理产出物
+    if args.clean:
+        # 先实例化以获取配置中的 output 路径
+        poc_instance = poc_cls.from_issue(args.issue)
+        output_dir = poc_instance.config.output_path
+        if output_dir.exists():
+            import shutil
+            for child in output_dir.iterdir():
+                if child.is_dir():
+                    shutil.rmtree(child)
+                    print(f"  🧹 已清理: {child.name}/")
+                elif child.suffix in (".png", ".jpg", ".jpeg", ".json", ".md"):
+                    child.unlink()
+                    print(f"  🧹 已清理: {child.name}")
+            print(f"\n✅ output/ 已清空")
+        else:
+            print(f"  ℹ️  output/ 不存在，无需清理")
+
+        # 清理日志
+        log_dir = poc_instance.config.log_path
+        if log_dir.exists():
+            import shutil
+            shutil.rmtree(log_dir)
+            print(f"  🧹 已清理: {log_dir.name}/")
+        print()
+
     poc_instance = poc_cls.from_issue(args.issue)
     runner = PocRunner(poc_instance)
+
+    # --daemon：后台执行
+    if args.daemon:
+        import os as _os
+        import subprocess as _sp
+        import time as _time
+        log_dir = poc_instance.config.log_path
+        log_dir.mkdir(parents=True, exist_ok=True)
+        ts = _time.strftime("%Y%m%d_%H%M%S")
+        log_file = log_dir / f"poc_{ts}.log"
+        latest = log_dir / "poc_latest.log"
+        if latest.exists() or latest.is_symlink():
+            latest.unlink()
+        latest.symlink_to(log_file.name)
+        # PID file
+        pid_file = log_dir / "poc.pid"
+
+        cmd = [sys.executable, "-m", "poc", "run", str(args.issue)]
+        with open(log_file, "w") as f:
+            proc = _sp.Popen(
+                cmd, stdout=f, stderr=_sp.STDOUT, preexec_fn=_os.setpgrp,
+            )
+        pid_file.write_text(str(proc.pid))
+
+        print(f"🚀 POC #{args.issue} 后台启动 (PID={proc.pid})")
+        print(f"   日志: {log_file}")
+        print(f"   跟踪: tail -f {log_file}")
+        print(f"   进度: python -m poc status {args.issue}")
+        return
+
     runner.run_all()
 
 

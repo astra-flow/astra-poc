@@ -2,7 +2,7 @@
 Prompt Builder - 用设计 Token 组装 prompt，保证跨批次一致性
 集成 Astra Creative Design 美学质量系统六大维度
 """
-from .design_tokens import color_hex, token
+from .tokens import color_hex, token
 
 
 def base_style() -> str:

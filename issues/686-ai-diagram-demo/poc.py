@@ -343,7 +343,7 @@ class PocImageGen(PocBase[ImageGenConfig]):
         print(f"状态码: {resp.status_code}", flush=True)
 
         if resp.status_code != 200:
-            print(f"  ❌ 错误: {resp.text[:300]}", flush=True)
+            print(f"  ❌ 错误: HTTP {resp.status_code}", flush=True)
             self.tracker.record(
                 "generate_api",
                 False,
@@ -365,6 +365,13 @@ class PocImageGen(PocBase[ImageGenConfig]):
                 try:
                     img_resp = _SESSION.get(img_url, timeout=(5, 30))
                     if img_resp.status_code == 200:
+                        # 验证 Content-Type
+                        ct = img_resp.headers.get("Content-Type", "")
+                        if ct and "image" not in ct:
+                            print(
+                                f"  ⚠️ 非图片 Content-Type: {ct}",
+                                flush=True,
+                            )
                         dl_ok = True
                         break
                 except Exception as exc:
@@ -407,3 +414,7 @@ class PocImageGen(PocBase[ImageGenConfig]):
                 child.unlink()
                 print(f"  🧹 已清理: {child.name}")
         print(f"\n✅ output/ 已清空")
+
+    def cleanup(self) -> None:
+        """释放 HTTP Session 连接池资源。"""
+        _SESSION.close()

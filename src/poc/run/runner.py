@@ -58,7 +58,10 @@ class PocRunner:
         print(f"{'=' * 60}", flush=True)
         self._poc.report(result, evaluation)
 
-        # 5. Tracker summary
+        # 5. Cleanup
+        self._poc.cleanup()
+
+        # 6. Tracker summary
         self._poc.tracker.print_summary()
 
         return result

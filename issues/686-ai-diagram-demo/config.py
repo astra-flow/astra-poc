@@ -23,3 +23,12 @@ class ImageGenConfig(PocConfig):
     vision_api_key: str = ""
     vision_model: str = "doubao-seed-2.0-pro"
     vision_base_url: str = ""
+
+    def __repr__(self) -> str:
+        """返回配置摘要，遮蔽敏感密钥。"""
+        return (
+            f"ImageGenConfig(issue={self.issue_number}, "
+            f"model={self.model}, "
+            f"api_key={'***' if self.api_key else '(unset)'}, "
+            f"vision_api_key={'***' if self.vision_api_key else '(unset)'})"
+        )

@@ -17,7 +17,7 @@ from PIL import Image
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from issue_686_ai_diagram_demo.config import ImageGenConfig
+from config import ImageGenConfig
 
 _VISION_SESSION = requests.Session()
 _VISION_RETRY = Retry(

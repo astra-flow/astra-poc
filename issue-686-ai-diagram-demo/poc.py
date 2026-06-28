@@ -20,13 +20,9 @@ from poc.base.evaluator import CompositeEvaluator
 from poc.base.poc_base import PocBase
 from poc.base.result import BatchResult, PocResult
 
-from issue_686_ai_diagram_demo.config import ImageGenConfig
-from issue_686_ai_diagram_demo.evaluators.pillow_evaluator import (
-    PillowSingleEvaluator,
-)
-from issue_686_ai_diagram_demo.evaluators.vision_llm_evaluator import (
-    VisionLLMSingleEvaluator,
-)
+from config import ImageGenConfig
+from evaluators.pillow_evaluator import PillowSingleEvaluator
+from evaluators.vision_llm_evaluator import VisionLLMSingleEvaluator
 
 # ── Socket 级全局超时兜底 ──
 _DEFAULT_TIMEOUT: float = 180.0
@@ -101,11 +97,11 @@ class PocImageGen(PocBase[ImageGenConfig]):
 
     def run(self) -> PocResult:
         """遍历所有批次，调用 ARK API 生成图片。"""
-        from issue_686_ai_diagram_demo.batches.batch_1 import get_batch_1
-        from issue_686_ai_diagram_demo.batches.batch_2 import get_batch_2
-        from issue_686_ai_diagram_demo.batches.batch_3 import get_batch_3
-        from issue_686_ai_diagram_demo.batches.batch_4 import get_batch_4
-        from issue_686_ai_diagram_demo.batches.batch_5 import get_batch_5
+        from batches.batch_1 import get_batch_1
+        from batches.batch_2 import get_batch_2
+        from batches.batch_3 import get_batch_3
+        from batches.batch_4 import get_batch_4
+        from batches.batch_5 import get_batch_5
 
         batches: dict[str, tuple[str, list]] = {
             "batch_1": ("P0 图表", get_batch_1()),

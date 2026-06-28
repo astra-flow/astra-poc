@@ -17,7 +17,11 @@ if str(_PROJECT_ROOT) not in sys.path:
 
 from poc._runner import PocRunner
 
-from issue_686_ai_diagram_demo.poc import PocImageGen
+# 用 runpy 运行本地 poc.py 获取 PocImageGen 类
+# 避免与已安装的 poc 框架包名冲突
+import runpy
+_poc_ns = runpy.run_path(str(_PROJECT_ROOT / "issue-686-ai-diagram-demo" / "poc.py"))
+PocImageGen = _poc_ns["PocImageGen"]
 
 
 def main() -> None:

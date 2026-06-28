@@ -19,8 +19,8 @@ from poc._status import print_status_table
 
 
 def _resolve_poc_root() -> Path:
-    """返回 POC 框架所在目录的父目录（即 ``poc/``）。"""
-    return Path(__file__).resolve().parent
+    """返回 POC 根目录（即 ``poc/``，src/ 的父目录）。"""
+    return Path(__file__).resolve().parent.parent.parent
 
 
 def _cmd_run(args: argparse.Namespace, poc_root: Path) -> None:

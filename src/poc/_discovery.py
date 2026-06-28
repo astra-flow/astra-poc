@@ -10,9 +10,9 @@
 
 from __future__ import annotations
 
-import importlib.util
 import inspect
 import re
+import runpy
 import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -64,6 +64,10 @@ def _load_poc_class(
 ) -> type | None:
     """动态导入模块并查找 PocBase 子类。
 
+    使用 runpy.run_path() 执行 poc.py，避免 sys.path/包名冲突问题。
+    POC 目录名含连字符（issue-686-ai-diagram-demo），不能作为 Python 包名，
+    因此无法用常规 import 方式加载。
+
     Args:
         module_path: poc.py 文件路径。
         base_class: 基类类型（PocBase）。
@@ -71,33 +75,26 @@ def _load_poc_class(
     Returns:
         找到的 PocBase 子类，若未找到则返回 None。
     """
-    module_name = f"_poc_discovered_{module_path.parent.name}"
-    spec = importlib.util.spec_from_file_location(module_name, module_path)
-    if spec is None or spec.loader is None:
-        return None
-
-    # 将模块父目录加入 sys.path，使其内部 import 正常工作
+    # 将 POC 目录加入 sys.path，使其内部 import 能解析同目录模块
     parent_dir = str(module_path.parent)
     if parent_dir not in sys.path:
         sys.path.insert(0, parent_dir)
 
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
+    # 执行 poc.py，捕获全局命名空间
+    globals_dict = runpy.run_path(str(module_path))
 
-    candidates: list[type] = [
-        obj
-        for _, obj in inspect.getmembers(module, inspect.isclass)
-        if (
-            issubclass(obj, base_class)
-            and obj is not base_class
-            and not inspect.isabstract(obj)
-        )
-    ]
+    candidates: list[type] = []
+    for obj in globals_dict.values():
+        if not inspect.isclass(obj):
+            continue
+        if obj is base_class:
+            continue
+        if not issubclass(obj, base_class):
+            continue
+        if inspect.isabstract(obj):
+            continue
+        candidates.append(obj)
 
-    if len(candidates) == 1:
-        return candidates[0]
-    if len(candidates) > 1:
-        # 取第一个非抽象子类
+    if len(candidates) >= 1:
         return candidates[0]
     return None

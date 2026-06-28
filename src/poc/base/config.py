@@ -35,3 +35,14 @@ class PocConfig:
     def log_path(self) -> Path:
         """日志目录的 Path 对象。"""
         return Path(self.log_dir)
+
+    def batch_output(self, batch: str) -> Path:
+        """指定批次的产出物子目录。
+
+        Args:
+            batch: 批次名称（如 ``"batch_1"``）。
+
+        Returns:
+            批次产出物目录的 Path 对象。
+        """
+        return self.output_path / batch

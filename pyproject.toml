@@ -11,6 +11,10 @@ license = {text = "Apache-2.0"}
 authors = [
     {name = "Astra Flow Team"},
 ]
+dependencies = [
+    "requests>=2.31,<3",
+    "Pillow>=10,<11",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

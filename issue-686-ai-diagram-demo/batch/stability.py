@@ -2,11 +2,11 @@
 Batch 5: 多轮稳定性测试 - 精选图表跑 3 轮，验证输出一致性
 每轮用相同 prompt 生成，文件名自动带时间戳区分
 """
-from .design_tokens import color_hex, token, MORANDI, SLATE, BRANCH
-from .prompt_builder import base_style, build_prompt, title, no_line
+from .design.tokens import color_hex, token, MORANDI, SLATE, BRANCH
+from .design.prompts import base_style, build_prompt, title, no_line
 
 
-def get_batch_5():
+def get_batch_stability():
     """返回 5 张精选图表，每张跑 3 轮 = 15 次生成"""
     tests = []
     

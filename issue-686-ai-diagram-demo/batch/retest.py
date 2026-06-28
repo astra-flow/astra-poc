@@ -3,11 +3,11 @@ Batch 4: 稳定性重测 - 精选图表重跑验证一致性
 从 Batch 1-3 中各选代表性图表重跑，验证输出质量稳定性
 使用设计 Token 和 Prompt Builder
 """
-from .design_tokens import color_hex, token, MORANDI, SLATE, BRANCH
-from .prompt_builder import base_style, build_prompt, title, no_line
+from .design.tokens import color_hex, token, MORANDI, SLATE, BRANCH
+from .design.prompts import base_style, build_prompt, title, no_line
 
 
-def get_batch_4():
+def get_batch_retest():
     return [
         # ===== 重测 1: 客户旅程地图（Batch 1 P0） =====
         {

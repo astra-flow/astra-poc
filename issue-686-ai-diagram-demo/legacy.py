@@ -15,7 +15,7 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
-from poc._runner import PocRunner
+from poc.run.runner import PocRunner
 
 # 用 runpy 运行本地 poc.py 获取 PocImageGen 类
 # 避免与已安装的 poc 框架包名冲突
@@ -35,8 +35,8 @@ def main() -> None:
         return
 
     if "--status" in flags:
-        from poc._status import check_poc_status, print_status_table
-        from poc._discovery import discover_pocs
+        from poc.run.status import check_poc_status, print_status_table
+        from poc.run.discovery import discover_pocs
 
         poc_root = Path(__file__).resolve().parent
         registry = discover_pocs(poc_root)

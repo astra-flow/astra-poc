@@ -13,9 +13,9 @@ import argparse
 import sys
 from pathlib import Path
 
-from poc._discovery import discover_pocs
-from poc._runner import PocRunner
-from poc._status import print_status_table
+from poc.run.discovery import discover_pocs
+from poc.run.runner import PocRunner
+from poc.run.status import print_status_table
 
 
 def _resolve_poc_root() -> Path:

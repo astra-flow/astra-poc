@@ -42,6 +42,10 @@ def check_poc_status(poc_dir: Path, poc_cls: type[PocBase]) -> dict:
         except (ValueError, OSError, ProcessLookupError):
             pid_file.unlink(missing_ok=True)
 
+    # 检查根级评估报告
+    root_report = output_dir / "evaluation_report.json"
+    has_root_report = root_report.exists()
+
     # 检查各批次产出物
     batches: list[dict] = []
     if output_dir.is_dir():
@@ -49,18 +53,23 @@ def check_poc_status(poc_dir: Path, poc_cls: type[PocBase]) -> dict:
             if not batch_dir.is_dir():
                 continue
             png_files = sorted(batch_dir.glob("*.png"))
-            report_file = batch_dir / "evaluation_report.json"
-            has_report = report_file.exists()
+            has_report = has_root_report  # 根级报告存在即视为所有批次已有报告
+
+            # 检查 batch 级独立报告
+            if not has_report:
+                report_file = batch_dir / "evaluation_report.json"
+                has_report = report_file.exists()
+
             vision_llm_count = 0
-            if has_report:
+            if has_report and has_root_report:
                 try:
-                    data = json.loads(report_file.read_text())
+                    data = json.loads(root_report.read_text())
+                    # 扁平列表结构：统计含 vision_llm 的条目
                     vision_llm_count = sum(
                         1
                         for e in data
-                        if "vision_llm" in e
-                        and e.get("vision_llm")
-                        and "verdict" in e["vision_llm"]
+                        if isinstance(e, dict)
+                        and "verdict" in e
                     )
                 except Exception:
                     pass
@@ -112,7 +121,17 @@ def print_status_table(
     print(f"{'─'*8} {'─'*10} {'─'*5} {'─'*6} {'─'*8}  {'─'*10}")
 
     for issue_num, cls in items.items():
-        poc_dir = poc_root / f"issue-{issue_num}"
+        # 从 issues/ 下匹配 <N>-<desc> 目录
+        issues_dir = poc_root / "issues"
+        poc_dir = None
+        if issues_dir.is_dir():
+            import re as _re
+            for d in issues_dir.iterdir():
+                if d.is_dir() and _re.match(rf"{issue_num}-", d.name):
+                    poc_dir = d
+                    break
+        if poc_dir is None:
+            poc_dir = poc_root / f"issue-{issue_num}"
         status = check_poc_status(poc_dir, cls)
 
         if not status["batches"]:
@@ -122,9 +141,22 @@ def print_status_table(
         running_mark = "🟢" if status["running"] else "⚪"
         for b in status["batches"]:
             report_mark = "✅" if b["has_report"] else "❌"
-            llm_mark = "✅" if b["vision_llm_count"] > 0 else "❌"
-            batch_status = "✅ 完成" if b["has_report"] else "🔄 进行中"
+            n = b["images"]
+            vllm = b["vision_llm_count"]
+            llm_mark = "✅" if vllm >= n else (f"🔄{vllm}/{n}" if vllm > 0 else "❌")
+            if n == 0 and not b["has_report"]:
+                batch_status = "⏳ 未开始"
+            elif status["running"] and not b["has_report"]:
+                batch_status = "🔄 生成中"
+            elif status["running"]:
+                batch_status = "🔄 进行中"
+            elif b["has_report"] and vllm >= n:
+                batch_status = "✅ 完成"
+            elif b["has_report"]:
+                batch_status = "✅ 已生成"
+            else:
+                batch_status = "⚪ 已完成"
             print(
                 f"{issue_num:<8} {b['name']:<10} {b['images']:>5} "
-                f"{report_mark:>6} {llm_mark:>8}  {running_mark} {batch_status}"
+                f"{report_mark:>6} {llm_mark:>8}  {batch_status}"
             )

@@ -9,7 +9,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-from poc.base.poc import PocBase
+    from poc.base.poc import PocBase
     from poc.base.result import PocResult
 
 

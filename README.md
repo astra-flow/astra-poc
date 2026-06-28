@@ -28,12 +28,13 @@ python -m poc list
 poc/                              # ← submodule: astra-flow/astra-poc
 ├── src/poc/                      # POC 框架代码
 │   ├── __main__.py               # CLI 入口 (python -m poc)
-│   ├── _discovery.py             # 自动发现
-│   ├── _runner.py                # PocRunner 编排
-│   ├── _status.py                # 进度查看
+│   ├── run/                      # 运行时编排层
+│   │   ├── discovery.py          # 自动发现
+│   │   ├── runner.py             # PocRunner 编排
+│   │   └── status.py             # 进度查看
 │   └── base/                     # 核心抽象层
 │       ├── config.py             # PocConfig 数据类
-│       ├── poc_base.py           # PocBase[T] 抽象基类
+│       ├── poc.py                # PocBase[T] 抽象基类
 │       ├── tracker.py            # StatsTracker
 │       ├── evaluator.py          # CompositeEvaluator
 │       └── result.py             # PocResult / BatchResult
@@ -49,8 +50,8 @@ poc/                              # ← submodule: astra-flow/astra-poc
 issue-<N>-<desc>/
 ├── poc.py           # PocBase 子类（必须）
 ├── config.py        # PocConfig 子类（可选）
-├── evaluators/      # 评估器实现（可选）
-├── batches/         # 批次定义（可选）
+├── evaluate/        # 评估器实现（可选）
+├── batch/           # 批次定义（可选）
 └── README.md        # 经验总结
 ```
 

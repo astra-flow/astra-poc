@@ -38,16 +38,17 @@ poc/                              # ← submodule: astra-flow/astra-poc
 │       ├── tracker.py            # StatsTracker
 │       ├── evaluator.py          # CompositeEvaluator
 │       └── result.py             # PocResult / BatchResult
-├── issue-686-ai-diagram-demo/    # AI 绘图 POC 实例
-└── issue-<N>-<desc>/             # 新增 POC 实例
+└── issues/                      # POC 实例统一目录
+    ├── 686-ai-diagram-demo/     # AI 绘图 POC 实例
+    └── <N>-<desc>/              # 新增 POC 实例
 ```
 
 ## 新增 POC
 
-在 `poc/` 目录下创建 `issue-<N>-<desc>/` 目录：
+在 `poc/issues/` 目录下以 Issue 编号开头创建目录：
 
 ```
-issue-<N>-<desc>/
+<N>-<desc>/
 ├── poc.py           # PocBase 子类（必须）
 ├── config.py        # PocConfig 子类（可选）
 ├── evaluate/        # 评估器实现（可选）

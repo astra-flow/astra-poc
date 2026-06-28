@@ -1,9 +1,9 @@
 """POC 自动发现与注册 — discover_pocs()。
 
-扫描 ``poc/issue-<N>-*/poc.py`` 目录，自动采集 PocBase 子类注册表。
+扫描 ``poc/issues/<N>-*/poc.py`` 目录，自动采集 PocBase 子类注册表。
 
 约定：
-    - 目录名必须匹配 ``issue-<数字>`` 模式
+    - 目录名必须匹配 ``<数字>-`` 前缀（如 ``686-ai-diagram-demo``）
     - 目录下必须存在 ``poc.py`` 文件
     - ``poc.py`` 中必须定义且仅定义一个 PocBase 子类
 """
@@ -18,14 +18,14 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from poc.base.poc_base import PocBase
+    from poc.base.poc import PocBase
 
 
 def discover_pocs(poc_root: Path) -> dict[int, type[PocBase]]:
-    """扫描 poc_root 下的所有 ``issue-<N>-*/poc.py``，返回注册表。
+    """扫描 poc_root/issues/ 下所有 ``<N>-*/poc.py``，返回注册表。
 
     Args:
-        poc_root: POC 根目录（通常是 ``poc/`` 的绝对路径）。
+        poc_root: POC 根目录（如 ``poc/`` 的绝对路径）。
 
     Returns:
         ``{issue_number: PocBase_subclass}`` 映射，按 issue_number 升序排列。
@@ -36,14 +36,19 @@ def discover_pocs(poc_root: Path) -> dict[int, type[PocBase]]:
     if not poc_root.is_dir():
         raise ValueError(f"POC 根目录不存在: {poc_root}")
 
+    issues_dir = poc_root / "issues"
+    if not issues_dir.is_dir():
+        return {}
+
     from poc.base.poc import PocBase  # noqa: F811
 
     registry: dict[int, type[PocBase]] = {}
 
-    for d in sorted(poc_root.iterdir()):
+    for d in sorted(issues_dir.iterdir()):
         if not d.is_dir():
             continue
-        match = re.match(r"issue-(\d+)", d.name)
+        # 匹配 "<数字>-<描述>" 格式（如 "686-ai-diagram-demo"）
+        match = re.match(r"(\d+)-", d.name)
         if not match:
             continue
         poc_module_path = d / "poc.py"

@@ -46,6 +46,23 @@ class PocBase(ABC, Generic[TConfig]):
         self.config = config
         self.tracker = StatsTracker()
 
+    @classmethod
+    def from_issue(cls, issue_number: int) -> "PocBase[TConfig]":
+        """根据 Issue 编号创建 POC 实例的工厂方法。
+
+        子类应覆盖此方法以提供自己的配置构造逻辑。
+        默认实现抛出 NotImplementedError。
+
+        Args:
+            issue_number: GitHub Issue 编号。
+
+        Returns:
+            PocBase 子类实例。
+        """
+        raise NotImplementedError(
+            f"{cls.__name__} 未实现 from_issue() 类方法"
+        )
+
     @abstractmethod
     def setup(self) -> None:
         """初始化环境、校验凭证 / 依赖是否就绪。

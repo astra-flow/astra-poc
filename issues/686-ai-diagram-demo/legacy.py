@@ -20,7 +20,7 @@ from poc.run.runner import PocRunner
 # 用 runpy 运行本地 poc.py 获取 PocImageGen 类
 # 避免与已安装的 poc 框架包名冲突
 import runpy
-_poc_ns = runpy.run_path(str(_PROJECT_ROOT / "issues" / "686-ai-diagram-demo" / "poc.py"))
+_poc_ns = runpy.run_path(str(_PROJECT_ROOT / "issue-686-ai-diagram-demo" / "poc.py"))
 PocImageGen = _poc_ns["PocImageGen"]
 
 

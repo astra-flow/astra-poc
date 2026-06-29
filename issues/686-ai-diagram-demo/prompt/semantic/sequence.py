@@ -20,6 +20,11 @@ class Swimlane:
         label: 泳道名称标签。
         items: 泳道内容列表（字符串或 Anchored 对象）。
         bg_color: 泳道背景色。
+        display_mode: 展示模式。
+            - "text"（默认）：文字列表
+            - "color_block"：色块序列（如情绪曲线）
+            - "icon"：图标序列
+            - "bar"：柱状/进度条
     """
 
     def __init__(
@@ -27,10 +32,12 @@ class Swimlane:
         label: str,
         items: Optional[list[str | "Anchored"]] = None,
         bg_color: str = "#F0F2F5",
+        display_mode: str = "text",
     ) -> None:
         self.label = label
         self.items = items or []
         self.bg_color = bg_color
+        self.display_mode = display_mode
 
 
 class Phase:
@@ -40,33 +47,19 @@ class Phase:
         name: 阶段名称。
         items: 阶段包含的组件列表。
         bg_color: 阶段容器背景色。
-        emotion: 情绪等级（高/较高/中等/较低/低），自动映射为背景色。
         annotations: 锚定到该阶段的标注列表（如机会点、时效）。
     """
-
-    # 情绪→背景色映射
-    EMOTION_COLORS = {
-        "很高": "#D4E8D4",   # 深绿
-        "高": "#E0F0E0",     # 浅绿
-        "较高": "#E8F0E0",   # 黄绿
-        "中等": "#F0F0E0",   # 米黄
-        "较低": "#F5E8D8",   # 浅橙
-        "低": "#F5D8D8",     # 浅红
-        "很低": "#F0C8C8",   # 粉红
-    }
 
     def __init__(
         self,
         name: str,
         items: Optional[list[str]] = None,
         bg_color: str = "#F0F2F5",
-        emotion: Optional[str] = None,
         annotations: Optional[list[str]] = None,
     ) -> None:
         self.name = name
         self.items = items or []
-        self.bg_color = self.EMOTION_COLORS.get(emotion, bg_color) if emotion else bg_color
-        self.emotion = emotion
+        self.bg_color = bg_color
         self.annotations = annotations or []
 
 
@@ -102,21 +95,45 @@ class SequenceBuilder:
         # 顶部泳道（如情绪曲线）
         if top_swimlanes:
             for lane in top_swimlanes:
-                lane_items = []
-                for item in lane.items:
-                    if isinstance(item, str):
-                        lane_items.append(f"'{item}'")
-                    else:
-                        pos_cn = {"below": "下方", "above": "上方", "inside": "内部"}.get(
-                            getattr(item, "position", "below"), "下方"
-                        )
-                        lane_items.append(
-                            f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
-                        )
-                items_str = "、".join(lane_items)
-                lines.append(
-                    f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
-                )
+                if lane.display_mode == "color_block":
+                    # 色块模式：每个阶段对应一个色块
+                    blocks = []
+                    for i, step in enumerate(steps):
+                        if i < len(lane.items):
+                            item = lane.items[i]
+                            if isinstance(item, str):
+                                blocks.append(f"阶段{i+1}：{item}")
+                            else:
+                                blocks.append(f"阶段{i+1}：{getattr(item, 'text', '')}")
+                    items_str = "、".join(blocks)
+                    lines.append(
+                        f"{lane.bg_color}背景的泳道'{lane.label}'（色块序列）：{items_str}"
+                    )
+                elif lane.display_mode == "icon":
+                    items_str = "、".join(
+                        f"'{i}'" if isinstance(i, str) else f"'{getattr(i, 'text', '')}'"
+                        for i in lane.items
+                    )
+                    lines.append(
+                        f"{lane.bg_color}背景的泳道'{lane.label}'（图标序列）：{items_str}"
+                    )
+                else:
+                    # text 模式（默认）
+                    lane_items = []
+                    for item in lane.items:
+                        if isinstance(item, str):
+                            lane_items.append(f"'{item}'")
+                        else:
+                            pos_cn = {"below": "下方", "above": "上方", "inside": "内部"}.get(
+                                getattr(item, "position", "below"), "下方"
+                            )
+                            lane_items.append(
+                                f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
+                            )
+                    items_str = "、".join(lane_items)
+                    lines.append(
+                        f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
+                    )
 
         # 阶段
         lines.append(f"横向{len(steps)}个阶段（{direction_cn}，每个阶段一个容器框）：")
@@ -132,21 +149,35 @@ class SequenceBuilder:
         # 底部泳道（如机会点）
         if bottom_swimlanes:
             for lane in bottom_swimlanes:
-                lane_items = []
-                for item in lane.items:
-                    if isinstance(item, str):
-                        lane_items.append(f"'{item}'")
-                    else:
-                        pos_cn = {"below": "下方", "above": "上方", "inside": "内部"}.get(
-                            getattr(item, "position", "below"), "下方"
-                        )
-                        lane_items.append(
-                            f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
-                        )
-                items_str = "、".join(lane_items)
-                lines.append(
-                    f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
-                )
+                if lane.display_mode == "color_block":
+                    blocks = []
+                    for i, step in enumerate(steps):
+                        if i < len(lane.items):
+                            item = lane.items[i]
+                            if isinstance(item, str):
+                                blocks.append(f"阶段{i+1}：{item}")
+                            else:
+                                blocks.append(f"阶段{i+1}：{getattr(item, 'text', '')}")
+                    items_str = "、".join(blocks)
+                    lines.append(
+                        f"{lane.bg_color}背景的泳道'{lane.label}'（色块序列）：{items_str}"
+                    )
+                else:
+                    lane_items = []
+                    for item in lane.items:
+                        if isinstance(item, str):
+                            lane_items.append(f"'{item}'")
+                        else:
+                            pos_cn = {"below": "下方", "above": "上方", "inside": "内部"}.get(
+                                getattr(item, "position", "below"), "下方"
+                            )
+                            lane_items.append(
+                                f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
+                            )
+                    items_str = "、".join(lane_items)
+                    lines.append(
+                        f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
+                    )
 
         return "\n".join(lines)
 

@@ -7,7 +7,30 @@ SequenceBuilder — 序列化原语
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .annotation import Anchored
+
+
+class Swimlane:
+    """泳道/层 — 阶段下方的独立行。
+
+    Attributes:
+        label: 泳道名称标签。
+        items: 泳道内容列表（字符串或 Anchored 对象）。
+        bg_color: 泳道背景色。
+    """
+
+    def __init__(
+        self,
+        label: str,
+        items: Optional[list[str | "Anchored"]] = None,
+        bg_color: str = "#F0F2F5",
+    ) -> None:
+        self.label = label
+        self.items = items or []
+        self.bg_color = bg_color
 
 
 class Phase:
@@ -44,16 +67,15 @@ class SequenceBuilder:
         title: str,
         steps: list[Phase],
         direction: str = "horizontal",
-        bottom_layer: Optional[str] = None,
+        swimlanes: Optional[list[Swimlane]] = None,
     ) -> str:
-        """线性序列 — 从左到右或从上到下的步骤流。
+        """线性序列 — 从左到右或从上到下的步骤流，支持多层泳道。
 
         Args:
             title: 序列标题。
             steps: 阶段列表。
             direction: 排列方向（horizontal / vertical）。
-            bottom_layer: 底部泳道/汇总区描述（可选）。
-            bottom_layer: 底部泳道/汇总区描述（可选）。
+            swimlanes: 底部泳道列表（如情绪曲线、机会点等）。
 
         Returns:
             Prompt 文本片段。
@@ -71,8 +93,24 @@ class SequenceBuilder:
             for ann in step.annotations:
                 lines.append(f"  ↳ 下方标注'{ann}'")
 
-        if bottom_layer:
-            lines.append(bottom_layer)
+        if swimlanes:
+            for lane in swimlanes:
+                lane_items = []
+                for item in lane.items:
+                    if isinstance(item, str):
+                        lane_items.append(f"'{item}'")
+                    else:
+                        # Anchored 对象
+                        pos_cn = {"below": "下方", "above": "上方", "inside": "内部"}.get(
+                            getattr(item, "position", "below"), "下方"
+                        )
+                        lane_items.append(
+                            f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
+                        )
+                items_str = "、".join(lane_items)
+                lines.append(
+                    f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
+                )
 
         return "\n".join(lines)
 

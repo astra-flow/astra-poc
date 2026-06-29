@@ -25,11 +25,11 @@ class Swimlane:
             - "color_block"：色块序列（如情绪曲线）
             - "icon"：图标序列
             - "bar"：柱状/进度条
-        label_position: 标签位置。
-            - "left"（默认）：左侧标注
-            - "top_center"：上方居中
-            - "top_left"：上方居左
-            - "inside"：内部左上角
+        label_position: 标签在泳道中的位置。
+            - "left"（默认）：泳道左侧标注
+            - "top_center"：泳道上方居中
+            - "top_left"：泳道上方居左
+            - "inside"：泳道内部左上角
             - "none"：不显示标签
     """
 
@@ -81,14 +81,14 @@ class SequenceBuilder:
     def _lane_label(lane: "Swimlane") -> str:
         """生成泳道标签前缀。"""
         pos_map = {
-            "left": f"左侧标注'{lane.label}'标签的",
-            "top_center": f"上方居中显示'{lane.label}'的",
-            "top_left": f"上方居左显示'{lane.label}'的",
-            "inside": f"内部左上角标注'{lane.label}'的",
+            "left": f"，左侧标注'{lane.label}'标签",
+            "top_center": f"，上方居中显示'{lane.label}'标签",
+            "top_left": f"，上方居左显示'{lane.label}'标签",
+            "inside": f"，内部左上角标注'{lane.label}'标签",
             "none": "",
         }
-        prefix = pos_map.get(lane.label_position, pos_map["left"])
-        return f"{prefix}{lane.bg_color}背景的泳道"
+        suffix = pos_map.get(lane.label_position, pos_map["left"])
+        return f"{lane.bg_color}背景的泳道{suffix}"
 
     @staticmethod
     def linear(

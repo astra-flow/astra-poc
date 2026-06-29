@@ -25,6 +25,12 @@ class Swimlane:
             - "color_block"：色块序列（如情绪曲线）
             - "icon"：图标序列
             - "bar"：柱状/进度条
+        label_position: 标签位置。
+            - "left"（默认）：左侧标注
+            - "top_center"：上方居中
+            - "top_left"：上方居左
+            - "inside"：内部左上角
+            - "none"：不显示标签
     """
 
     def __init__(
@@ -33,11 +39,13 @@ class Swimlane:
         items: Optional[list[str | "Anchored"]] = None,
         bg_color: str = "#F0F2F5",
         display_mode: str = "text",
+        label_position: str = "left",
     ) -> None:
         self.label = label
         self.items = items or []
         self.bg_color = bg_color
         self.display_mode = display_mode
+        self.label_position = label_position
 
 
 class Phase:
@@ -70,6 +78,19 @@ class SequenceBuilder:
     """
 
     @staticmethod
+    def _lane_label(lane: "Swimlane") -> str:
+        """生成泳道标签前缀。"""
+        pos_map = {
+            "left": f"左侧标注'{lane.label}'标签的",
+            "top_center": f"上方居中显示'{lane.label}'的",
+            "top_left": f"上方居左显示'{lane.label}'的",
+            "inside": f"内部左上角标注'{lane.label}'的",
+            "none": "",
+        }
+        prefix = pos_map.get(lane.label_position, pos_map["left"])
+        return f"{prefix}{lane.bg_color}背景的泳道"
+
+    @staticmethod
     def linear(
         title: str,
         steps: list[Phase],
@@ -95,8 +116,8 @@ class SequenceBuilder:
         # 顶部泳道（如情绪曲线）
         if top_swimlanes:
             for lane in top_swimlanes:
+                label_prefix = SequenceBuilder._lane_label(lane)
                 if lane.display_mode == "color_block":
-                    # 色块模式：每个阶段对应一个色块
                     blocks = []
                     for i, step in enumerate(steps):
                         if i < len(lane.items):
@@ -106,19 +127,14 @@ class SequenceBuilder:
                             else:
                                 blocks.append(f"阶段{i+1}：{getattr(item, 'text', '')}")
                     items_str = "、".join(blocks)
-                    lines.append(
-                        f"{lane.bg_color}背景的泳道'{lane.label}'（色块序列）：{items_str}"
-                    )
+                    lines.append(f"{label_prefix}（色块序列）：{items_str}")
                 elif lane.display_mode == "icon":
                     items_str = "、".join(
                         f"'{i}'" if isinstance(i, str) else f"'{getattr(i, 'text', '')}'"
                         for i in lane.items
                     )
-                    lines.append(
-                        f"{lane.bg_color}背景的泳道'{lane.label}'（图标序列）：{items_str}"
-                    )
+                    lines.append(f"{label_prefix}（图标序列）：{items_str}")
                 else:
-                    # text 模式（默认）
                     lane_items = []
                     for item in lane.items:
                         if isinstance(item, str):
@@ -131,9 +147,7 @@ class SequenceBuilder:
                                 f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
                             )
                     items_str = "、".join(lane_items)
-                    lines.append(
-                        f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
-                    )
+                    lines.append(f"{label_prefix}：{items_str}")
 
         # 阶段
         lines.append(f"横向{len(steps)}个阶段（{direction_cn}，每个阶段一个容器框）：")
@@ -149,6 +163,7 @@ class SequenceBuilder:
         # 底部泳道（如机会点）
         if bottom_swimlanes:
             for lane in bottom_swimlanes:
+                label_prefix = SequenceBuilder._lane_label(lane)
                 if lane.display_mode == "color_block":
                     blocks = []
                     for i, step in enumerate(steps):
@@ -159,9 +174,7 @@ class SequenceBuilder:
                             else:
                                 blocks.append(f"阶段{i+1}：{getattr(item, 'text', '')}")
                     items_str = "、".join(blocks)
-                    lines.append(
-                        f"{lane.bg_color}背景的泳道'{lane.label}'（色块序列）：{items_str}"
-                    )
+                    lines.append(f"{label_prefix}（色块序列）：{items_str}")
                 else:
                     lane_items = []
                     for item in lane.items:
@@ -175,9 +188,7 @@ class SequenceBuilder:
                                 f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
                             )
                     items_str = "、".join(lane_items)
-                    lines.append(
-                        f"{lane.bg_color}背景的泳道'{lane.label}'：{items_str}"
-                    )
+                    lines.append(f"{label_prefix}：{items_str}")
 
         return "\n".join(lines)
 

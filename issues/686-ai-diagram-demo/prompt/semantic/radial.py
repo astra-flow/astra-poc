@@ -7,7 +7,10 @@ RadialBuilder — 辐射化原语
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..aesthetic.tokens import DesignTokens
 
 
 class RadialBuilder:
@@ -16,8 +19,11 @@ class RadialBuilder:
     每个方法返回一段 Prompt 文本片段，描述一种辐射布局。
     """
 
-    @staticmethod
+    def __init__(self, tokens: Optional["DesignTokens"] = None) -> None:
+        self.tokens = tokens
+
     def center_radial(
+        self,
         title: str,
         center: str,
         center_color: str = "#4A6FA5",
@@ -50,8 +56,8 @@ class RadialBuilder:
 
         return "\n".join(lines)
 
-    @staticmethod
     def multi_axis(
+        self,
         title: str,
         center: str,
         axes: list[tuple[str, str, float]],

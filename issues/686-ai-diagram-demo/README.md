@@ -276,3 +276,160 @@ poc/issue-686-ai-diagram-demo/
 | VS Code 原生支持 | 是 | 否（需插件） | 否 |
 | 手绘风格 | 否 | 否 | 是 |
 | 适合场景 | 文档嵌入、简单图 | 复杂图、高质量布局 | 快速草图、演示 |
+
+---
+
+## 架构设计：Prompt Builder 语义模型
+
+### 设计理念
+
+> **任何"设计系统"，本质上都是一套"语义原子 + 组合规则"的产物。**
+
+UI Design System 和"图表语义模型"是同构的，只是应用域不同。本 POC 的 Prompt Builder 借鉴了 Design System 的分层思想，构建了 4 层语义模型：
+
+### 四层架构
+
+```
+┌─────────────────────────────────────────────────────┐
+│  层级 4: Prompt 生成层                               │
+│  PromptBuilder 总装器 → 完整 Prompt → ARK API       │
+├─────────────────────────────────────────────────────┤
+│  层级 3: 图表模板层（行业惯用组合）                   │
+│  Chart.customer_journey() / .approval_flow() / ...  │
+├─────────────────────────────────────────────────────┤
+│  层级 2: 图表原语层（通用元素）                       │
+│  Swimlane / Phase / Quadrant / Connector / Card     │
+├─────────────────────────────────────────────────────┤
+│  层级 1: 设计 Token 层（跨图通用）                    │
+│  DesignTokens / ColorPalette / StylePreset          │
+└─────────────────────────────────────────────────────┘
+```
+
+### 目录结构（prompt/）
+
+```
+prompt/
+├── builder.py              # PromptBuilder 总装器 + LayoutRule
+├── icon.py                 # IconPicker 图标选择器（emoji/text/line）
+├── aesthetic/              # 美学 Builder（跨图通用）
+│   ├── tokens.py           # DesignTokens 设计 Token 系统
+│   ├── palette.py          # ColorPalette 配色体系
+│   └── preset.py           # StylePreset 风格预设
+└── semantic/               # 语义 Builder（图类型专属）
+    ├── sequence.py         # SequenceBuilder 序列化原语
+    ├── container.py        # ContainerBuilder 容器化原语
+    ├── annotation.py       # AnnotationBuilder 标注化原语
+    ├── chart.py            # Chart 自由组合模型
+    ├── matrix.py           # MatrixBuilder 矩阵原语
+    └── radial.py           # RadialBuilder 辐射原语
+```
+
+### 核心组件
+
+#### 层级 1：设计 Token 层
+
+**DesignTokens** — 语义 Builder 的颜色/样式唯一来源，所有硬编码颜色值集中管理：
+
+```python
+# 三种构造方式
+tokens = DesignTokens()                                    # 默认值
+tokens = DesignTokens.from_palette(ColorPalette.MORANDI)   # 从配色体系
+tokens = DesignTokens.from_style('wechat')                 # 从风格名称
+```
+
+| Token | 说明 | 默认值 |
+|-------|------|--------|
+| `title_color` | 标题颜色 | 深蓝灰色 |
+| `title_size` | 标题尺寸 | 大 |
+| `card_bg_cycle` | 阶段卡片背景色循环 | `["#F0F2F5"]` |
+| `return_card_color` | 闭环返回卡片颜色 | 浅红色 |
+| `lane_bg` | 泳道默认背景色 | `#F0F2F5` |
+| `accent` | 强调色 | `#D4A04A` |
+
+**StylePreset** — 5 种风格预设（consulting / wechat / minimal / dark / brand），覆盖六大美学维度：色彩、构图、光影、质感、细节、风格。
+
+**ColorPalette** — 6 套配色体系（MORANDI / SLATE / ROLE / BRANCH / STAGE / EVENT）。
+
+#### 层级 2：图表原语层
+
+| 原语 | 说明 | 关键方法 |
+|------|------|---------|
+| **Swimlane** | 泳道/层 | label, items, display_mode, label_position |
+| **Phase** | 序列阶段 | name, items, bg_color, annotations |
+| **Anchored** | 跨层锚定 | text, at_step, position |
+| **IconPicker** | 图标选择器 | emoji(), text(), build() |
+| **ContainerBuilder** | 容器化 | layer(), swimlane(), quadrant(), surround(), group() |
+| **AnnotationBuilder** | 标注化 | value_label(), level(), color_code(), emotion_curve() |
+
+**关键设计决策：归属优先于对齐**
+
+`Anchored` 属于源层（如 Swimlane），通过 `at_step` 锚定到目标层，而非把标注挂在 Phase 上：
+
+```python
+Swimlane(
+    label="机会点",
+    items=[
+        Anchored("简化支付流程", at_step=2, position="below"),
+        Anchored("推荐奖励机制", at_step=4, position="below"),
+    ],
+)
+```
+
+#### 层级 3：图表模板层
+
+**Chart** — 自由组合模型，支持行级自由增删改排序：
+
+```python
+chart = Chart(title='客户旅程地图', tokens=t)
+chart.add_swimlane_row(emotion_lane)     # 情绪曲线
+chart.add_phase_row(steps)               # 业务阶段
+chart.add_swimlane_row(opportunity_lane) # 机会点
+prompt = chart.build()
+```
+
+预设工厂方法：
+
+| 方法 | 说明 |
+|------|------|
+| `Chart.customer_journey()` | 客户旅程地图（情绪曲线 + 阶段 + 机会点） |
+| `Chart.approval_flow()` | 审批流程（阶段 + 驳回返回卡片） |
+| `Chart.branch_comparison()` | 分支模型对比（多行分支对比） |
+
+#### 层级 4：Prompt 生成层
+
+**PromptBuilder** — 总装器，组装语义 + 美学 + 布局 + 图标：
+
+```python
+prompt = PromptBuilder(
+    semantic=chart.build(),
+    aesthetic=StylePreset.consulting(),
+    tokens=tokens,
+    no_line=True,
+).build()
+```
+
+### 与 UI Design System 的对应关系
+
+| UI Design System 概念 | 图表语义模型对应 |
+|----------------------|----------------|
+| Design Token（色/字/间距） | DesignTokens（标题色/卡片背景/边框色） |
+| Component Library（Button/Card） | Primitive Library（Swimlane/Phase/Quadrant） |
+| Layout Grid（8px 网格） | LayoutRule（方向/对齐/间距/留白） |
+| Composition Rules（组件嵌套约束） | Chart 行级组合规则 |
+| Theming（浅色/深色主题） | StylePreset（咨询风/微信风/极简风/深色风） |
+
+### 数据流
+
+```
+用户定义图表 → Chart.build() + StylePreset
+                → PromptBuilder.assemble() → 完整 Prompt
+                → ARK API (doubao-seedream-5.0-lite) → PNG
+                → PillowEvaluator + VisionLLMEvaluator → Report
+```
+
+### 待改进方向
+
+1. **JSON Schema 注册表** — 将 Python 类定义提炼为 JSON Schema，支持跨语言复用
+2. **图表模板 DSL** — 用 YAML 编写模板，支持参数化变体和嵌套组合
+3. **Prompt 质检器** — 调 API 前检查 prompt 质量（组件数、配色、无连线约束等）
+4. **渐进式约束** — 常见图表用强模板（精确可控），自定义场景用弱模板（灵活但有风险）

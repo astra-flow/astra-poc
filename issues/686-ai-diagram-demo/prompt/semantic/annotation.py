@@ -7,7 +7,10 @@ AnnotationBuilder — 标注化原语
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..aesthetic.tokens import DesignTokens
 
 
 class Anchored:
@@ -39,8 +42,11 @@ class AnnotationBuilder:
     每个方法返回一段 Prompt 文本片段，描述一种标注方式。
     """
 
-    @staticmethod
+    def __init__(self, tokens: Optional["DesignTokens"] = None) -> None:
+        self.tokens = tokens
+
     def value_label(
+        self,
         items: list[tuple[str, str]],
         prefix: str = "下方标注",
     ) -> str:
@@ -58,8 +64,8 @@ class AnnotationBuilder:
             parts.append(f"  {name}：'{value}'")
         return "\n".join(parts)
 
-    @staticmethod
     def level(
+        self,
         levels: list[tuple[str, str, str, str]],
     ) -> str:
         """等级标注 — 阶梯式等级描述。
@@ -77,8 +83,8 @@ class AnnotationBuilder:
             )
         return "\n".join(lines)
 
-    @staticmethod
     def color_code(
+        self,
         items: list[tuple[str, str, str]],
     ) -> str:
         """颜色编码标注 — 用颜色区分不同类型。
@@ -96,8 +102,8 @@ class AnnotationBuilder:
             )
         return "\n".join(lines)
 
-    @staticmethod
     def emotion_curve(
+        self,
         phases: list[tuple[str, str]],
     ) -> str:
         """情绪曲线标注 — 各阶段的情绪值描述。
@@ -113,8 +119,8 @@ class AnnotationBuilder:
             parts.append(f"  {name}→{emotion}")
         return "\n".join(parts)
 
-    @staticmethod
     def anchored_list(
+        self,
         label: str,
         items: list[Anchored | str],
         bg_color: str = "#F0F2F5",

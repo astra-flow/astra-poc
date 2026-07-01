@@ -6,7 +6,12 @@ PromptBuilder 总装器 — 组装语义 Builder + 美学 Builder + 布局规则
 
 from __future__ import annotations
 
-from typing import Optional, Union
+from typing import Optional, TYPE_CHECKING, Union
+
+from .icon import IconPicker
+
+if TYPE_CHECKING:
+    from .aesthetic.tokens import DesignTokens
 
 
 class LayoutRule:
@@ -44,39 +49,6 @@ class LayoutRule:
         return "，".join(parts)
 
 
-class IconPicker:
-    """图标选择器 — 语义选型 + 美学定风格。
-
-    Attributes:
-        type_name: 图标类型（如 database, server, user, gear, cloud）。
-        style: 图标风格（line / fill / dual）。
-        size: 图标尺寸（small / medium / large）。
-        color: 图标颜色（色号）。
-    """
-
-    def __init__(
-        self,
-        type_name: str,
-        style: str = "line",
-        size: str = "small",
-        color: str = "#8E8E93",
-    ) -> None:
-        self.type_name = type_name
-        self.style = style
-        self.size = size
-        self.color = color
-
-    def build(self) -> str:
-        """输出图标描述的 Prompt 片段。"""
-        style_map = {"line": "线性", "fill": "填充", "dual": "双色"}
-        size_map = {"small": "小型", "medium": "中型", "large": "大型"}
-        return (
-            f"{size_map.get(self.size, self.size)}"
-            f"{style_map.get(self.style, self.style)}"
-            f"图标'{self.type_name}'，{self.color}色"
-        )
-
-
 class PromptBuilder:
     """Prompt 总装器。
 
@@ -100,6 +72,7 @@ class PromptBuilder:
         icons: Optional[list[IconPicker]] = None,
         title_text: str = "",
         no_line: bool = True,
+        tokens: Optional["DesignTokens"] = None,
     ) -> None:
         self.semantic = semantic
         self.aesthetic = aesthetic
@@ -107,6 +80,7 @@ class PromptBuilder:
         self.icons = icons or []
         self.title_text = title_text
         self.no_line = no_line
+        self.tokens = tokens
 
     def build(self) -> str:
         """组装完整 Prompt。
@@ -119,6 +93,12 @@ class PromptBuilder:
         # 1. 图类型声明 + 基础风格
         if self.aesthetic:
             sections.append(self.aesthetic)
+        elif self.tokens:
+            sections.append(
+                f"纯白背景。使用{self.tokens.title_color}作为标题色，"
+                f"{self.tokens.accent}作为强调色。"
+                f"色调统一，色彩和谐，视觉层次清晰。"
+            )
 
         # 2. 语义内容
         if self.semantic:

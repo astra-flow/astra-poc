@@ -7,7 +7,10 @@ MatrixBuilder — 矩阵化原语
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ..aesthetic.tokens import DesignTokens
 
 
 class MatrixBuilder:
@@ -16,8 +19,11 @@ class MatrixBuilder:
     每个方法返回一段 Prompt 文本片段，描述一种矩阵布局。
     """
 
-    @staticmethod
+    def __init__(self, tokens: Optional["DesignTokens"] = None) -> None:
+        self.tokens = tokens
+
     def quadrant_matrix(
+        self,
         title: str,
         x_label: str,
         y_label: str,
@@ -57,8 +63,8 @@ class MatrixBuilder:
 
         return "\n".join(lines)
 
-    @staticmethod
     def time_priority(
+        self,
         title: str,
         time_phases: list[tuple[str, str, list[str]]],
         priority_layers: list[tuple[str, str, list[str]]],

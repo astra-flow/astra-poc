@@ -7,7 +7,47 @@ SequenceBuilder — 序列化原语
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING, Union
+
+if TYPE_CHECKING:
+    from .annotation import Anchored
+    from ..icon import IconPicker
+    from ..aesthetic.tokens import DesignTokens
+
+
+class Swimlane:
+    """泳道/层 — 阶段下方的独立行。
+
+    Attributes:
+        label: 泳道名称标签。
+        items: 泳道内容列表（字符串、Anchored 或 IconPicker 对象）。
+        bg_color: 泳道背景色。
+        display_mode: 展示模式。
+            - "text"（默认）：文字列表
+            - "color_block"：色块序列（如情绪曲线）
+            - "icon"：图标序列（items 中可传入 IconPicker 对象）
+            - "bar"：柱状/进度条
+        label_position: 标签在泳道中的位置。
+            - "left"（默认）：泳道左侧标注
+            - "top_center"：泳道上方居中
+            - "top_left"：泳道上方居左
+            - "inside"：泳道内部左上角
+            - "none"：不显示标签
+    """
+
+    def __init__(
+        self,
+        label: str,
+        items: Optional[list[Union[str, "Anchored", "IconPicker"]]] = None,
+        bg_color: str = "#F0F2F5",
+        display_mode: str = "text",
+        label_position: str = "left",
+    ) -> None:
+        self.label = label
+        self.items = items or []
+        self.bg_color = bg_color
+        self.display_mode = display_mode
+        self.label_position = label_position
 
 
 class Phase:
@@ -37,103 +77,53 @@ class SequenceBuilder:
     """序列化原语构建器。
 
     每个方法返回一段 Prompt 文本片段，描述一种序列布局。
+    所有颜色/样式通过 DesignTokens 注入，不再硬编码。
     """
 
-    @staticmethod
-    def linear(
-        title: str,
-        steps: list[Phase],
-        direction: str = "horizontal",
-        bottom_layer: Optional[str] = None,
-    ) -> str:
-        """线性序列 — 从左到右或从上到下的步骤流。
-
-        Args:
-            title: 序列标题。
-            steps: 阶段列表。
-            direction: 排列方向（horizontal / vertical）。
-            bottom_layer: 底部泳道/汇总区描述（可选）。
-            bottom_layer: 底部泳道/汇总区描述（可选）。
-
-        Returns:
-            Prompt 文本片段。
-        """
-        direction_cn = "从左到右水平排列" if direction == "horizontal" else "从上到下垂直排列"
-        lines = [f"顶部深蓝灰色大标题'{title}'，居中显示"]
-        lines.append(f"横向{len(steps)}个阶段（{direction_cn}，每个阶段一个容器框）：")
-
-        for i, step in enumerate(steps):
-            items = "、".join(f"'{c}'" for c in step.items) if step.items else ""
-            base = f"阶段{i + 1}（{step.bg_color}背景）：'{step.name}'"
-            if items:
-                base += f" - 包含{items}"
-            lines.append(base)
-            for ann in step.annotations:
-                lines.append(f"  ↳ 下方标注'{ann}'")
-
-        if bottom_layer:
-            lines.append(bottom_layer)
-
-        return "\n".join(lines)
+    def __init__(self, tokens: Optional["DesignTokens"] = None) -> None:
+        self.tokens = tokens
 
     @staticmethod
-    def branch(
-        title: str,
-        branches: list[tuple[str, list[str]]],
-        bg_color: str = "#F0F2F5",
-    ) -> str:
-        """分支序列 — 多分支对比布局。
-
-        Args:
-            title: 标题。
-            branches: 分支列表，每项为 (分支名, 标签列表)。
-            bg_color: 容器背景色。
-
-        Returns:
-            Prompt 文本片段。
-        """
-        lines = [f"顶部深蓝灰色大标题'{title}'，居中显示"]
-        lines.append("从上到下垂直排列，每行一个容器框：")
-
-        for i, (name, tags) in enumerate(branches):
-            tag_str = "、".join(f"'{t}'" for t in tags)
-            lines.append(
-                f"第{i + 1}行（{bg_color}背景）：'{name}' - 标签：{tag_str}"
-            )
-
-        return "\n".join(lines)
-
-    @staticmethod
-    def loop(
-        title: str,
-        steps: list[Phase],
-        return_point: int,
-        return_label: str = "驳回→返回",
-    ) -> str:
-        """闭环序列 — 带返回路径的流程。
-
-        Args:
-            title: 标题。
-            steps: 步骤列表。
-            return_point: 返回目标步骤索引（0-based）。
-            return_label: 返回路径标签。
-
-        Returns:
-            Prompt 文本片段。
-        """
-        lines = [f"顶部深蓝灰色大标题'{title}'，居中显示"]
-        lines.append("从左到右水平排列的步骤卡片：")
-
-        for i, step in enumerate(steps):
-            items = "、".join(f"'{c}'" for c in step.items) if step.items else ""
-            base = f"步骤{i + 1}（{step.bg_color}背景）：'{step.name}'"
-            if items:
-                base += f" - 包含{items}"
-            lines.append(base)
-
-        lines.append(
-            f"在步骤{len(steps)}下方有一个浅红色小卡片"
-            f"'{return_label}步骤{return_point + 1}'"
+    def _item_str(item: Union[str, "Anchored", "IconPicker"]) -> str:
+        """将泳道条目转为 Prompt 字符串。"""
+        from ..icon import IconPicker as _IconPicker
+        if isinstance(item, _IconPicker):
+            return item.build()
+        if isinstance(item, str):
+            return f"'{item}'"
+        # Anchored
+        pos_cn = {"below": "下方", "above": "上方", "inside": "内部"}.get(
+            getattr(item, "position", "below"), "下方"
         )
+        return f"阶段{getattr(item, 'at_step', 0) + 1}{pos_cn}：'{getattr(item, 'text', '')}'"
 
-        return "\n".join(lines)
+    def _lane_label(self, lane: "Swimlane") -> str:
+        """生成泳道标签前缀。"""
+        pos_map = {
+            "left": f"，左侧标注'{lane.label}'标签",
+            "top_center": f"，上方居中显示'{lane.label}'标签",
+            "top_left": f"，上方居左显示'{lane.label}'标签",
+            "inside": f"，内部左上角标注'{lane.label}'标签",
+            "none": "",
+        }
+        suffix = pos_map.get(lane.label_position, pos_map["left"])
+        return f"{lane.bg_color}背景的泳道{suffix}"
+
+    def _resolve_title(self, title: str) -> str:
+        """根据 DesignTokens 生成标题行。"""
+        if self.tokens:
+            return f"顶部{self.tokens.title_color}{self.tokens.title_size}标题'{title}'，居中显示"
+        return f"顶部深蓝灰色大标题'{title}'，居中显示"
+
+    def _resolve_card_bg(self, index: int) -> str:
+        """根据 DesignTokens 循环获取阶段卡片背景色。"""
+        if self.tokens and self.tokens.card_bg_cycle:
+            cycle = self.tokens.card_bg_cycle
+            return cycle[index % len(cycle)]
+        return "#F0F2F5"
+
+    def _resolve_return_card(self) -> str:
+        """根据 DesignTokens 获取返回卡片颜色。"""
+        if self.tokens:
+            return self.tokens.return_card_color
+        return "浅红色"

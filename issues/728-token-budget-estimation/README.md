@@ -13,9 +13,10 @@
 
 - **年预算：314.5 万元**（含 15% 波动系数，覆盖 400 人）
 - **人均月费用：570 元/人/月**
-- **主力供应商**：DeepSeek（V4 + Flash）占 73% + GLM-5.2 占 26%，合计 99%
+- **主力供应商**：DeepSeek 占 73.1%（V4 + Flash）+ 智谱 GLM-5.2 占 26.0%
 - **测算方法**：费用主线法（费用数据自洽可信，Token 数据虚高弃用）
-- **模型族**：5 个（原 Qwen3-Plus 已折算到 DeepSeek-V4-Flash）
+- **Token 量**：人均月 3.40 亿，全公司年 18,744 亿（按 DeepSeek 官方刊例价反推，作规模参考）
+- **采购建议**：按金额签框架协议，不按 Token 量签
 
 ## 目录结构
 
@@ -25,36 +26,24 @@
 ├── data/                              # 调研原始数据
 │   └── 敏捷软件开发AI应用需求情况统计.xlsx
 ├── scripts/                           # 测算脚本
-│   ├── 01_data_clean_and_aggregate.py # 数据清洗与模型名归一化
-│   ├── 02_budget_calc_fee_line.py     # 费用主线预算计算
-│   ├── 03_token_line_compare.py       # Token 主线对比（论证方法选择）
-│   ├── 04_per_capita_analysis.py      # 人均费用分析
-│   ├── 05_recalc_after_fee_update.py  # 费用更新后重算（剔除ArkClaw席位费）
-│   └── 06_merge_qwen_to_flash.py      # Qwen3-Plus 折算到 DeepSeek-V4-Flash
+│   └── 00_official_calc.py            # 权威计算脚本（唯一数据来源）
 └── output/                            # 输出文档
     └── 敏捷软件开发AI应用Token资源包预算测算说明.md
 ```
 
 ## 脚本说明
 
-| 脚本 | 用途 | 关键输出 |
-|------|------|---------|
-| 01_data_clean | 模型名归一化、按模型族/场景聚合 | 6 个模型族聚合表 |
-| 02_budget_calc | 费用主线法计算年预算 | 314.5 万年预算明细 |
-| 03_token_line_compare | Token 主线 vs 费用主线对比 | Token 虚高 60 倍的反证 |
-| 04_per_capita | 人均费用测算 | 570 元/人/月 |
-| 05_recalc | 剔除 ArkClaw 席位费后重算 | 346 万→314.5 万 |
-| 06_merge_qwen_to_flash | Qwen3-Plus 折算到 DeepSeek-V4-Flash | 模型族 6→5，DeepSeek 占比升至 73% |
+| 脚本 | 用途 |
+|------|------|
+| 00_official_calc.py | **权威计算脚本**（唯一数据来源），输出所有文档/消息引用的数字 |
+
+> ⚠️ 所有数字必须来自 `00_official_calc.py` 脚本输出，禁止手动计算。
 
 ## 运行方式
 
 ```bash
-cd scripts
-python3 01_data_clean_and_aggregate.py
-python3 02_budget_calc_fee_line.py
-python3 03_token_line_compare.py
-python3 04_per_capita_analysis.py
-python3 05_recalc_after_fee_update.py
+cd data
+python3 ../scripts/00_official_calc.py
 ```
 
 依赖：openpyxl（读取 Excel 调研表）
@@ -66,11 +55,11 @@ python3 05_recalc_after_fee_update.py
     ↓
 以费用为主线编预算
     ↓
-用市场真实单价反推 Token 量（费用 ÷ 单价 = Token）
+用 DeepSeek 官方刊例价反推 Token 量（费用 ÷ 单价 = Token）
     ↓
-Token 量 × 12 × 1.15 波动系数 = 年度资源包规格
+Token 量作为规模参考（汇报口径）
     ↓
-资源包规格 × 单价 = 年度预算（与费用主线交叉验证，偏差 0%）
+实际采购按金额签框架协议（不按 Token 量签）
 ```
 
 ## 数据来源

@@ -1,0 +1,8 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 输出产物（如需保留则取消注释）
+# output/*.png
+# output/*.csv

@@ -30,7 +30,7 @@ from collections import defaultdict
 
 # ============ 配置区 ============
 XLSX_PATH = '敏捷软件开发AI应用需求情况统计.xlsx'
-PERSONS = 400  # 覆盖人数
+PERSONS = 389  # 一汽（北京）软件科技有限公司人数（含7月入职11人，不含长春）
 WAVE_FACTOR = 1.15  # 波动系数
 CACHE_HIT_RATE = 0.5  # 缓存命中率假设
 INPUT_OUTPUT_RATIO = (3, 1)  # 输入:输出 = 3:1

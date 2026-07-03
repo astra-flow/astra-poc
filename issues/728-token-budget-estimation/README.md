@@ -13,8 +13,9 @@
 
 - **年预算：314.5 万元**（含 15% 波动系数，覆盖 400 人）
 - **人均月费用：570 元/人/月**
-- **三大主力模型**：DeepSeek-V4（140万）+ Qwen3-Plus（90万）+ GLM-5.2（82万）占 99%
+- **主力供应商**：DeepSeek（V4 + Flash）占 73% + GLM-5.2 占 26%，合计 99%
 - **测算方法**：费用主线法（费用数据自洽可信，Token 数据虚高弃用）
+- **模型族**：5 个（原 Qwen3-Plus 已折算到 DeepSeek-V4-Flash）
 
 ## 目录结构
 
@@ -28,7 +29,8 @@
 │   ├── 02_budget_calc_fee_line.py     # 费用主线预算计算
 │   ├── 03_token_line_compare.py       # Token 主线对比（论证方法选择）
 │   ├── 04_per_capita_analysis.py      # 人均费用分析
-│   └── 05_recalc_after_fee_update.py  # 费用更新后重算（剔除ArkClaw席位费）
+│   ├── 05_recalc_after_fee_update.py  # 费用更新后重算（剔除ArkClaw席位费）
+│   └── 06_merge_qwen_to_flash.py      # Qwen3-Plus 折算到 DeepSeek-V4-Flash
 └── output/                            # 输出文档
     └── 敏捷软件开发AI应用Token资源包预算测算说明.md
 ```
@@ -42,6 +44,7 @@
 | 03_token_line_compare | Token 主线 vs 费用主线对比 | Token 虚高 60 倍的反证 |
 | 04_per_capita | 人均费用测算 | 570 元/人/月 |
 | 05_recalc | 剔除 ArkClaw 席位费后重算 | 346 万→314.5 万 |
+| 06_merge_qwen_to_flash | Qwen3-Plus 折算到 DeepSeek-V4-Flash | 模型族 6→5，DeepSeek 占比升至 73% |
 
 ## 运行方式
 

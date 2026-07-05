@@ -129,8 +129,12 @@ def main():
     print(f'    {"供应商":<22}{"方案":<20}{"席位人数":>8}{"席位单价":>10}{"年席位费":>12}{"月Credits":>12}{"积分价值":>12}{"净Token预算":>12}{"年度总预算":>12}')
     print('    ' + '-' * 120)
     for k, v in sb['vendors'].items():
+        pp = v['price_per_seat_month']
+        # 如果有折后价，显示折后价
+        has_discount = any(p.get('discounted_price') for p in v.get('all_plans', []) if p.get('is_priced'))
+        price_str = f'{pp}元/月'
         print(f'    {v["name"]:<22}{v["plan_name"]:<20}{v["seat_persons"]:>6}人'
-              f'{v["price_per_seat_month"]:>8}元/月'
+              f'{price_str:>10}'
               f'{v["seat_annual"]:>10,.0f}元{v["credits_monthly"]:>10,.0f}'
               f'{v["credit_value"]:>10,.0f}元{v["net_token_budget"]:>10.1f}万'
               f'{v["total_annual"]:>10,.0f}元')

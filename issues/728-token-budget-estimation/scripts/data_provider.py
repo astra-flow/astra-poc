@@ -93,6 +93,8 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         # 按策略选方案
         if prefer_vpc:
             vpc_keys = [k for k in priced_plans if 'vpc' in k.lower() or 'vpc' in priced_plans[k].get('notes', '').lower()]
+            # 排除起购门槛超过总人数的 VPC 方案
+            vpc_keys = [k for k in vpc_keys if priced_plans[k].get('min_seats', 1) <= persons]
             if vpc_keys:
                 best_plan_key = min(vpc_keys, key=lambda k: priced_plans[k]['price_per_seat_month'])
             else:
@@ -101,8 +103,11 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
             best_plan_key = min(priced_plans.keys(), key=lambda k: priced_plans[k]['price_per_seat_month'])
         best = priced_plans[best_plan_key]
 
+        # 使用折后价（如果有）
+        effective_price = best.get('discounted_price') or best['price_per_seat_month']
+
         sp = seat_persons.get(key, persons)
-        seat_month = best['price_per_seat_month'] * sp
+        seat_month = effective_price * sp
         seat_annual = seat_month * 12
 
         # 赠送积分价值：每月赠送 Credits × 人数 × 12 × 积分单价
@@ -128,14 +133,16 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         all_plans = []
         for pk, plan in plans.items():
             pp = plan.get('price_per_seat_month')
+            dp = plan.get('discounted_price')
             all_plans.append({
                 'name': plan['name'],
                 'price_per_seat_month': pp,
+                'discounted_price': dp,
                 'credits_per_seat_month': plan.get('credits_per_seat_month', 0),
                 'min_seats': plan.get('min_seats', 1),
                 'notes': plan.get('notes', ''),
                 'is_priced': pp is not None,
-                'seat_annual': pp * sp * 12 if pp is not None else None,
+                'seat_annual': (dp or pp) * sp * 12 if pp is not None else None,
             })
 
         result['vendors'][key] = {

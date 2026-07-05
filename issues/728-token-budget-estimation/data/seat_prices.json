@@ -60,32 +60,48 @@
     "trae": {
       "name": "Trae CN（火山引擎）",
       "type": "AI编程助手（IDE）",
-      "pricing_url": "https://www.volcengine.com/product/trae",
+      "pricing_url": "SA报价文件：一汽集团 trae 报价 20260520.xlsx",
       "plans": {
-        "team": {
-          "name": "团队版",
-          "price_per_seat_month": 149,
-          "credits_per_seat_month": 0,
-          "min_seats": 1,
-          "notes": "无起购限制，超级代码补全30M Tokens"
-        },
-        "flagship": {
-          "name": "旗舰版",
+        "flagship_saas": {
+          "name": "SaaS-企业旗舰版",
           "price_per_seat_month": 259,
+          "discount": 0.8,
+          "discounted_price": 207.2,
           "credits_per_seat_month": 0,
           "min_seats": 3,
-          "notes": "3席位起购，代码补全不限量，企业级安全管控"
+          "notes": "3席位起购，代码补全无限量，含100元/席/月大模型Token池(8600万token)"
+        },
+        "flagship_vpc": {
+          "name": "公有云VPC-旗舰版",
+          "price_per_seat_month": 399,
+          "discount": 0.8,
+          "discounted_price": 319.2,
+          "credits_per_seat_month": 0,
+          "min_seats": 200,
+          "notes": "200席位起购，代码补全无限量，含100元/席/月大模型Token池(8600万token)"
         }
       },
-      "notes": "Trae 是 AI Coding IDE，与 ArkClaw（数字员工平台）独立计费"
+      "token_packs": [
+        {"price": 50, "tokens": "4500万", "validity_months": 12},
+        {"price": 500, "tokens": "4.5亿", "validity_months": 12},
+        {"price": 5000, "tokens": "45亿", "validity_months": 12}
+      ],
+      "notes": "SA报价：旗舰版8折后207.2元/席/月，VPC版8折后319.2元/席/月（200席起）"
     },
     "workbuddy": {
       "name": "WorkBuddy（腾讯）",
       "type": "AI编程助手",
-      "pricing_url": "https://cloud.tencent.com/document/product/1749/105816",
+      "pricing_url": "https://www.codebuddy.cn/docs/workbuddy/Pricing",
       "plans": {
-        "enterprise": {
-          "name": "企业版（SaaS）",
+        "premium": {
+          "name": "企业专享版",
+          "price_per_seat_month": 198,
+          "credits_per_seat_month": 2000,
+          "min_seats": 1,
+          "notes": "1坐席起购，Credits团队内共享，对话问答不限频"
+        },
+        "flagship": {
+          "name": "企业旗舰版",
           "price_per_seat_month": 316,
           "credits_per_seat_month": 2000,
           "min_seats": 100,
@@ -106,6 +122,13 @@
           "notes": "完全私有化部署、定制化开发，价格需联系腾讯云商务获取"
         }
       },
+      "resource_pack": {
+        "price": 100,
+        "credits": 2000,
+        "credit_unit_price": 0.05,
+        "validity_months": 6,
+        "notes": "企业加量包，100元/2000积分（6个月有效）"
+      },
       "notes": "2026年5月15日起执行新计费方案，企业版由158元调整为316元"
     }
   },
@@ -118,11 +141,12 @@
     },
     "all_plans_ranked": [
       {"vendor": "qoder_cn", "plan": "teams", "price": 99, "credits": 3000, "type": "SaaS"},
-      {"vendor": "trae", "plan": "team", "price": 149, "credits": 0, "type": "SaaS"},
+      {"vendor": "trae", "plan": "flagship_saas", "price": 259, "credits": 0, "type": "SaaS"},
+      {"vendor": "workbuddy", "plan": "premium", "price": 198, "credits": 2000, "type": "SaaS"},
       {"vendor": "arkclaw", "plan": "standard", "price": 198, "credits": 25000, "type": "SaaS（内置VPC）"},
       {"vendor": "qoder_cn", "plan": "vpc", "price": 199, "credits": 3000, "type": "VPC"},
-      {"vendor": "trae", "plan": "flagship", "price": 259, "credits": 0, "type": "SaaS"},
-      {"vendor": "workbuddy", "plan": "enterprise", "price": 316, "credits": 2000, "type": "SaaS"},
+      {"vendor": "trae", "plan": "flagship_vpc", "price": 399, "credits": 0, "type": "VPC"},
+      {"vendor": "workbuddy", "plan": "flagship", "price": 316, "credits": 2000, "type": "SaaS"},
       {"vendor": "workbuddy", "plan": "vpc", "price": 316, "credits": 2000, "type": "VPC"},
       {"vendor": "arkclaw", "plan": "advanced", "price": 698, "credits": 100000, "type": "SaaS（内置VPC）"},
       {"vendor": "workbuddy", "plan": "private", "price": null, "credits": null, "type": "私有化"}

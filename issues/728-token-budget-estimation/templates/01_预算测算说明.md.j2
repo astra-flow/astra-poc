@@ -190,42 +190,7 @@ $$
 
 7. **模型配比不锁定**：第 6.3 节模型配比仅用于预算测算及供应商询价，实际采购采用框架协议模式，不锁定具体模型配比。甲方有权根据实际业务需求调整模型使用比例，总量不超出年度上限即可。
 
-## 8. 席位费预算 — AI 编程助手及数字员工平台
-
-### 8.1 采购标的
-
-| 产品 | 厂商 | 类型 | 方案 | 席位单价 |
-|------|------|------|------|:--------:|
-{% for k, v in seat_budget.vendors.items() -%}
-| {{ v.name }} | {% if '阿里' in v.name %}阿里云{% elif '火山' in v.name %}火山引擎{% else %}腾讯云{% endif %} | {{ v.type }} | {{ v.plan_name }} | {{ v.price_per_seat_month }} 元/席位/月 |
-{% endfor %}
-
-> 席位费按官网比价最低价框预算，最低为 **{{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月**。
-
-### 8.2 供应商对比测算
-
-按 {{ seat_budget.persons }} 人、Token 预算 {{ "%.1f"|format(seat_budget.token_budget_wan) }} 万元测算：
-
-| 供应商 | 席位单价 | 年席位费 | 月赠送Credits | 积分折现 | 净Token预算 | 年度总预算 |
-|--------|:--------:|:--------:|:------------:|:--------:|:----------:|:----------:|
-{% for k, v in seat_budget.vendors.items() -%}
-| {{ v.name }} | {{ v.price_per_seat_month }}元/月 | {{ "%.0f"|format(v.seat_annual) }}元 | {{ "%.0f"|format(v.credits_monthly) }} | {{ "%.0f"|format(v.credit_value) }}元 | {{ "%.1f"|format(v.net_token_budget) }}万 | {{ "%.0f"|format(v.total_annual) }}元 |
-{% endfor %}
-
-> **积分折现逻辑**：席位费赠送的 Credits 按厂商资源包单价折为等值金额，从 Token 预算中扣减。
-> Qoder CN 企业资源包：80 元/2000 Credits（0.04 元/Credit）。
-> ArkClaw 每月赠送 50M 免费 Token，未折算为金额。
-> WorkBuddy 暂无公开资源包定价，积分价值暂不折算。
-
-### 8.3 预算汇总
-
-| 采购项 | 预算金额 |
-|--------|:--------:|
-| Token 资源包 | {{ "%.1f"|format(seat_budget.token_budget_wan) }} 万元 |
-| 席位费（{{ seat_budget.lowest_seat_vendor }}） | {{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元 |
-| **合计** | **{{ "%.1f"|format(seat_budget.token_budget_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** |
-
-## 9. 参考资料
+## 8. 参考资料
 
 | 序号 | 资料 | 链接 |
 |:----:|------|------|

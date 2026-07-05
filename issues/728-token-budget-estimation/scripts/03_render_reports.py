@@ -14,6 +14,7 @@
   python3 scripts/03_render_reports.py --doc 1   # 预算测算说明
   python3 scripts/03_render_reports.py --doc 2   # 预算汇报
   python3 scripts/03_render_reports.py --doc 3   # 供应商询价
+  python3 scripts/03_render_reports.py --doc 4   # 席位费预算测算说明
 
   # 查看帮助
   python3 scripts/03_render_reports.py --help
@@ -22,6 +23,7 @@
   - output/01_预算测算说明.md
   - output/02_预算汇报.md
   - output/03_供应商询价.md
+  - output/04_席位费预算测算说明.md
 =====================================================================
 """
 import argparse
@@ -61,6 +63,12 @@ DOCUMENTS = {
         'template': '03_供应商询价.md.j2',
         'output': '03_供应商询价.md',
         'desc': '供应商询价报告，含报价模板',
+    },
+    4: {
+        'name': '席位费预算测算说明',
+        'template': '04_席位费预算测算说明.md.j2',
+        'output': '04_席位费预算测算说明.md',
+        'desc': '席位费预算测算模型，含供应商比价与积分折现',
     },
 }
 

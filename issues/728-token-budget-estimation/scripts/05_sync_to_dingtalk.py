@@ -12,7 +12,7 @@
   python3 scripts/05_sync_to_dingtalk.py --all
 
   # 同步指定文档
-  python3 scripts/05_sync_to_dingtalk.py --doc 1 2
+  python3 scripts/05_sync_to_dingtalk.py --doc 1 2 3 4
 
   # 仅查看已同步文档列表
   python3 scripts/05_sync_to_dingtalk.py --list
@@ -46,6 +46,7 @@ DOCUMENTS = {
     1: {'name': 'AI平台资源包预算测算说明', 'file': '01_预算测算说明.md'},
     2: {'name': 'AI平台预算汇报', 'file': '02_预算汇报.md'},
     3: {'name': 'AI平台供应商询价报告', 'file': '03_供应商询价.md'},
+    4: {'name': 'AI平台席位费预算测算说明', 'file': '04_席位费预算测算说明.md'},
 }
 
 
@@ -218,7 +219,8 @@ def main():
             '文档列表：\n'
             '  1 - 预算测算说明\n'
             '  2 - 预算汇报\n'
-            '  3 - 供应商询价\n\n'
+            '  3 - 供应商询价\n'
+            '  4 - 席位费预算测算说明\n\n'
             '示例：\n'
             '  python3 scripts/05_sync_to_dingtalk.py --all    # 同步全部\n'
             '  python3 scripts/05_sync_to_dingtalk.py --doc 1   # 仅同步预算测算说明\n'

@@ -12,6 +12,10 @@ status: 评审中
 ## 1. 预算整体情况
 
 > 基于 {{ survey_meta.product_lines }} 条产品线、{{ survey_meta.base_modules }} 个基础软件模块的 AI 应用调研，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度资源包预算为 {{ "%.1f"|format(total_year_fee_wan) }} 万元**（含 {{ WAVE_FACTOR }} 波动系数）。
+>
+> 另需采购 AI 编程助手及数字员工平台企业版席位费，按官网最低价框算，**席位费预算 {{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元**（{{ seat_budget.lowest_seat_vendor }}，{{ seat_budget.lowest_seat_price }} 元/席位/月）。
+>
+> **两项合计约 {{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元**。
 
 ## 2. 预算方法说明
 
@@ -38,9 +42,11 @@ status: 评审中
 | 指标 | 数值 | 说明 |
 |------|:----:|------|
 | 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖{{ survey_meta.survey_persons }}人 + 扩展余量 |
-| 月总费用 | {{ "{:,.0f}".format(total_month_fee) }} 元 | 调研表实测值 |
-| 人均月费用 | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 行业AI工具合理区间 |
-| 年预算 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 含{{ WAVE_FACTOR}}波动系数 |
+| 月总费用（资源包） | {{ "{:,.0f}".format(total_month_fee) }} 元 | 调研表实测值 |
+| 人均月费用（资源包） | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 行业AI工具合理区间 |
+| 年预算（资源包） | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 含{{ WAVE_FACTOR}}波动系数 |
+| 年预算（席位费） | **{{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元** | {{ seat_budget.lowest_seat_vendor }}，{{ seat_budget.lowest_seat_price }}元/席位/月 |
+| **年预算合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
 | 年Token总量 | {{ "{:,.0f}".format(total_year_token_yi) }} 亿 | 按官方刊例价反推，仅作参考 |
 
 ### 3.2 按模型分布
@@ -73,11 +79,19 @@ status: 评审中
 
 ## 5. 采购建议
 
+### 5.1 资源包采购
+
 建议**按金额签框架协议，不按 Token 量签**：
 
 1. 主力模型价格随新模型推出会变化
 2. 新模型价格未知，但肯定要用
 3. 各家计价方式不同（credits/积分/AFP），按 Token 量签不可控
+
+### 5.2 席位费采购
+
+席位费按官网最低价框预算，**{{ seat_budget.lowest_seat_vendor }}（{{ seat_budget.lowest_seat_price }} 元/席位/月）** 为最低方案。各供应商方案对比详见《AI平台席位费预算测算说明》。
+
+> 席位费赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.0f"|format(seat_budget.vendors.qoder_cn.credit_value) }} 元。
 
 ## 6. 人均费用特征
 
@@ -85,29 +99,6 @@ status: 评审中
 - 应用产品团队：人均 48-700 元/月（以代码生成和 PRD 生成为主）
 - 整体人均 {{ "%.0f"|format(month_fee_per) }} 元/月，处于行业 AI 工具人均成本的合理区间
 
-## 7. 席位费预算 — AI 编程助手及数字员工平台
-
-### 7.1 供应商对比
-
-按 {{ seat_budget.persons }} 人测算，席位费按官网最低价框预算：
-
-| 供应商 | 方案 | 席位单价 | 年席位费 | 赠送积分/月 | 积分折现 | 净Token预算 | 年度总预算 |
-|--------|------|:--------:|:--------:|:----------:|:--------:|:----------:|:----------:|
-{% for k, v in seat_budget.vendors.items() -%}
-| {{ v.name }} | {{ v.plan_name }} | {{ v.price_per_seat_month }}元 | {{ "%.0f"|format(v.seat_annual) }}元 | {{ "%.0f"|format(v.credits_monthly) }} | {{ "%.0f"|format(v.credit_value) }}元 | {{ "%.1f"|format(v.net_token_budget) }}万 | {{ "%.0f"|format(v.total_annual) }}元 |
-{% endfor %}
-
-> 积分折现：赠送 Credits 按厂商资源包单价折为等值金额，从 Token 预算扣减。
-> 最低席位费：**{{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月**。
-
-### 7.2 预算汇总
-
-| 采购项 | 预算 |
-|:------|:----:|
-| Token 资源包 | {{ "%.1f"|format(seat_budget.token_budget_wan) }} 万元 |
-| 席位费（{{ seat_budget.lowest_seat_vendor }}） | {{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元 |
-| **合计** | **{{ "%.1f"|format(seat_budget.token_budget_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** |
-
-## 8. 详细测算
+## 7. 详细测算
 
 完整的测算过程、公式推导、假设约束及数据校验，详见《AI平台资源包预算测算说明》。

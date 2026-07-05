@@ -231,13 +231,13 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
                     combined['sub_vendors'].append(sv)
             result['groups'][gname] = combined
 
-    # 全家桶对比（AI Coding + 数字员工一体）
+    # 全家桶对比（以供应商维度合并）
     bundles = {}
-    # Qoder CN 全家桶：QoderWork CN（数字员工）已含在 Qoder CN 套件中
-    if 'qoder_cn' in result['vendors']:
-        q = result['vendors']['qoder_cn']
-        bundles['qoder_cn'] = {
-            'name': 'Qoder CN 全家桶（阿里）',
+    # 阿里云：Qoder CN（含数字员工）
+    if '阿里云 Qoder CN' in result['vendors']:
+        q = result['vendors']['阿里云 Qoder CN']
+        bundles['aliyun'] = {
+            'name': '阿里云全家桶',
             'type': 'AI编程+数字员工',
             'seat_annual': q['seat_annual'],
             'price_per_seat_month': q['price_per_seat_month'],
@@ -246,11 +246,11 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
             'total_annual': q['total_annual'],
             'sub_vendors': [q],
         }
-    # WorkBuddy 全家桶：含 AI Coding + 数字员工
-    if 'workbuddy' in result['vendors']:
-        w = result['vendors']['workbuddy']
-        bundles['workbuddy'] = {
-            'name': 'WorkBuddy 全家桶（腾讯）',
+    # 腾讯云：WorkBuddy
+    if '腾讯云 WorkBuddy' in result['vendors']:
+        w = result['vendors']['腾讯云 WorkBuddy']
+        bundles['tencent'] = {
+            'name': '腾讯云全家桶',
             'type': 'AI编程+数字员工',
             'seat_annual': w['seat_annual'],
             'price_per_seat_month': w['price_per_seat_month'],
@@ -259,12 +259,12 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
             'total_annual': w['total_annual'],
             'sub_vendors': [w],
         }
-    # 字节系全家桶：Trae（AI Coding）+ ArkClaw（数字员工）
+    # 火山引擎全家桶：ArkClaw + Trae
     if '字节系（火山引擎）' in result.get('groups', {}):
         g = result['groups']['字节系（火山引擎）']
         avg_price = g['seat_annual'] / 12 / persons if persons > 0 else 0
-        bundles['byte'] = {
-            'name': '字节系全家桶（火山引擎）',
+        bundles['volcengine'] = {
+            'name': '火山引擎全家桶',
             'type': 'AI编程+数字员工',
             'seat_annual': g['seat_annual'],
             'price_per_seat_month': round(avg_price, 2),

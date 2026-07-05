@@ -15,7 +15,7 @@ status: 评审中
 
 | 采购项 | 年预算 | 说明 |
 |:------|:------|:-----|
-| Token 资源包 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 覆盖 7 个 AI 应用场景的模型调用费用 |
+| Token 资源包 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 覆盖 6 个 AI 应用场景的模型调用费用 |
 | 席位费 | **{{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元** | AI 编程助手及数字员工平台企业版席位 |
 | **合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** | — |
 
@@ -41,8 +41,8 @@ status: 评审中
 
 | 步骤 | 说明 |
 |:----|:-----|
-| ① 确定覆盖人数 | 与资源包预算一致，{{ PERSONS }} 人 |
-| ② 官网比价取最低价 | 三家供应商中最低为 {{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月 |
+| ① 确定覆盖人数 | 与资源包预算一致，{{ PERSONS }} 人（Trae 排除日志分析场景，覆盖 {{ seat_budget.vendors.trae.seat_persons }} 人） |
+| ② 官网比价取最低价 | 四家供应商中最低为 {{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月 |
 | ③ 赠送积分可折现 | 席位赠送的 Credits 按厂商资源包单价折为等值金额，从 Token 预算中扣减 |
 
 > 各供应商方案对比详见《AI平台席位费预算测算说明》。

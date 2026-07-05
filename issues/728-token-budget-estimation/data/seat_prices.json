@@ -37,32 +37,25 @@
     "arkclaw": {
       "name": "ArkClaw 企业版（火山引擎）",
       "type": "数字员工平台",
-      "pricing_url": "https://www.volcengine.com/article/7318996461085696037",
+      "pricing_url": "https://www.volcengine.com/docs/87732/2272732",
       "plans": {
         "standard": {
-          "name": "标准坐席（SaaS）",
+          "name": "标准坐席",
           "price_per_seat_month": 198,
           "credits_per_seat_month": 25000,
           "min_seats": 1,
-          "notes": "每5小时1,200次请求，每月赠送50M免费Token"
+          "notes": "每5小时1,200次请求，每月赠送50M免费Token。内置VPC逻辑隔离"
         },
         "advanced": {
-          "name": "高级坐席（SaaS）",
+          "name": "高级坐席",
           "price_per_seat_month": 698,
           "credits_per_seat_month": 100000,
           "min_seats": 1,
-          "notes": "每5小时6,000次请求，每月赠送50M免费Token"
-        },
-        "dedicated": {
-          "name": "专属版（VPC/私有部署）",
-          "price_per_seat_month": null,
-          "credits_per_seat_month": null,
-          "min_seats": null,
-          "notes": "支持专属VPC部署、私有化部署，价格需联系火山引擎商务获取"
+          "notes": "每5小时6,000次请求，每月赠送50M免费Token。内置VPC逻辑隔离"
         }
       },
       "free_token_monthly_m": 50,
-      "notes": "免费Token默认优先消耗Agent Plan/Coding Plan套餐内额度"
+      "notes": "标准版即支持VPC逻辑隔离；专属模式（独立账号）需联系商务"
     },
     "trae": {
       "name": "Trae CN（火山引擎）",
@@ -126,13 +119,12 @@
     "all_plans_ranked": [
       {"vendor": "qoder_cn", "plan": "teams", "price": 99, "credits": 3000, "type": "SaaS"},
       {"vendor": "trae", "plan": "team", "price": 149, "credits": 0, "type": "SaaS"},
-      {"vendor": "arkclaw", "plan": "standard", "price": 198, "credits": 25000, "type": "SaaS"},
+      {"vendor": "arkclaw", "plan": "standard", "price": 198, "credits": 25000, "type": "SaaS（内置VPC）"},
       {"vendor": "qoder_cn", "plan": "vpc", "price": 199, "credits": 3000, "type": "VPC"},
       {"vendor": "trae", "plan": "flagship", "price": 259, "credits": 0, "type": "SaaS"},
       {"vendor": "workbuddy", "plan": "enterprise", "price": 316, "credits": 2000, "type": "SaaS"},
       {"vendor": "workbuddy", "plan": "vpc", "price": 316, "credits": 2000, "type": "VPC"},
-      {"vendor": "arkclaw", "plan": "advanced", "price": 698, "credits": 100000, "type": "SaaS"},
-      {"vendor": "arkclaw", "plan": "dedicated", "price": null, "credits": null, "type": "VPC/私有"},
+      {"vendor": "arkclaw", "plan": "advanced", "price": 698, "credits": 100000, "type": "SaaS（内置VPC）"},
       {"vendor": "workbuddy", "plan": "private", "price": null, "credits": null, "type": "私有化"}
     ]
   }

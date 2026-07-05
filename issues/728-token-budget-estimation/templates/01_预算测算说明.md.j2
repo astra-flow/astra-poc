@@ -114,11 +114,14 @@ $$
 #### 资源包预算汇总
 
 {% set rnd_token = (total_year_token_yi * 100 // 1000) * 1000 %}
-{% set rnd_wp = total_year_fee_yuan / rnd_token %}
+{% set rnd_price = 1.89 %}
+{% set rnd_total = (rnd_token * rnd_price)|int %}
 | 字段 | 数值 | 说明 |
 |:-----|:----:|:-----|
-| 年预算金额 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** | 按金额签框架协议 |
-| 年 Token 需求量（参考） | **{{ "{:,.0f}".format(rnd_token) }} 百万** | 按刊例价反推，约 {{ "%.2f"|format(rnd_wp) }} 元/百万 Token |
+| 年 Token 需求量 | **{{ "{:,.0f}".format(rnd_token) }} 百万** | 取整估算 |
+| 综合加权单价 | **{{ "%.2f"|format(rnd_price) }} 元/百万 Token** | 取整后填入采购申请 |
+| 年预算金额 | **{{ "{:,.2f}".format(rnd_total) }} 元** | Token 数 × 单价 = 总价，三数对应 |
+| 精确预算参考 | {{ "{:,.2f}".format(total_year_fee_yuan) }} 元 | 按实测费用 × 12 计算，偏差约 {{ "%.1f"|format((total_year_fee_yuan - rnd_total) / total_year_fee_yuan * 100) }}% |
 | 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 + 扩展余量 |
 
 ### 5.3 人均口径（按 {{ PERSONS }} 人）

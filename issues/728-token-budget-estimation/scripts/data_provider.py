@@ -19,7 +19,7 @@ SEAT_PRICES_JSON = os.path.join(DATA_DIR, 'seat_prices.json')
 SURVEY_XLSX = os.path.join(DATA_DIR, '敏捷软件开发AI应用需求情况统计.xlsx')
 
 # ============ 参数 ============
-WAVE_FACTOR = 1.15
+WAVE_FACTOR = 1.0
 CACHE_HIT_RATE = 0.5
 INPUT_OUTPUT_RATIO = (3, 1)
 MILLION_TO_YI = 100

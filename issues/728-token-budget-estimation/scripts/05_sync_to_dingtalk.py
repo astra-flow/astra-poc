@@ -30,6 +30,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 from datetime import datetime
 
 # ============ 路径 ============
@@ -110,6 +111,16 @@ def update_document(node_id, file_path):
     return True
 
 
+def strip_front_matter(content):
+    """去掉 Markdown 文件头的 YAML front matter（--- ... ---）"""
+    if content.startswith('---'):
+        end = content.find('\n---', 3)
+        if end != -1:
+            # 跳过 front matter 和后面的空行
+            content = content[end + 4:].lstrip('\n')
+    return content
+
+
 def sync_document(doc_id, cache):
     """同步单个文档到钉钉"""
     doc = DOCUMENTS[doc_id]
@@ -120,6 +131,17 @@ def sync_document(doc_id, cache):
         print(f'     请先运行: python3 scripts/03_render_reports.py --all')
         return False
     
+    # 读取文件并去掉 front matter
+    with open(file_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    content = strip_front_matter(content)
+    
+    # 写到临时文件
+    tmp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8')
+    tmp_file.write(content)
+    tmp_file.close()
+    sync_file_path = tmp_file.name
+    
     cache_key = str(doc_id)
     
     # 检查缓存中是否有 nodeId
@@ -127,12 +149,12 @@ def sync_document(doc_id, cache):
         node_id = cache[cache_key]['nodeId']
         print(f'  📝 更新文档: {doc["name"]} (nodeId: {node_id[:16]}...)')
         try:
-            update_document(node_id, file_path)
+            update_document(node_id, sync_file_path)
             cache[cache_key]['updated'] = datetime.now().isoformat()
             print(f'  ✅ 更新成功')
         except Exception as e:
             print(f'  ⚠ 更新失败，尝试重新创建: {e}')
-            node_id, _ = create_document(doc['name'], file_path, TARGET_FOLDER_ID)
+            node_id, _ = create_document(doc['name'], sync_file_path, TARGET_FOLDER_ID)
             if node_id:
                 cache[cache_key] = {
                     'nodeId': node_id,
@@ -146,7 +168,7 @@ def sync_document(doc_id, cache):
                 return False
     else:
         print(f'  📝 创建文档: {doc["name"]}')
-        node_id, raw = create_document(doc['name'], file_path, TARGET_FOLDER_ID)
+        node_id, raw = create_document(doc['name'], sync_file_path, TARGET_FOLDER_ID)
         if node_id:
             cache[cache_key] = {
                 'nodeId': node_id,
@@ -159,6 +181,12 @@ def sync_document(doc_id, cache):
         else:
             print(f'  ❌ 创建失败，dws 返回: {raw}')
             return False
+    
+    # 清理临时文件
+    try:
+        os.unlink(sync_file_path)
+    except OSError:
+        pass
     
     return True
 

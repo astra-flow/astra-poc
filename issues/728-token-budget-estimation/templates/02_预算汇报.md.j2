@@ -11,13 +11,13 @@ status: 评审中
 
 ## 1. 预算整体情况
 
-> 基于内部调研数据，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度预算合计约 {{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元**，含以下两项采购：
+> 基于内部调研数据，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度预算合计约 {{ "%.2f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元**，含以下两项采购：
 
 | 采购项 | 年预算 | 说明 |
 |:------|:------|:-----|
-| Token 资源包 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 覆盖 6 个 AI 应用场景的模型调用费用 |
-| 席位费 | **{{ "%.1f"|format(seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | AI 编程助手及数字员工平台企业版席位（最低价方案） |
-| **合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | — |
+| Token 资源包 | **{{ "%.2f"|format(total_year_fee_wan) }} 万元** | 覆盖 6 个 AI 应用场景的模型调用费用 |
+| 席位费 | **{{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | AI 编程助手及数字员工平台企业版席位（最低价方案） |
+| **合计** | **{{ "%.2f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | — |
 
 > 席位费按"全家桶"口径对比（AI 编程 + 数字员工一体），最低为 **Qoder CN 全家桶（阿里）199 元/席位/月**（含 VPC）。
 
@@ -57,18 +57,18 @@ status: 评审中
 | 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 {{ survey_meta.survey_persons }} 人 + 扩展余量 |
 | 月总费用（资源包） | {{ "{:,.2f}".format(total_month_fee) }} 元 | 各团队实际使用费用汇总 |
 | 人均月费用（资源包） | **{{ "%.2f"|format(month_fee_per) }} 元/人/月** | 含 {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率后约 {{ "%.2f"|format(month_fee_per * WAVE_FACTOR) }} 元 |
-| 年预算（资源包） | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 月费用 × 12 × {{ WAVE_FACTOR }} |
-| 年预算（席位费） | **{{ "%.1f"|format(seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | Qoder CN 全家桶 VPC 版（最低价方案） |
-| **年预算合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
+| 年预算（资源包） | **{{ "%.2f"|format(total_year_fee_wan) }} 万元** | 月费用 × 12 × {{ WAVE_FACTOR }} |
+| 年预算（席位费） | **{{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | Qoder CN 全家桶 VPC 版（最低价方案） |
+| **年预算合计** | **{{ "%.2f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
 
 ### 3.2 按模型分布
 
 | 主力模型 | 占比 | 年预算(万元) | 说明 |
 |:--------|:---:|:----------:|:-----|
 {% for r in results -%}
-| {{ r.model }} | {{ "%.1f"|format(r.pct) }}% | {{ "%.1f"|format(r.yf_wan) }} | {{ r.vendor }} {{ r.tier }}档 |
+| {{ r.model }} | {{ "%.1f"|format(r.pct) }}% | {{ "%.2f"|format(r.yf_wan) }} | {{ r.vendor }} {{ r.tier }}档 |
 {% endfor %}
-| **合计** | **100%** | **{{ "%.1f"|format(total_year_fee_wan) }}** | — |
+| **合计** | **100%** | **{{ "%.2f"|format(total_year_fee_wan) }}** | — |
 
 > DeepSeek 占比 {{ "%.0f"|format(deepseek_fee / total_month_fee * 100) }}%，一家覆盖旗舰+轻量两档，便于打包议价。
 

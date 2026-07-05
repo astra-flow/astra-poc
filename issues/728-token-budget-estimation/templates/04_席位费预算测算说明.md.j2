@@ -53,17 +53,16 @@ status: 评审中
 
 ## 4. 供应商对比测算
 
-按 {{ seat_budget.persons }} 人、Token 资源包预算 {{ "%.1f"|format(seat_budget.token_budget_wan) }} 万元测算：
+按 {{ seat_budget.persons }} 人测算：
 
 ### 4.1 席位费对比
 
-| 供应商 | 最低方案 | 席位单价 | 年席位费 | 月赠送Credits | 积分折现 | 净Token预算 | 年度总预算 |
-|--------|---------|:--------:|:--------:|:------------:|:--------:|:----------:|:----------:|
+| 供应商 | 最低方案 | 席位单价 | 年席位费 | 月赠送Credits | 积分折现 |
+|--------|---------|:--------:|:--------:|:------------:|:--------:|
 {% for k, v in seat_budget.vendors.items() -%}
-| {{ v.name }} | {{ v.plan_name }} | {{ v.price_per_seat_month }}元/月 | {{ "%.0f"|format(v.seat_annual) }}元 | {{ "%.0f"|format(v.credits_monthly) }} | {{ "%.0f"|format(v.credit_value) }}元 | {{ "%.1f"|format(v.net_token_budget) }}万 | {{ "%.0f"|format(v.total_annual) }}元 |
+| {{ v.name }} | {{ v.plan_name }} | {{ v.price_per_seat_month }}元/月 | {{ "%.0f"|format(v.seat_annual) }}元 | {{ "%.0f"|format(v.credits_monthly) }} | {{ "%.0f"|format(v.credit_value) }}元 |
 {% endfor %}
 
-> 净Token预算 = 原Token预算({{ "%.1f"|format(seat_budget.token_budget_wan) }}万) - 赠送积分折现。
 > 积分折现仅适用于有公开资源包定价的厂商。
 
 ### 4.2 全部方案一览
@@ -80,9 +79,7 @@ status: 评审中
 
 | 采购项 | 预算金额 |
 |--------|:--------:|
-| Token 资源包 | {{ "%.1f"|format(seat_budget.token_budget_wan) }} 万元 |
 | 席位费（最低价方案） | {{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元 |
-| **合计** | **{{ "%.1f"|format(seat_budget.token_budget_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** |
 
 > 席位费按官网最低价框预算，最低为 **{{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月**。
 

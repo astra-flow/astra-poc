@@ -39,7 +39,7 @@ OUTPUT_DIR = os.path.join(BASE_DIR, 'output')
 CACHE_FILE = os.path.join(OUTPUT_DIR, '.dingtalk_sync_cache.json')
 
 # ============ 钉钉配置 ============
-TARGET_FOLDER_ID = "YQBnd5ExVEGzgBYrTgqLNmPE8yeZqMmz"  # 竞标材料文件夹
+TARGET_FOLDER_ID = "YndMj49yWjaZMw5bTR755ROm83pmz5aA"  # 采购预算文件夹
 
 # 文档配置
 DOCUMENTS = {
@@ -112,6 +112,12 @@ def update_document(node_id, file_path):
     return True
 
 
+def delete_document(node_id):
+    """通过 dws CLI 删除文档"""
+    run_dws(['doc', 'delete', '--node', node_id], parse_json=False)
+    return True
+
+
 def strip_front_matter(content):
     """去掉 Markdown 文件头的 YAML front matter（--- ... ---）"""
     if content.startswith('---'):
@@ -173,7 +179,13 @@ def sync_document(doc_id, cache):
             cache[cache_key]['name'] = doc_name
             print(f'  ✅ 更新成功')
         except Exception as e:
-            print(f'  ⚠ 更新失败，尝试重新创建: {e}')
+            print(f'  ⚠ 更新失败，尝试删除后重新创建: {e}')
+            # 先删除原文档，避免残留重复文档
+            try:
+                delete_document(node_id)
+                print(f'  🗑 已删除原文档 (nodeId: {node_id[:16]}...)')
+            except Exception:
+                print(f'  ⚠ 删除原文档失败，可能已不存在')
             node_id, _ = create_document(doc_name, sync_file_path, TARGET_FOLDER_ID)
             if node_id:
                 cache[cache_key] = {

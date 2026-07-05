@@ -56,22 +56,6 @@ status: 评审中
 {% endfor -%}
 {% endfor %}
 
-### 3.2 赠送 Credits 处理策略
-
-各厂商均会随席位赠送 Credits/积分，用于抵扣模型调用费用。但由于各厂商 Credits 计算规则不统一（有的按请求次数、有的按 Token 量、有的按积分点数），Credits 的实际价值缺乏横向可比基准。针对 Credits 如何处理，有以下两种策略：
-
-| 策略 | 做法 | 优点 | 风险 |
-|:-----|:-----|:----|:-----|
-| **策略一：Credits 不纳入席位比价（推荐）** | 席位费对比表中不列 Credits 折现，统一声明 Credits 不作为席位价格判定依据。Credits 折现留待 Token 资源包采购阶段，由甲方按统一口径折算并从 Token 预算中扣减 | 比价基准清晰，供应商无歧义；Credits 在 Token 预算侧统一处理更合理 | 席位预算不反映 Credits 价值，可能略高估 |
-| **策略二：Credits 直接折现扣减席位预算** | 将赠送 Credits 按厂商资源包单价折算为金额，从席位预算中扣减，体现"净席位费" | 体现 Credits 的实际价值 | ⚠ 供应商可能不接受折后报价方式，要求按原价签约，导致无人出价或谈判僵局 |
-
-**建议采用策略一**。理由：
-- Credits 计算口径不统一，强行折现扣减席位费反而模糊比价基准
-- Credits 本质是模型调用费用的抵扣，在 Token 资源包采购阶段按统一口径（元/百万 Token）折算更合理
-- 席位费比价应聚焦于席位本身的服务价值，Credits 作为附加权益另行处理
-
-> 在 Token 资源包采购时，Qoder CN 赠送 Credits 可按 0.04 元/Credit 折现，从 Token 预算中扣减。
-
 ## 4. 假设与约束
 
 1. **VPC/私有化方案需询价**：ArkClaw 标准版内置 VPC 逻辑隔离；WorkBuddy 企业专享版同价含 VPC；Qoder CN VPC 版需加价 100 元/月（199 元 vs 标准版 99 元）。
@@ -83,12 +67,12 @@ status: 评审中
 
 ### A.1 官网公开定价
 
-| 产品 | 方案 | 席位单价 | 月赠送Credits | 起购门槛 | 来源 |
+| 厂商 | 方案 | 席位单价 | 月赠送Credits | 起购门槛 | 来源 |
 |------|------|:--------:|:------------:|:--------:|------|
 {% for k, v in seat_budget.vendors.items() -%}
 {% for p in v.all_plans -%}
 {% if p.is_priced -%}
-| {{ v.name }} | {{ p.name }} | {{ p.price_per_seat_month }}元/月 | {{ p.credits_per_seat_month }} | {{ p.min_seats }}席起 | 官网公开价 |
+| {{ v.vendor_name | replace("云", "") | replace("引擎", "") }} | {{ v.product_name }} {{ p.name }} | {{ p.price_per_seat_month }}元/月 | {{ p.credits_per_seat_month }} | {{ p.min_seats }}席起 | 官网公开价 |
 {% endif -%}
 {% endfor -%}
 {% endfor %}
@@ -96,13 +80,15 @@ status: 评审中
 > 价格来源：各厂商官网公开定价页面，采集日期 {{ generated_at }}。
 > VPC/私有化部署方案需联系商务获取报价，不在本测算范围内。
 
-### A.2 积分折现参考
+### A.2 Credits 说明
 
-| 厂商 | 资源包规格 | 单价 | 折合单价 |
-|------|:----------:|:----:|:--------:|
-| Qoder CN | 80 元 / 2,000 Credits | 0.04 元/Credit | — |
-| ArkClaw | 无公开资源包定价 | — | 积分价值暂不折算 |
-| WorkBuddy | 无公开资源包定价 | — | 积分价值暂不折算 |
+各厂商均随席位赠送 Credits/积分，可用于抵扣模型调用费用。当前各厂商均在推行标准化多模型积分策略，但不同平台模型定价不一致、Credits 计算规则不透明，缺乏横向可比基准。因此本次比价**不将 Credits 赠送作为席位价格判定依据**，席位费统一按官网标价框算。Credits 折现可在 Token 资源包采购阶段，由甲方按统一口径折算并从 Token 预算中扣减。
+
+| 厂商 | 资源包规格 | 单价 |
+|------|:----------:|:----:|
+| Qoder CN | 80 元 / 2,000 Credits | 0.04 元/Credit |
+| ArkClaw | 无公开资源包定价 | — |
+| WorkBuddy | 无公开资源包定价 | — |
 
 ### A.3 参考资料
 

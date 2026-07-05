@@ -223,8 +223,18 @@ def generate_inquiry_template():
         set_cell(ws2, r, 3, val, Font(name='微软雅黑', size=10), None, left, thin_border)
         ws2.row_dimensions[r].height = 30
 
-    # ============ Sheet 3: 参考基准价（采购方内部，不发送） ============
-    ws3 = wb.create_sheet('参考基准价(采购方)')
+    # ============ 保存供应商版（仅Sheet1+Sheet2） ============
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    vendor_path = os.path.join(OUTPUT_DIR, 'Token资源包报价模板.xlsx')
+    wb.save(vendor_path)
+    print(f'✅ 供应商版询价模板已生成: {vendor_path}')
+    print(f'   Sheet1: Token资源包报价（供应商填写）')
+    print(f'   Sheet2: 填写说明')
+
+    # ============ 生成内部参考基准价（单独文件，不发送给供应商） ============
+    wb_ref = openpyxl.Workbook()
+    ws3 = wb_ref.active
+    ws3.title = '参考基准价'
     ws3.column_dimensions['A'].width = 6
     ws3.column_dimensions['B'].width = 22
     ws3.column_dimensions['C'].width = 10
@@ -259,14 +269,9 @@ def generate_inquiry_template():
              '说明：此表为采购方内部参考基准价，用于验证供应商报价合理性。数据来自各厂商官方定价页。',
              Font(name='微软雅黑', size=9, color='666666'), None, left)
 
-    # ============ 保存 ============
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    output_path = os.path.join(OUTPUT_DIR, 'Token资源包报价模板.xlsx')
-    wb.save(output_path)
-    print(f'✅ 询价模板已生成: {output_path}')
-    print(f'   Sheet1: Token资源包报价（供应商填写）')
-    print(f'   Sheet2: 填写说明')
-    print(f'   Sheet3: 参考基准价（采购方内部，不发送）')
+    ref_path = os.path.join(OUTPUT_DIR, '参考基准价_内部.xlsx')
+    wb_ref.save(ref_path)
+    print(f'✅ 内部参考基准价已生成: {ref_path}（不发送给供应商）')
 
 
 if __name__ == '__main__':

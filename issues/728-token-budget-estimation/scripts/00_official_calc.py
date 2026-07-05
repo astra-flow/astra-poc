@@ -118,6 +118,24 @@ def main():
     glm_pct = data['glm_fee'] / data['total_month_fee'] * 100
     print(f'  DeepSeek占比: {deepseek_pct:.1f}%（V4旗舰档 + Flash轻量档）')
     print(f'  智谱GLM-5.2占比: {glm_pct:.1f}%')
+    print()
+
+    # 7. 席位费预算
+    sb = data['seat_budget']
+    print('【7】席位费预算 — AI编程助手及数字员工平台')
+    print(f'    人数: {sb["persons"]} 人')
+    print(f'    最低席位费: {sb["lowest_seat_vendor"]} {sb["lowest_seat_price"]}元/席位/月')
+    print()
+    print(f'    {"供应商":<22}{"方案":<20}{"席位单价":>10}{"年席位费":>12}{"月Credits":>12}{"积分价值":>12}{"净Token预算":>12}{"年度总预算":>12}')
+    print('    ' + '-' * 112)
+    for k, v in sb['vendors'].items():
+        print(f'    {v["name"]:<22}{v["plan_name"]:<20}{v["price_per_seat_month"]:>8}元/月'
+              f'{v["seat_annual"]:>10,.0f}元{v["credits_monthly"]:>10,.0f}'
+              f'{v["credit_value"]:>10,.0f}元{v["net_token_budget"]:>10.1f}万'
+              f'{v["total_annual"]:>10,.0f}元')
+    print()
+    print(f'    注：净Token预算 = 原Token预算({sb["token_budget_wan"]:.1f}万) - 赠送积分折现')
+    print(f'    注：ArkClaw每月赠送50M免费Token，未折算为金额')
 
 
 if __name__ == '__main__':

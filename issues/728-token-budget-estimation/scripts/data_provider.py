@@ -15,6 +15,7 @@ from collections import defaultdict
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 PRICES_JSON = os.path.join(DATA_DIR, 'official_prices.json')
+SEAT_PRICES_JSON = os.path.join(DATA_DIR, 'seat_prices.json')
 SURVEY_XLSX = os.path.join(DATA_DIR, '敏捷软件开发AI应用需求情况统计.xlsx')
 
 # ============ 参数 ============
@@ -29,6 +30,89 @@ def load_prices():
     with open(PRICES_JSON, 'r', encoding='utf-8') as f:
         data = json.load(f)
     return data['models']
+
+
+def load_seat_prices():
+    """加载席位费 JSON"""
+    with open(SEAT_PRICES_JSON, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+
+def calc_seat_budget(persons, token_budget_wan):
+    """计算席位费预算及供应商对比
+
+    规则：
+    1. 席位费按官网最低价框预算
+    2. 赠送积分按厂商积分售价折为钱数，扣减 Token 预算
+    3. 返回各供应商的席位费、赠送积分价值、净Token预算
+    """
+    seat_data = load_seat_prices()
+    vendors = seat_data['vendors']
+
+    result = {
+        'persons': persons,
+        'token_budget_wan': token_budget_wan,
+        'vendors': {},
+        'lowest_seat_vendor': None,
+        'lowest_seat_annual': None,
+    }
+
+    for key, v in vendors.items():
+        plans = v['plans']
+        # 取该供应商最低价方案
+        best_plan_key = min(plans.keys(), key=lambda k: plans[k]['price_per_seat_month'])
+        best = plans[best_plan_key]
+
+        seat_month = best['price_per_seat_month'] * persons
+        seat_annual = seat_month * 12
+
+        # 赠送积分价值：每月赠送 Credits × 人数 × 12 × 积分单价
+        credits_monthly = best.get('credits_per_seat_month', 0) * persons
+        credits_annual = credits_monthly * 12
+
+        # 积分折现：用该厂商资源包单价
+        rp = v.get('resource_pack')
+        if rp:
+            credit_value = credits_annual * rp['credit_unit_price']
+        else:
+            # ArkClaw 没有资源包定价，用免费Token折算
+            credit_value = 0
+
+        # 净Token预算 = 原Token预算 - 赠送积分价值
+        net_token_budget = token_budget_wan - credit_value / 10000
+
+        # ArkClaw 特殊：每月赠送 50M 免费 Token
+        free_token_value = 0
+        if 'free_token_monthly_m' in v:
+            free_token_value = v['free_token_monthly_m'] * persons * 12  # 年Token(M)
+
+        result['vendors'][key] = {
+            'name': v['name'],
+            'type': v['type'],
+            'plan_name': best['name'],
+            'price_per_seat_month': best['price_per_seat_month'],
+            'credits_per_seat_month': best.get('credits_per_seat_month', 0),
+            'min_seats': best.get('min_seats', 1),
+            'seat_monthly': seat_month,
+            'seat_annual': seat_annual,
+            'credits_monthly': credits_monthly,
+            'credits_annual': credits_annual,
+            'credit_unit_price': rp['credit_unit_price'] if rp else None,
+            'credit_value': credit_value,
+            'free_token_monthly_m': v.get('free_token_monthly_m', 0),
+            'free_token_value': free_token_value,
+            'net_token_budget': net_token_budget,
+            'total_annual': seat_annual + token_budget_wan * 10000,
+            'notes': best.get('notes', ''),
+        }
+
+    # 找最低席位费
+    lowest = min(result['vendors'].items(), key=lambda x: x[1]['price_per_seat_month'])
+    result['lowest_seat_vendor'] = lowest[1]['name']
+    result['lowest_seat_price'] = lowest[1]['price_per_seat_month']
+    result['lowest_seat_annual'] = lowest[1]['seat_annual']
+
+    return result
 
 
 def weighted_price(input_hit, input_miss, output,
@@ -386,6 +470,9 @@ def get_all_data():
             'source_url': p['source_url'],
         })
 
+    # 席位费预算
+    seat_budget = calc_seat_budget(PERSONS, total_year_fee_wan)
+
     return {
         'prices': prices,
         'results': results_sorted,
@@ -408,7 +495,8 @@ def get_all_data():
         'other_fee': other_fee,
         'official_prices_table': official_prices_table,
         'survey_meta': survey_meta,
-        'generated_at': '2026-07-04',
+        'seat_budget': seat_budget,
+        'generated_at': '2026-07-05',
     }
 
 

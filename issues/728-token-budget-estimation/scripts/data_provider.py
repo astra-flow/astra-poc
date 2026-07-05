@@ -42,7 +42,7 @@ def weighted_price(input_hit, input_miss, output,
 def normalize_model(raw):
     """将调研表中的模型名归一化到采购模型族"""
     if not raw or raw in ('无', '-', '—', 'None'):
-        return None
+        return 'DeepSeek-V4-Pro'
     s = str(raw).lower().replace(' ', '').replace('\n', '').replace('_', '').replace('，', '')
     if 'deepseek' in s:
         return 'DeepSeek-V4-Pro'
@@ -56,7 +56,7 @@ def normalize_model(raw):
         return 'Gemini'
     if 'codex' in s:
         return 'Codex'
-    return None
+    return 'DeepSeek-V4-Pro'
 
 
 # 采购模型族 → 官方价格 JSON 中的模型映射
@@ -236,8 +236,7 @@ def parse_survey():
     ]
 
     for r in range(3, ws1.max_row + 1):
-        product = ws1.cell(row=r, column=2).value
-        if not product:
+        if _is_summary_row(ws1, r, 2):
             continue
         for scene, mcol, tcol, fcol, pcol, total_col in scenes_app:
             raw = ws1.cell(row=r, column=mcol).value
@@ -253,8 +252,7 @@ def parse_survey():
             scene_agg[scene]['persons'] += persons
 
     for r in range(3, ws2.max_row + 1):
-        module = ws2.cell(row=r, column=1).value
-        if not module:
+        if _is_summary_row(ws2, r, 1):
             continue
         fee_dev = float(ws2.cell(row=r, column=7).value or 0)
         persons_dev = float(ws2.cell(row=r, column=6).value or 0)
@@ -275,6 +273,8 @@ def parse_survey():
     other_total_fee = 0
     other_persons = 0
     for r in range(2, ws3.max_row + 1):
+        if _is_summary_row(ws3, r, 1):
+            continue
         persons = float(ws3.cell(row=r, column=2).value or 0)
         total = float(ws3.cell(row=r, column=4).value or 0)
         other_persons += persons

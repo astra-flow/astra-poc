@@ -73,11 +73,11 @@ def main():
     
     # 4. 人均口径
     print(f'【4】人均口径（按 {data["PERSONS"]} 人）')
-    print(f'    人均月费用: {data["month_fee_per"]:.0f} 元/人/月')
+    print(f'    人均月费用: {data["month_fee_per"]:.2f} 元/人/月')
     print(f'    人均月Token: {data["month_token_per_M"]:.0f} 百万/人/月 = '
           f'{data["month_token_per_yi"]:.2f} 亿/人/月')
     print(f'    人均年Token: {data["year_token_per_yi"]:.2f} 亿/人/年')
-    print(f'    人均年预算: {data["year_fee_per"]:.0f} 元/人/年')
+    print(f'    人均年预算: {data["year_fee_per"]:.2f} 元/人/年')
     print(f'    全公司年Token: {data["total_year_token_yi"]:,.0f} 亿')
     print(f'    全公司年预算: {data["total_year_fee_wan"]:.1f} 万元')
     print()
@@ -87,8 +87,8 @@ def main():
     print(f'    {"场景":<16}{"月费用(元)":>14}{"使用人数":>10}{"人均月费":>10}{"占比":>8}')
     print('    ' + '-' * 60)
     for s in data['scenes']:
-        print(f'    {s["name"]:<16}{s["fee"]:>14,.0f}{s["persons"]:>10.0f}'
-              f'{s["per_person"]:>10.0f}{s["pct"]:>7.1f}%')
+        print(f'    {s["name"]:<16}{s["fee"]:>14,.2f}{s["persons"]:>10.0f}'
+              f'{s["per_person"]:>10.2f}{s["pct"]:>7.1f}%')
     print()
     
     # 6. 采购方式建议
@@ -103,9 +103,9 @@ def main():
     print('=' * 100)
     print('【汇报口径数据】（供消息/文档直接引用，勿手动修改）')
     print('=' * 100)
-    print(f'  调研月费用: {data["total_month_fee"]:,.0f} 元')
+    print(f'  调研月费用: {data["total_month_fee"]:,.2f} 元')
     print(f'  全公司人数: {data["PERSONS"]} 人')
-    print(f'  人均月费用: {data["month_fee_per"]:.0f} 元/人/月')
+    print(f'  人均月费用: {data["month_fee_per"]:.2f} 元/人/月')
     print(f'  业务增长率: {data["WAVE_FACTOR"]}')
     print(f'  年预算: {data["total_year_fee_wan"]:.1f} 万元')
     print(f'  人均月Token: {data["month_token_per_M"]:.0f} 百万 = '
@@ -135,17 +135,17 @@ def main():
         price_str = f'{pp}元/月'
         print(f'    {v["name"]:<22}{v["plan_name"]:<20}{v["seat_persons"]:>6}人'
               f'{price_str:>10}'
-              f'{v["seat_annual"]:>10,.0f}元{v["credits_monthly"]:>10,.0f}'
-              f'{v["credit_value"]:>10,.0f}元{v["net_token_budget"]:>10.1f}万'
-              f'{v["total_annual"]:>10,.0f}元')
+              f'{v["seat_annual"]:>10,.2f}元{v["credits_monthly"]:>10,.0f}'
+              f'{v["credit_value"]:>10,.2f}元{v["net_token_budget"]:>10.1f}万'
+              f'{v["total_annual"]:>10,.2f}元')
     print()
     # 供应商分组
     if sb.get('groups'):
         print(f'    {"分组合并":<22}{"年席位费":>12}{"积分价值":>12}{"净Token预算":>12}{"年度总预算":>12}')
         print('    ' + '-' * 70)
         for gname, g in sb['groups'].items():
-            print(f'    {gname:<22}{g["seat_annual"]:>10,.0f}元{g["credit_value"]:>10,.0f}元'
-                  f'{g["net_token_budget"]:>10.1f}万{g["total_annual"]:>10,.0f}元')
+            print(f'    {gname:<22}{g["seat_annual"]:>10,.2f}元{g["credit_value"]:>10,.2f}元'
+                  f'{g["net_token_budget"]:>10.1f}万{g["total_annual"]:>10,.2f}元')
     print()
     # 全家桶对比（AI Coding + 数字员工一体）
     if sb.get('bundles'):
@@ -153,11 +153,11 @@ def main():
         print('    ' + '-' * 55)
         for bk, b in sb['bundles'].items():
             pp = f'{b["price_per_seat_month"]}元/月' if b.get('price_per_seat_month') else '—'
-            print(f'    {b["name"]:<30}{b["seat_annual"]:>10,.0f}元{pp:>10}')
+            print(f'    {b["name"]:<30}{b["seat_annual"]:>10,.2f}元{pp:>10}')
             for sv in b.get('sub_vendors', []):
-                print(f'      ├ {sv["name"]:<28}{sv["seat_annual"]:>10,.0f}元')
+                print(f'      ├ {sv["name"]:<28}{sv["seat_annual"]:>10,.2f}元')
     print()
-    print(f'    注：Trae 仅覆盖开发人员（排除日志分析场景 127 人），席位={sb["vendors"]["trae"]["seat_persons"]}人')
+    print(f'    注：Trae 仅覆盖开发人员（排除日志分析场景 127 人），席位={sb["vendors"]["火山引擎 Trae CN"]["seat_persons"]}人')
     print(f'    注：净Token预算 = 原Token预算({sb["token_budget_wan"]:.1f}万) - 赠送积分折现')
     print(f'    注：ArkClaw每月赠送50M免费Token，未折算为金额')
 

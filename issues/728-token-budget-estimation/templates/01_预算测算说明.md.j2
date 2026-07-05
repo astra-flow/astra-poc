@@ -108,18 +108,18 @@ $$
 | 模型族 | 月费用（元） | 记录数 | 涉及场景 |
 |--------|:----------:|:------:|---------|
 {% for r in results -%}
-| {{ r.model }} | {{ "{:,.0f}".format(r.fee) }} | {{ r.records }} | {{ r.scenes }} |
+| {{ r.model }} | {{ "{:,.2f}".format(r.fee) }} | {{ r.records }} | {{ r.scenes }} |
 {% endfor %}
-| **合计** | **{{ "{:,.0f}".format(total_month_fee) }}** | — | — |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — |
 
 ### 5.2 Token 量反推与年度预算
 
 | 模型族 | 月费用（元） | 加权单价（元/百万） | 月Token(百万) | 月Token(亿) | 年Token(亿) | 波动后(亿) | 年预算（万元） |
 |--------|:----------:|:-----------------:|:-------------:|:-----------:|:-----------:|:----------:|:------------:|
 {% for r in results -%}
-| {{ r.model }} | {{ "{:,.0f}".format(r.fee) }} | {{ "%.4f"|format(r.wp) }} | {{ "{:,.0f}".format(r.mt_M) }} | {{ "%.2f"|format(r.mt_yi) }} | {{ "{:,.0f}".format(r.yt_yi) }} | {{ "{:,.0f}".format(r.yt_buf) }} | {{ "%.1f"|format(r.yf_wan) }} |
+| {{ r.model }} | {{ "{:,.2f}".format(r.fee) }} | {{ "%.4f"|format(r.wp) }} | {{ "{:,.2f}".format(r.mt_M) }} | {{ "%.2f"|format(r.mt_yi) }} | {{ "{:,.2f}".format(r.yt_yi) }} | {{ "{:,.2f}".format(r.yt_buf) }} | {{ "%.1f"|format(r.yf_wan) }} |
 {% endfor %}
-| **合计** | **{{ "{:,.0f}".format(total_month_fee) }}** | — | — | — | — | **{{ "{:,.0f}".format(total_year_token_yi) }}** | **{{ "%.1f"|format(total_year_fee_wan) }}** |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | — | — | **{{ "{:,.0f}".format(total_year_token_yi) }}** | **{{ "%.1f"|format(total_year_fee_wan) }}** |
 
 > Token 量按官方刊例价反推，作为规模参考；实际采购按金额签框架协议。
 
@@ -127,11 +127,11 @@ $$
 
 | 指标 | 金额 |
 |------|:----:|
-| 月总费用 | {{ "{:,.0f}".format(total_month_fee) }} 元 |
+| 月总费用 | {{ "{:,.2f}".format(total_month_fee) }} 元 |
 | 人均月费用 | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** |
 | 人均月 Token | {{ "%.0f"|format(month_token_per_M) }} 百万 = **{{ "%.2f"|format(month_token_per_yi) }} 亿/人/月** |
 | 人均年 Token | {{ "%.2f"|format(year_token_per_yi) }} 亿/人/年 |
-| 人均年预算 | {{ "{:,.0f}".format(year_fee_per) }} 元/人/年 |
+| 人均年预算 | {{ "{:,.2f}".format(year_fee_per) }} 元/人/年 |
 | {{ PERSONS }} 人年预算合计 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** |
 | {{ PERSONS }} 人年 Token 合计 | **{{ "{:,.0f}".format(total_year_token_yi) }} 亿** |
 
@@ -148,9 +148,9 @@ $$
 | 场景 | 月费用（元） | 使用人数 | 人均月费（元） | 占比 |
 |------|:---------:|:-------:|:----------:|:---:|
 {% for s in scenes -%}
-| {{ s.name }} | {{ "{:,.0f}".format(s.fee) }} | {{ "%.0f"|format(s.persons) }} | {{ "%.0f"|format(s.per_person) }} | {{ "%.1f"|format(s.pct) }}% |
+| {{ s.name }} | {{ "{:,.2f}".format(s.fee) }} | {{ "%.0f"|format(s.persons) }} | {{ "%.0f"|format(s.per_person) }} | {{ "%.1f"|format(s.pct) }}% |
 {% endfor %}
-| **合计** | **{{ "{:,.0f}".format(total_month_fee) }}** | — | — | 100% |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | 100% |
 
 ### 6.2 供应商集中度
 
@@ -170,7 +170,7 @@ $$
 | 模型族 | 波动后年Token(亿) | 占比 |
 |--------|:-----------------:|:----:|
 {% for r in results -%}
-| {{ r.model }} | {{ "{:,.0f}".format(r.yt_buf) }} | {{ "%.1f"|format(r.pct) }}% |
+| {{ r.model }} | {{ "{:,.2f}".format(r.yt_buf) }} | {{ "%.1f"|format(r.pct) }}% |
 {% endfor %}
 | **合计** | **{{ "{:,.0f}".format(total_year_token_yi) }}** | 100% |
 

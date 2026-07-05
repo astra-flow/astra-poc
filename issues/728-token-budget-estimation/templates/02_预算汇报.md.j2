@@ -45,7 +45,7 @@ status: 评审中
 | ② 全家桶口径比价 | 三家"全家桶"方案（AI 编程 + 数字员工一体）中最低为 **Qoder CN 全家桶 199 元/席位/月**（含 VPC） |
 | ③ 赠送积分可折现 | 席位赠送的 Credits 按厂商资源包单价折为等值金额，从 Token 预算中扣减 |
 
-> **全家桶口径说明**：Qoder CN 和 WorkBuddy 为一体化方案（AI 编程 + 数字员工），字节系需 **Trae（AI 编程）+ ArkClaw（数字员工）** 两个产品合并才能对标，合并后加权单价约 {{ "%.0f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/席位/月。
+> **全家桶口径说明**：Qoder CN 和 WorkBuddy 为一体化方案（AI 编程 + 数字员工），字节系需 **Trae（AI 编程）+ ArkClaw（数字员工）** 两个产品合并才能对标，合并后加权单价约 {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/席位/月。
 > 各供应商方案对比详见《AI平台席位费预算测算说明》。
 
 ## 3. 核心数据
@@ -55,8 +55,8 @@ status: 评审中
 | 指标 | 数值 | 说明 |
 |:-----|:----:|:-----|
 | 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 {{ survey_meta.survey_persons }} 人 + 扩展余量 |
-| 月总费用（资源包） | {{ "{:,.0f}".format(total_month_fee) }} 元 | 各团队实际使用费用汇总 |
-| 人均月费用（资源包） | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 含 {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率后约 {{ "%.0f"|format(month_fee_per * WAVE_FACTOR) }} 元 |
+| 月总费用（资源包） | {{ "{:,.2f}".format(total_month_fee) }} 元 | 各团队实际使用费用汇总 |
+| 人均月费用（资源包） | **{{ "%.2f"|format(month_fee_per) }} 元/人/月** | 含 {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率后约 {{ "%.2f"|format(month_fee_per * WAVE_FACTOR) }} 元 |
 | 年预算（资源包） | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 月费用 × 12 × {{ WAVE_FACTOR }} |
 | 年预算（席位费） | **{{ "%.1f"|format(seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | Qoder CN 全家桶 VPC 版（最低价方案） |
 | **年预算合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.aliyun.seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
@@ -77,9 +77,9 @@ status: 评审中
 | 场景 | 月费用(元) | 占比 | 说明 |
 |:-----|:---------:|:---:|:-----|
 {% for s in scenes -%}
-| {{ s.name }} | {{ "{:,.0f}".format(s.fee) }} | {{ "%.1f"|format(s.pct) }}% | 人均{{ "%.0f"|format(s.per_person) }}元/月 |
+| {{ s.name }} | {{ "{:,.2f}".format(s.fee) }} | {{ "%.1f"|format(s.pct) }}% | 人均{{ "%.2f"|format(s.per_person) }}元/月 |
 {% endfor %}
-| **合计** | **{{ "{:,.0f}".format(total_month_fee) }}** | 100% | — |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | 100% | — |
 
 > 基础软件开发（人均 1,200 元/月）和代码生成（人均 278 元/月）是主要消耗场景，合计占比超 90%。
 
@@ -99,12 +99,12 @@ status: 评审中
 
 | 全家桶方案 | 组成 | 年席位费 | 席位单价 |
 |:----------|:-----|:--------:|:--------:|
-| **Qoder CN 全家桶（阿里）** | 一体化方案 | {{ "%.0f"|format(seat_budget.bundles.aliyun.seat_annual) }} 元 | **199 元/月** |
-| 字节系全家桶（火山引擎） | Trae + ArkClaw | {{ "%.0f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.0f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/月 |
-| WorkBuddy 全家桶（腾讯） | 一体化方案 | {{ "%.0f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/月 |
+| **Qoder CN 全家桶（阿里）** | 一体化方案 | {{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual) }} 元 | **199 元/月** |
+| 字节系全家桶（火山引擎） | Trae + ArkClaw | {{ "%.2f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/月 |
+| WorkBuddy 全家桶（腾讯） | 一体化方案 | {{ "%.2f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/月 |
 
 > 字节系需 Trae（AI 编程）+ ArkClaw（数字员工）两个产品合并才能对标 Qoder CN 和 WorkBuddy 的一体化方案。
-> 席位赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.0f"|format(seat_budget.vendors["阿里云 Qoder CN"].credit_value) }} 元。
+> 席位赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.2f"|format(seat_budget.vendors["阿里云 Qoder CN"].credit_value) }} 元。
 
 ## 5. 详细测算
 

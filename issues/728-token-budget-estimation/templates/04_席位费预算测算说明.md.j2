@@ -60,7 +60,7 @@ status: 评审中
 | 供应商 | 最低方案 | 席位单价 | 年席位费 | 月赠送Credits | 积分折现 |
 |--------|---------|:--------:|:--------:|:------------:|:--------:|
 {% for k, v in seat_budget.vendors.items() -%}
-| {{ v.name }} | {{ v.plan_name }} | {{ v.price_per_seat_month }}元/月 | {{ "%.0f"|format(v.seat_annual) }}元 | {{ "%.0f"|format(v.credits_monthly) }} | {{ "%.0f"|format(v.credit_value) }}元 |
+| {{ v.name }} | {{ v.plan_name }} | {{ v.price_per_seat_month }}元/月 | {{ "%.2f"|format(v.seat_annual) }}元 | {{ "%.0f"|format(v.credits_monthly) }} | {{ "%.2f"|format(v.credit_value) }}元 |
 {% endfor %}
 
 > 积分折现仅适用于有公开资源包定价的厂商。

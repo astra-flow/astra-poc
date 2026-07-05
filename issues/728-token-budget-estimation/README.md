@@ -149,10 +149,32 @@ python3 scripts/03_render_reports.py --help
 python3 scripts/04_generate_inquiry_template.py
 ```
 
-输出：`output/Token资源包报价模板.xlsx`（3个Sheet）
+输出：`output/Token资源包报价模板.xlsx`（2个Sheet）
 - Sheet1: Token资源包报价（供应商填写，黄色=必填）
 - Sheet2: 填写说明
-- Sheet3: 参考基准价（采购方内部，不发送给供应商）
+
+参考基准价单独生成到 `output/参考基准价_内部.xlsx`（不发送给供应商）。
+
+### 05_sync_to_dingtalk.py（钉钉知识库同步）
+
+通过 dws CLI 将生成的文档同步到钉钉知识库（竞标材料文件夹下）。
+
+```bash
+# 同步全部文档
+python3 scripts/05_sync_to_dingtalk.py --all
+
+# 同步指定文档
+python3 scripts/05_sync_to_dingtalk.py --doc 1    # 仅预算测算说明
+python3 scripts/05_sync_to_dingtalk.py --doc 2 3  # 预算汇报+供应商询价
+
+# 查看已同步文档列表
+python3 scripts/05_sync_to_dingtalk.py --list
+```
+
+特性：
+- 首次同步创建文档，后续同步自动更新（基于 nodeId 缓存）
+- 缓存文件：`output/.dingtalk_sync_cache.json`
+- 依赖：dws CLI（已安装并认证）
 
 ## 运行方式
 

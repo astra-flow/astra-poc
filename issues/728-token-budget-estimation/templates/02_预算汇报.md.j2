@@ -36,17 +36,12 @@ status: 评审中
 
 ### 2.2 资源包预算说明
 
-#### 2.2.1 资源包预算概览
+#### 2.2.1 资源包预算汇总
 
-| 指标 | 数值 |
-|:-----|:----:|
 {% set rnd_token = (total_year_token_yi * 100 // 1000) * 1000 %}
 {% set rnd_wp = total_year_fee_yuan / rnd_token %}
-| 年 Token 需求量 | **{{ "{:,.0f}".format(rnd_token) }} 百万** |
-| 综合加权单价 | **{{ "%.4f"|format(rnd_wp) }} 元/百万 Token** |
-| 年预算金额 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** |
 
-> **加权单价**：各模型按使用费用加权平均后得到 **{{ "%.4f"|format(rnd_wp) }} 元/百万 Token**（约 1.89 元）。年 Token 需求量 × 加权单价 = 年度总预算，三数联动可交叉校验。
+> 年度预算 **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元**，对应年 Token 需求量约 {{ "{:,.0f}".format(rnd_token) }} 百万（综合加权单价约 {{ "%.2f"|format(rnd_wp) }} 元/百万 Token），采购申请以年度预算金额为准。
 
 > **估算逻辑**：各团队调研的月实际使用费用 × 12 个月即为年度预算，Token 量按费用 ÷ 官方刊例价反推，仅作规模参考。
 

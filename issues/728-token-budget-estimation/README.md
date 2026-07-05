@@ -141,6 +141,19 @@ python3 scripts/03_render_reports.py --help
 - `output/02_预算汇报.md`
 - `output/03_供应商询价.md`
 
+### 04_generate_inquiry_template.py（询价Excel模板）
+
+生成标准化的供应商报价 Excel 模板，基于 data_provider 数据自动填充采购需求概况。
+
+```bash
+python3 scripts/04_generate_inquiry_template.py
+```
+
+输出：`output/Token资源包报价模板.xlsx`（3个Sheet）
+- Sheet1: Token资源包报价（供应商填写，黄色=必填）
+- Sheet2: 填写说明
+- Sheet3: 参考基准价（采购方内部，不发送给供应商）
+
 ## 运行方式
 
 ### 依赖

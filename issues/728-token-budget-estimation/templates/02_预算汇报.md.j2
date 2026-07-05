@@ -43,10 +43,10 @@ status: 评审中
 {% set rnd_token = (total_year_token_yi * 100 // 1000) * 1000 %}
 {% set rnd_wp = total_year_fee_yuan / rnd_token %}
 | 年 Token 需求量 | **{{ "{:,.0f}".format(rnd_token) }} 百万** |
-| 综合加权单价 | **{{ "%.2f"|format(rnd_wp) }} 元/百万 Token** |
+| 综合加权单价 | **{{ "%.4f"|format(rnd_wp) }} 元/百万 Token** |
 | 年预算金额 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** |
 
-> **加权单价**：不同模型定价不同（如 DeepSeek V4 约 2.63 元/百万 Token、GLM 5.2 约 10.75 元/百万 Token），按各模型实际使用费用占比加权平均后得到 **{{ "%.2f"|format(rnd_wp) }} 元/百万 Token**。用此单价乘以年 Token 需求量即可还原年度总预算，用于采购申请单填写。
+> **加权单价**：各模型按使用费用加权平均后得到 **{{ "%.4f"|format(rnd_wp) }} 元/百万 Token**（约 1.89 元）。年 Token 需求量 × 加权单价 = 年度总预算，三数联动可交叉校验。
 
 > **估算逻辑**：各团队调研的月实际使用费用 × 12 个月即为年度预算，Token 量按费用 ÷ 官方刊例价反推，仅作规模参考。
 

@@ -562,6 +562,7 @@ def get_all_data():
 
     total_month_fee = sum(d['月总费用'] for d in agg.values())
     total_year_fee_wan = total_month_fee * 12 * WAVE_FACTOR / 10000
+    total_year_fee_yuan = total_year_fee_wan * 10000
 
     # 按模型计算
     results = []
@@ -575,6 +576,7 @@ def get_all_data():
         yt_yi = mt_yi * 12
         yt_buf = yt_yi * WAVE_FACTOR
         yf_wan = fee * 12 * WAVE_FACTOR / 10000
+        yf_yuan = fee * 12 * WAVE_FACTOR
         total_year_token_yi += yt_buf
 
         p = prices[MODEL_MAP[model]]
@@ -587,6 +589,7 @@ def get_all_data():
             'yt_yi': yt_yi,
             'yt_buf': yt_buf,
             'yf_wan': yf_wan,
+            'yf_yuan': yf_yuan,
             'input_hit': p['input_hit'],
             'input_miss': p['input_miss'],
             'output': p['output'],
@@ -661,6 +664,7 @@ def get_all_data():
         'scenes': scenes,
         'total_month_fee': total_month_fee,
         'total_year_fee_wan': total_year_fee_wan,
+        'total_year_fee_yuan': total_year_fee_yuan,
         'total_year_token_yi': total_year_token_yi,
         'PERSONS': PERSONS,
         'month_fee_per': month_fee_per,

@@ -55,10 +55,10 @@ def main():
     print('【3】Token 量反推与年度预算（核心结果）')
     print(f'    公式：月Token(百万) = 月费用 / 加权单价')
     print(f'          年Token(亿) = 月Token(百万) × 12 ÷ {data["MILLION_TO_YI"]}')
-    print(f'          年预算(万) = 月费用 × 12 × {data["WAVE_FACTOR"]} ÷ 10000')
+    print(f'          年预算(元) = 月费用 × 12 × {data["WAVE_FACTOR"]}')
     print()
     print(f'    {"模型族":<22}{"月费用":>10}{"加权单价":>10}{"月Token(百万)":>16}'
-          f'{"月Token(亿)":>14}{"年Token(亿)":>14}{"波动后(亿)":>14}{"年预算(万)":>12}')
+          f'{"月Token(亿)":>14}{"年Token(亿)":>14}{"波动后(亿)":>14}{"年预算(元)":>14}')
     print('    ' + '-' * 112)
     
     for r in data['results']:
@@ -79,7 +79,7 @@ def main():
     print(f'    人均年Token: {data["year_token_per_yi"]:.2f} 亿/人/年')
     print(f'    人均年预算: {data["year_fee_per"]:.2f} 元/人/年')
     print(f'    全公司年Token: {data["total_year_token_yi"]:,.0f} 亿')
-    print(f'    全公司年预算: {data["total_year_fee_wan"]:.2f} 万元')
+    print(f'    全公司年预算: {data["total_year_fee_yuan"]:,.2f} 元')
     print()
     
     # 5. 场景维度
@@ -107,7 +107,7 @@ def main():
     print(f'  全公司人数: {data["PERSONS"]} 人')
     print(f'  人均月费用: {data["month_fee_per"]:.2f} 元/人/月')
     print(f'  业务增长率: {data["WAVE_FACTOR"]}')
-    print(f'  年预算: {data["total_year_fee_wan"]:.2f} 万元')
+    print(f'  年预算: {data["total_year_fee_yuan"]:,.2f} 元')
     print(f'  人均月Token: {data["month_token_per_M"]:.0f} 百万 = '
           f'{data["month_token_per_yi"]:.2f} 亿/人/月')
     print(f'  全公司年Token: {data["total_year_token_yi"]:,.0f} 亿')
@@ -136,7 +136,7 @@ def main():
         print(f'    {v["name"]:<22}{v["plan_name"]:<20}{v["seat_persons"]:>6}人'
               f'{price_str:>10}'
               f'{v["seat_annual"]:>10,.2f}元{v["credits_monthly"]:>10,.0f}'
-              f'{v["credit_value"]:>10,.2f}元{v["net_token_budget"]:>10.2f}万'
+              f'{v["credit_value"]:>10,.2f}元{v["net_token_budget"] * 10000:>14,.2f}元'
               f'{v["total_annual"]:>10,.2f}元')
     print()
     # 供应商分组
@@ -145,7 +145,7 @@ def main():
         print('    ' + '-' * 70)
         for gname, g in sb['groups'].items():
             print(f'    {gname:<22}{g["seat_annual"]:>10,.2f}元{g["credit_value"]:>10,.2f}元'
-                  f'{g["net_token_budget"]:>10.2f}万{g["total_annual"]:>10,.2f}元')
+                  f'{g["net_token_budget"] * 10000:>14,.2f}元{g["total_annual"]:>10,.2f}元')
     print()
     # 全家桶对比（AI Coding + 数字员工一体）
     if sb.get('bundles'):
@@ -158,7 +158,7 @@ def main():
                 print(f'      ├ {sv["name"]:<28}{sv["seat_annual"]:>10,.2f}元')
     print()
     print(f'    注：Trae 仅覆盖开发人员（排除日志分析场景 127 人），席位={sb["vendors"]["火山引擎 Trae CN"]["seat_persons"]}人')
-    print(f'    注：净Token预算 = 原Token预算({sb["token_budget_wan"]:.2f}万) - 赠送积分折现')
+    print(f'    注：净Token预算 = 原Token预算({sb["token_budget_wan"] * 10000:,.2f}元) - 赠送积分折现')
     print(f'    注：ArkClaw每月赠送50M免费Token，未折算为金额')
 
 

@@ -114,12 +114,12 @@ $$
 
 ### 5.2 Token 量反推与年度预算
 
-| 模型族 | 月费用（元） | 加权单价（元/百万） | 月Token(百万) | 月Token(亿) | 年Token(亿) | 波动后(亿) | 年预算（万元） |
+| 模型族 | 月费用（元） | 加权单价（元/百万） | 月Token(百万) | 月Token(亿) | 年Token(亿) | 波动后(亿) | 年预算（元） |
 |--------|:----------:|:-----------------:|:-------------:|:-----------:|:-----------:|:----------:|:------------:|
 {% for r in results -%}
-| {{ r.model }} | {{ "%.2f"|format(r.fee) }} | {{ "%.4f"|format(r.wp) }} | {{ "%.0f"|format(r.mt_M) }} | {{ "%.2f"|format(r.mt_yi) }} | {{ "%.0f"|format(r.yt_yi) }} | {{ "%.0f"|format(r.yt_buf) }} | {{ "%.2f"|format(r.yf_wan) }} |
+| {{ r.model }} | {{ "%.2f"|format(r.fee) }} | {{ "%.4f"|format(r.wp) }} | {{ "%.0f"|format(r.mt_M) }} | {{ "%.2f"|format(r.mt_yi) }} | {{ "%.0f"|format(r.yt_yi) }} | {{ "%.0f"|format(r.yt_buf) }} | {{ "{:,.2f}".format(r.yf_yuan) }} |
 {% endfor %}
-| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | — | — | **{{ "{:,.0f}".format(total_year_token_yi) }}** | **{{ "%.2f"|format(total_year_fee_wan) }}** |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | — | — | **{{ "{:,.0f}".format(total_year_token_yi) }}** | **{{ "{:,.2f}".format(total_year_fee_yuan) }}** |
 
 > Token 量按官方刊例价反推，作为规模参考；实际采购按金额签框架协议。
 
@@ -132,7 +132,7 @@ $$
 | 人均月 Token | {{ "%.0f"|format(month_token_per_M) }} 百万 = **{{ "%.2f"|format(month_token_per_yi) }} 亿/人/月** |
 | 人均年 Token | {{ "%.2f"|format(year_token_per_yi) }} 亿/人/年 |
 | 人均年预算 | {{ "{:,.2f}".format(year_fee_per) }} 元/人/年 |
-| {{ PERSONS }} 人年预算合计 | **{{ "%.2f"|format(total_year_fee_wan) }} 万元** |
+| {{ PERSONS }} 人年预算合计 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** |
 | {{ PERSONS }} 人年 Token 合计 | **{{ "{:,.0f}".format(total_year_token_yi) }} 亿** |
 
 人均费用呈"两极分布"特征：
@@ -154,12 +154,12 @@ $$
 
 ### 6.2 供应商集中度
 
-| 供应商 | 模型族 | 年预算（万元） | 占比 |
+| 供应商 | 模型族 | 年预算（元） | 占比 |
 |--------|--------|:------------:|:----:|
-| DeepSeek | V4 (Pro) + Flash | {{ "%.2f"|format(deepseek_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(deepseek_fee / total_month_fee * 100) }}% |
-| 智谱 | GLM-5.2 | {{ "%.2f"|format(glm_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(glm_fee / total_month_fee * 100) }}% |
-| 其他 | Codex + Gemini + Doubao | {{ "%.2f"|format(other_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(other_fee / total_month_fee * 100) }}% |
-| **合计** | — | **{{ "%.2f"|format(total_year_fee_wan) }}** | 100% |
+| DeepSeek | V4 (Pro) + Flash | {{ "{:,.2f}".format(deepseek_fee * 12 * WAVE_FACTOR) }} | {{ "%.1f"|format(deepseek_fee / total_month_fee * 100) }}% |
+| 智谱 | GLM-5.2 | {{ "{:,.2f}".format(glm_fee * 12 * WAVE_FACTOR) }} | {{ "%.1f"|format(glm_fee / total_month_fee * 100) }}% |
+| 其他 | Codex + Gemini + Doubao | {{ "{:,.2f}".format(other_fee * 12 * WAVE_FACTOR) }} | {{ "%.1f"|format(other_fee / total_month_fee * 100) }}% |
+| **合计** | — | **{{ "{:,.2f}".format(total_year_fee_yuan) }}** | 100% |
 
 > DeepSeek 一家覆盖旗舰 + 轻量两档，供应商集中度高，便于打包议价。
 

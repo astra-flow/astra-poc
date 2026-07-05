@@ -42,9 +42,10 @@ def calc_seat_budget(persons, token_budget_wan):
     """计算席位费预算及供应商对比
 
     规则：
-    1. 席位费按官网最低价框预算
-    2. 赠送积分按厂商积分售价折为钱数，扣减 Token 预算
-    3. 返回各供应商的席位费、赠送积分价值、净Token预算
+    1. 席位费优先选 VPC/专属版方案（数据安全合规要求）
+    2. 无 VPC 方案的供应商取最低价方案
+    3. 赠送积分按厂商积分售价折为钱数，扣减 Token 预算
+    4. 返回各供应商的席位费、赠送积分价值、净Token预算
     """
     seat_data = load_seat_prices()
     vendors = seat_data['vendors']
@@ -59,11 +60,17 @@ def calc_seat_budget(persons, token_budget_wan):
 
     for key, v in vendors.items():
         plans = v['plans']
-        # 取该供应商最低价方案（跳过价格为 null 的私有版/VPC版）
+        # 取该供应商最低价方案（跳过价格为 null 的私有版）
         priced_plans = {k: p for k, p in plans.items() if p.get('price_per_seat_month') is not None}
         if not priced_plans:
             continue
-        best_plan_key = min(priced_plans.keys(), key=lambda k: priced_plans[k]['price_per_seat_month'])
+
+        # 优先选 VPC 方案（数据安全合规要求）
+        vpc_keys = [k for k in priced_plans if 'vpc' in k.lower() or 'vpc' in priced_plans[k].get('notes', '').lower()]
+        if vpc_keys:
+            best_plan_key = min(vpc_keys, key=lambda k: priced_plans[k]['price_per_seat_month'])
+        else:
+            best_plan_key = min(priced_plans.keys(), key=lambda k: priced_plans[k]['price_per_seat_month'])
         best = priced_plans[best_plan_key]
 
         seat_month = best['price_per_seat_month'] * persons
@@ -123,8 +130,12 @@ def calc_seat_budget(persons, token_budget_wan):
             'all_plans': all_plans,
         }
 
-    # 找最低席位费
-    lowest = min(result['vendors'].items(), key=lambda x: x[1]['price_per_seat_month'])
+    # 找最低席位费（仅比较 VPC 方案，数据安全合规要求）
+    vpc_vendors = {k: v for k, v in result['vendors'].items()
+                   if 'vpc' in v['plan_name'].lower() or '内置VPC' in v.get('notes', '')}
+    if not vpc_vendors:
+        vpc_vendors = result['vendors']
+    lowest = min(vpc_vendors.items(), key=lambda x: x[1]['price_per_seat_month'])
     result['lowest_seat_vendor'] = lowest[1]['name']
     result['lowest_seat_price'] = lowest[1]['price_per_seat_month']
     result['lowest_seat_annual'] = lowest[1]['seat_annual']

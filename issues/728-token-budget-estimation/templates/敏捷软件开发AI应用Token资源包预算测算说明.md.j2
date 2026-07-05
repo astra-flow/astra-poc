@@ -116,9 +116,11 @@ $$
 | 字段 | 数值 | 说明 |
 |:-----|:----:|:-----|
 | 采购品名 | Token 资源包 | — |
+{% set rnd_token = (total_year_token_yi * 100 // 1000) * 1000 %}
+{% set rnd_wp = total_year_fee_yuan / rnd_token %}
 | 年预算金额 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** | 按金额签框架协议 |
-| 年 Token 需求量 | **{{ "{:,.0f}".format(total_year_token_yi * 100) }} 百万** | 按刊例价反推 |
-| 综合加权单价 | **{{ "%.4f"|format(overall_wp) }} 元/百万 Token** | 各模型按费用加权后的平均单价 |
+| 年 Token 需求量 | **{{ "{:,.0f}".format(rnd_token) }} 百万** | 按刊例价反推 |
+| 综合加权单价 | **{{ "%.4f"|format(rnd_wp) }} 元/百万 Token** | 各模型按费用加权后的平均单价 |
 | 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 + 扩展余量 |
 
 ### 5.3 人均口径（按 {{ PERSONS }} 人）

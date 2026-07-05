@@ -116,9 +116,21 @@ def strip_front_matter(content):
     if content.startswith('---'):
         end = content.find('\n---', 3)
         if end != -1:
-            # 跳过 front matter 和后面的空行
             content = content[end + 4:].lstrip('\n')
     return content
+
+
+def extract_and_strip_title(content):
+    """提取一级标题作为文档名，并从内容中移除该行"""
+    lines = content.split('\n')
+    title = None
+    new_lines = []
+    for line in lines:
+        if title is None and line.startswith('# ') and not line.startswith('## '):
+            title = line[2:].strip()
+            continue  # 跳过该行，不写入文档
+        new_lines.append(line)
+    return title, '\n'.join(new_lines)
 
 
 def sync_document(doc_id, cache):
@@ -136,6 +148,12 @@ def sync_document(doc_id, cache):
         content = f.read()
     content = strip_front_matter(content)
     
+    # 提取一级标题作为文档名，并从内容中移除
+    doc_name, content = extract_and_strip_title(content)
+    if not doc_name:
+        doc_name = doc['name']  # 兜底：用配置中的名称
+    print(f'  📄 文档名: {doc_name}')
+    
     # 写到临时文件
     tmp_file = tempfile.NamedTemporaryFile(mode='w', suffix='.md', delete=False, encoding='utf-8')
     tmp_file.write(content)
@@ -147,18 +165,19 @@ def sync_document(doc_id, cache):
     # 检查缓存中是否有 nodeId
     if cache_key in cache and cache[cache_key].get('nodeId'):
         node_id = cache[cache_key]['nodeId']
-        print(f'  📝 更新文档: {doc["name"]} (nodeId: {node_id[:16]}...)')
+        print(f'  📝 更新文档: {doc_name} (nodeId: {node_id[:16]}...)')
         try:
             update_document(node_id, sync_file_path)
             cache[cache_key]['updated'] = datetime.now().isoformat()
+            cache[cache_key]['name'] = doc_name
             print(f'  ✅ 更新成功')
         except Exception as e:
             print(f'  ⚠ 更新失败，尝试重新创建: {e}')
-            node_id, _ = create_document(doc['name'], sync_file_path, TARGET_FOLDER_ID)
+            node_id, _ = create_document(doc_name, sync_file_path, TARGET_FOLDER_ID)
             if node_id:
                 cache[cache_key] = {
                     'nodeId': node_id,
-                    'name': doc['name'],
+                    'name': doc_name,
                     'updated': datetime.now().isoformat(),
                     'url': f"https://alidocs.dingtalk.com/i/nodes/{node_id}",
                 }
@@ -167,12 +186,12 @@ def sync_document(doc_id, cache):
                 print(f'  ❌ 创建失败')
                 return False
     else:
-        print(f'  📝 创建文档: {doc["name"]}')
-        node_id, raw = create_document(doc['name'], sync_file_path, TARGET_FOLDER_ID)
+        print(f'  📝 创建文档: {doc_name}')
+        node_id, raw = create_document(doc_name, sync_file_path, TARGET_FOLDER_ID)
         if node_id:
             cache[cache_key] = {
                 'nodeId': node_id,
-                'name': doc['name'],
+                'name': doc_name,
                 'updated': datetime.now().isoformat(),
                 'url': f"https://alidocs.dingtalk.com/i/nodes/{node_id}",
             }

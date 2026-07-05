@@ -71,14 +71,17 @@ MODEL_MAP = {
 
 
 def _is_summary_row(ws, row, key_col):
-    """判断是否为合计行：首列（A列）为空，且该行有数据（人数/费用列有值）"""
+    """判断是否为合计行：首列（A列）为空或为'合计'，且该行有数据（人数/费用列有值）"""
     a_val = ws.cell(row=row, column=1).value
-    key_val = ws.cell(row=row, column=key_col).value
-    # 合计行特征：A列和关键字段都为空，但其他列有值
-    if a_val is not None:
+    # 合计行特征：A列为空或为'合计'文本
+    a_str = str(a_val).strip() if a_val is not None else ''
+    if a_str not in ('', '合计'):
         return False
-    if key_val is not None:
-        return False
+    # 如果 key_col 不是 A 列，检查关键字段是否为空
+    if key_col != 1:
+        key_val = ws.cell(row=row, column=key_col).value
+        if key_val is not None:
+            return False
     # 确认该行确实有数据（不是空行）
     for c in range(2, ws.max_column + 1):
         if ws.cell(row=row, column=c).value is not None:

@@ -82,6 +82,7 @@ data_provider.py（唯一数据源，所有计算逻辑）
 ### data_provider.py（唯一数据源）
 
 所有脚本的统一数据来源，包含：
+
 - `load_prices()`：加载官方刊例价JSON
 - `calc_persons()`：从调研表合计行计算总人数
 - `get_survey_meta()`：提取调研元数据（产品线数、模块数、记录数等）
@@ -137,6 +138,7 @@ python3 scripts/03_render_reports.py --help
 ```
 
 输出：
+
 - `output/01_预算测算说明.md`
 - `output/02_预算汇报.md`
 - `output/03_供应商询价.md`
@@ -150,6 +152,7 @@ python3 scripts/04_generate_inquiry_template.py
 ```
 
 输出：`output/Token资源包报价模板.xlsx`（2个Sheet）
+
 - Sheet1: Token资源包报价（供应商填写，黄色=必填）
 - Sheet2: 填写说明
 
@@ -172,6 +175,7 @@ python3 scripts/05_sync_to_dingtalk.py --list
 ```
 
 特性：
+
 - 首次同步创建文档，后续同步自动更新（基于 nodeId 缓存）
 - 缓存文件：`output/.dingtalk_sync_cache.json`
 - 依赖：dws CLI（已安装并认证）

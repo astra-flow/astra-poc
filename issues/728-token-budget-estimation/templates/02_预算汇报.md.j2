@@ -1,0 +1,90 @@
+---
+title: AI 平台预算汇报
+document_id: SOR-AI-TOKEN-2026-001-REPORT
+version: V3.0
+date: {{ generated_at }}
+author: 业务发起部门
+status: 评审中
+---
+
+# AI 平台预算汇报
+
+## 1. 一句话结论
+
+> 基于 {{ survey_meta.product_lines }} 条产品线、{{ survey_meta.base_modules }} 个基础软件模块的 AI 应用调研，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度资源包预算为 {{ "%.1f"|format(total_year_fee_wan) }} 万元**（含 {{ WAVE_FACTOR }} 波动系数）。
+
+## 2. 预算怎么算的
+
+### 2.1 测算逻辑（一句话）
+
+> **内部调研的实际使用费用** × **官方刊例价** × **波动系数** = 年度预算
+
+### 2.2 关键公式
+
+| 公式 | 说明 |
+|------|------|
+| 年预算 = 月费用 × 12 × {{ WAVE_FACTOR }} | 月费用来自调研表实测，波动系数覆盖业务增长和调试消耗 |
+| Token量 = 费用 ÷ 加权单价 | Token量仅作规模参考，实际按金额签约 |
+| 加权单价 = (输入价×3 + 输出价×1) ÷ 4 | 假设输入:输出=3:1，缓存命中率50% |
+
+### 2.3 为什么用费用主线法
+
+调研表同时收集了"费用数据"和"Token消耗量"两类数据，但 Token 数据虚高（反推单价低于官方价16-108倍），不可信。费用数据经62条记录校验全部自洽，0偏差，作为预算基准。
+
+## 3. 核心数据
+
+### 3.1 预算总览
+
+| 指标 | 数值 | 说明 |
+|------|:----:|------|
+| 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖{{ survey_meta.survey_persons }}人 + 扩展余量 |
+| 月总费用 | {{ "{:,.0f}".format(total_month_fee) }} 元 | 调研表实测值 |
+| 人均月费用 | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 行业AI工具合理区间 |
+| 年预算 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 含{{ WAVE_FACTOR}}波动系数 |
+| 年Token总量 | {{ "{:,.0f}".format(total_year_token_yi) }} 亿 | 按官方刊例价反推，仅作参考 |
+
+### 3.2 按模型分布
+
+| 主力模型 | 占比 | 年预算(万元) | 说明 |
+|---------|:---:|:----------:|------|
+{% for r in results -%}
+| {{ r.model }} | {{ "%.1f"|format(r.pct) }}% | {{ "%.1f"|format(r.yf_wan) }} | {{ r.vendor }} {{ r.tier }}档 |
+{% endfor %}
+| **合计** | **100%** | **{{ "%.1f"|format(total_year_fee_wan) }}** | — |
+
+### 3.3 按场景分布
+
+| 场景 | 月费用(元) | 占比 | 说明 |
+|------|:---------:|:---:|------|
+{% for s in scenes -%}
+| {{ s.name }} | {{ "{:,.0f}".format(s.fee) }} | {{ "%.1f"|format(s.pct) }}% | 人均{{ "%.0f"|format(s.per_person) }}元/月 |
+{% endfor %}
+| **合计** | **{{ "{:,.0f}".format(total_month_fee) }}** | 100% | — |
+
+## 4. 供应商集中度
+
+| 供应商 | 年预算(万元) | 占比 | 说明 |
+|--------|:----------:|:---:|------|
+| DeepSeek | {{ "%.1f"|format(deepseek_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(deepseek_fee / total_month_fee * 100) }}% | 旗舰+轻量两档 |
+| 智谱 | {{ "%.1f"|format(glm_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(glm_fee / total_month_fee * 100) }}% | GLM-5.2 |
+| 其他 | {{ "%.1f"|format(other_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(other_fee / total_month_fee * 100) }}% | Codex+Gemini+Doubao |
+
+> DeepSeek 占比 {{ "%.0f"|format(deepseek_fee / total_month_fee * 100) }}%，一家覆盖旗舰+轻量两档，便于打包议价。
+
+## 5. 采购建议
+
+建议**按金额签框架协议，不按 Token 量签**：
+
+1. 主力模型价格随新模型推出会变化
+2. 新模型价格未知，但肯定要用
+3. 各家计价方式不同（credits/积分/AFP），按 Token 量签不可控
+
+## 6. 人均费用特征
+
+- 基础软件开发团队：人均 1,200 元/月（三模型并行开发，强度最高）
+- 应用产品团队：人均 48-700 元/月（以代码生成和 PRD 生成为主）
+- 整体人均 {{ "%.0f"|format(month_fee_per) }} 元/月，处于行业 AI 工具人均成本的合理区间
+
+## 7. 详细测算
+
+完整的测算过程、公式推导、假设约束及数据校验，详见《AI平台资源包预算测算说明》。

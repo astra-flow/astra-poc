@@ -1,0 +1,108 @@
+{
+  "_meta": {
+    "description": "各厂商模型官方刊例价标准数据（元/百万Token）",
+    "fetched_at": "2026-07-04",
+    "sources": [
+      "DeepSeek: https://api-docs.deepseek.com/zh-cn/quick_start/pricing",
+      "智谱GLM: https://bigmodel.cn/pricing",
+      "字节方舟: https://www.volcengine.com/docs/82379/1544106",
+      "阿里百炼: https://www.alibabacloud.com/help/zh/model-studio/model-pricing",
+      "腾讯TokenHub: https://cloud.tencent.com/product/tokenhub"
+    ]
+  },
+  "models": {
+    "DeepSeek-V4-Pro": {
+      "vendor": "DeepSeek",
+      "tier": "旗舰",
+      "context": "1M",
+      "input_hit": 0.025,
+      "input_miss": 3.00,
+      "output": 6.00,
+      "source_url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing"
+    },
+    "DeepSeek-V4-Flash": {
+      "vendor": "DeepSeek",
+      "tier": "轻量",
+      "context": "1M",
+      "input_hit": 0.020,
+      "input_miss": 1.00,
+      "output": 2.00,
+      "source_url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing"
+    },
+    "GLM-5.2": {
+      "vendor": "智谱",
+      "tier": "旗舰",
+      "context": "1M",
+      "input_hit": 2.00,
+      "input_miss": 8.00,
+      "output": 28.00,
+      "source_url": "https://bigmodel.cn/pricing"
+    },
+    "Doubao-Seed-2.1-Pro": {
+      "vendor": "字节火山",
+      "tier": "旗舰",
+      "context": "256K",
+      "input_hit": 1.20,
+      "input_miss": 3.00,
+      "output": 15.00,
+      "source_url": "https://www.volcengine.com/docs/82379/1544106"
+    },
+    "Doubao-Seed-2.1-Turbo": {
+      "vendor": "字节火山",
+      "tier": "高性价比",
+      "context": "256K",
+      "input_hit": 0.60,
+      "input_miss": 1.50,
+      "output": 7.50,
+      "source_url": "https://www.volcengine.com/docs/82379/1544106"
+    },
+    "Qwen3.7-Max": {
+      "vendor": "阿里百炼",
+      "tier": "旗舰",
+      "context": "1M",
+      "input_hit": 2.40,
+      "input_miss": 12.00,
+      "output": 36.00,
+      "source_url": "https://www.alibabacloud.com/help/zh/model-studio/model-pricing"
+    },
+    "Qwen3.7-Plus": {
+      "vendor": "阿里百炼",
+      "tier": "主力多模态",
+      "context": "1M",
+      "input_hit": 0.40,
+      "input_miss": 2.00,
+      "output": 8.00,
+      "source_url": "https://www.alibabacloud.com/help/zh/model-studio/model-pricing"
+    },
+    "Codex": {
+      "vendor": "OpenAI",
+      "tier": "旗舰",
+      "context": "—",
+      "input_hit": 0.030,
+      "input_miss": 3.60,
+      "output": 7.20,
+      "note": "按 DeepSeek-Pro ×1.2 折算（订阅制/国际模型溢价）",
+      "source_url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing"
+    },
+    "Gemini": {
+      "vendor": "Google",
+      "tier": "旗舰",
+      "context": "—",
+      "input_hit": 0.030,
+      "input_miss": 3.60,
+      "output": 7.20,
+      "note": "按 DeepSeek-Pro ×1.2 折算（国际模型溢价）",
+      "source_url": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing"
+    },
+    "Doubao-Seed-Code": {
+      "vendor": "字节火山",
+      "tier": "轻量",
+      "context": "—",
+      "input_hit": 0.020,
+      "input_miss": 1.00,
+      "output": 2.00,
+      "note": "按 DeepSeek-Flash 同档折算",
+      "source_url": "https://www.volcengine.com/docs/82379/1544106"
+    }
+  }
+}

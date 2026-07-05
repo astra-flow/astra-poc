@@ -11,94 +11,93 @@ status: 评审中
 
 ## 1. 预算整体情况
 
-> 基于 {{ survey_meta.product_lines }} 条产品线、{{ survey_meta.base_modules }} 个基础软件模块的 AI 应用调研，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度资源包预算为 {{ "%.1f"|format(total_year_fee_wan) }} 万元**（含 {{ WAVE_FACTOR }} 波动系数）。
->
-> 另需采购 AI 编程助手及数字员工平台企业版席位费，按官网最低价框算，**席位费预算 {{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元**（{{ seat_budget.lowest_seat_vendor }}，{{ seat_budget.lowest_seat_price }} 元/席位/月）。
->
-> **两项合计约 {{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元**。
+> 基于内部调研数据，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度预算合计约 {{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元**，含以下两项采购：
+
+| 采购项 | 年预算 | 说明 |
+|:------|:------|:-----|
+| Token 资源包 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 覆盖 7 个 AI 应用场景的模型调用费用 |
+| 席位费 | **{{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元** | AI 编程助手及数字员工平台企业版席位 |
+| **合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** | — |
+
+> 席位费按官网最低价框算，{{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月。
 
 ## 2. 预算方法说明
 
-### 2.1 测算逻辑（一句话）
+### 2.1 Token 资源包预算
 
-> **内部调研的实际使用费用** × **官方刊例价** × **波动系数** = 年度预算
+> **调研实际月费用 × 12 个月 × {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率 = 年度预算**
 
-### 2.2 关键公式
+| 步骤 | 说明 |
+|:----|:-----|
+| ① 调研各团队实际月费用 | 覆盖 {{ survey_meta.product_lines }} 条产品线、{{ survey_meta.base_modules }} 个基础软件模块，62 条记录全部自洽 |
+| ② 按官方刊例价反推 Token 量 | Token 量仅作规模参考，实际按金额签约 |
+| ③ 乘以 {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率 | 覆盖业务增长和调试消耗，保守估计 |
 
-| 公式 | 说明 |
-|------|------|
-| 年预算 = 月费用 × 12 × {{ WAVE_FACTOR }} | 月费用来自调研表实测，波动系数覆盖业务增长和调试消耗 |
-| Token量 = 费用 ÷ 加权单价 | Token量仅作规模参考，实际按金额签约 |
-| 加权单价 = (输入价×3 + 输出价×1) ÷ 4 | 假设输入:输出=3:1，缓存命中率50% |
+> **为什么按金额签？** 主力模型价格随新模型推出会变化，各家计价方式不同（credits/积分/AFP），按 Token 量签不可控。
 
-### 2.3 为什么用费用主线法
+### 2.2 席位费预算
 
-调研表同时收集了"费用数据"和"Token消耗量"两类数据，但 Token 数据虚高（反推单价低于官方价16-108倍），不可信。费用数据经62条记录校验全部自洽，0偏差，作为预算基准。
+> **人数 × 席位单价 × 12 个月 = 年度席位费**
+
+| 步骤 | 说明 |
+|:----|:-----|
+| ① 确定覆盖人数 | 与资源包预算一致，{{ PERSONS }} 人 |
+| ② 官网比价取最低价 | 三家供应商中最低为 {{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月 |
+| ③ 赠送积分可折现 | 席位赠送的 Credits 按厂商资源包单价折为等值金额，从 Token 预算中扣减 |
+
+> 各供应商方案对比详见《AI平台席位费预算测算说明》。
 
 ## 3. 核心数据
 
 ### 3.1 预算总览
 
 | 指标 | 数值 | 说明 |
-|------|:----:|------|
-| 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖{{ survey_meta.survey_persons }}人 + 扩展余量 |
-| 月总费用（资源包） | {{ "{:,.0f}".format(total_month_fee) }} 元 | 调研表实测值 |
-| 人均月费用（资源包） | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 行业AI工具合理区间 |
-| 年预算（资源包） | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 含{{ WAVE_FACTOR}}波动系数 |
+|:-----|:----:|:-----|
+| 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 {{ survey_meta.survey_persons }} 人 + 扩展余量 |
+| 月总费用（资源包） | {{ "{:,.0f}".format(total_month_fee) }} 元 | 各团队实际使用费用汇总 |
+| 人均月费用（资源包） | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 含 {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率后约 {{ "%.0f"|format(month_fee_per * WAVE_FACTOR) }} 元 |
+| 年预算（资源包） | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 月费用 × 12 × {{ WAVE_FACTOR }} |
 | 年预算（席位费） | **{{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元** | {{ seat_budget.lowest_seat_vendor }}，{{ seat_budget.lowest_seat_price }}元/席位/月 |
 | **年预算合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
-| 年Token总量 | {{ "{:,.0f}".format(total_year_token_yi) }} 亿 | 按官方刊例价反推，仅作参考 |
 
 ### 3.2 按模型分布
 
 | 主力模型 | 占比 | 年预算(万元) | 说明 |
-|---------|:---:|:----------:|------|
+|:--------|:---:|:----------:|:-----|
 {% for r in results -%}
 | {{ r.model }} | {{ "%.1f"|format(r.pct) }}% | {{ "%.1f"|format(r.yf_wan) }} | {{ r.vendor }} {{ r.tier }}档 |
 {% endfor %}
 | **合计** | **100%** | **{{ "%.1f"|format(total_year_fee_wan) }}** | — |
 
+> DeepSeek 占比 {{ "%.0f"|format(deepseek_fee / total_month_fee * 100) }}%，一家覆盖旗舰+轻量两档，便于打包议价。
+
 ### 3.3 按场景分布
 
 | 场景 | 月费用(元) | 占比 | 说明 |
-|------|:---------:|:---:|------|
+|:-----|:---------:|:---:|:-----|
 {% for s in scenes -%}
 | {{ s.name }} | {{ "{:,.0f}".format(s.fee) }} | {{ "%.1f"|format(s.pct) }}% | 人均{{ "%.0f"|format(s.per_person) }}元/月 |
 {% endfor %}
 | **合计** | **{{ "{:,.0f}".format(total_month_fee) }}** | 100% | — |
 
-## 4. 供应商集中度
+> 基础软件开发（人均 1,200 元/月）和代码生成（人均 278 元/月）是主要消耗场景，合计占比超 90%。
 
-| 供应商 | 年预算(万元) | 占比 | 说明 |
-|--------|:----------:|:---:|------|
-| DeepSeek | {{ "%.1f"|format(deepseek_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(deepseek_fee / total_month_fee * 100) }}% | 旗舰+轻量两档 |
-| 智谱 | {{ "%.1f"|format(glm_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(glm_fee / total_month_fee * 100) }}% | GLM-5.2 |
-| 其他 | {{ "%.1f"|format(other_fee * 12 * WAVE_FACTOR / 10000) }} | {{ "%.1f"|format(other_fee / total_month_fee * 100) }}% | Codex+Gemini+Doubao |
+## 4. 采购建议
 
-> DeepSeek 占比 {{ "%.0f"|format(deepseek_fee / total_month_fee * 100) }}%，一家覆盖旗舰+轻量两档，便于打包议价。
-
-## 5. 采购建议
-
-### 5.1 资源包采购
+### 4.1 资源包采购
 
 建议**按金额签框架协议，不按 Token 量签**：
 
-1. 主力模型价格随新模型推出会变化
-2. 新模型价格未知，但肯定要用
-3. 各家计价方式不同（credits/积分/AFP），按 Token 量签不可控
+1. 主力模型价格随新模型推出会变化，锁定 Token 量反而被动
+2. 各家计价方式不同（credits/积分/AFP），按 Token 量签不可控
+3. 框架协议可灵活调整模型配比，总量不超出年度上限即可
 
-### 5.2 席位费采购
+### 4.2 席位费采购
 
-席位费按官网最低价框预算，**{{ seat_budget.lowest_seat_vendor }}（{{ seat_budget.lowest_seat_price }} 元/席位/月）** 为最低方案。各供应商方案对比详见《AI平台席位费预算测算说明》。
+席位费按官网最低价框预算，**{{ seat_budget.lowest_seat_vendor }}（{{ seat_budget.lowest_seat_price }} 元/席位/月）** 为最低方案。
 
-> 席位费赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.0f"|format(seat_budget.vendors.qoder_cn.credit_value) }} 元。
+> 席位赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.0f"|format(seat_budget.vendors.qoder_cn.credit_value) }} 元。
 
-## 6. 人均费用特征
+## 5. 详细测算
 
-- 基础软件开发团队：人均 1,200 元/月（三模型并行开发，强度最高）
-- 应用产品团队：人均 48-700 元/月（以代码生成和 PRD 生成为主）
-- 整体人均 {{ "%.0f"|format(month_fee_per) }} 元/月，处于行业 AI 工具人均成本的合理区间
-
-## 7. 详细测算
-
-完整的测算过程、公式推导、假设约束及数据校验，详见《AI平台资源包预算测算说明》。
+完整的测算过程、公式推导、假设约束及数据校验，详见《AI平台资源包预算测算说明》和《AI平台席位费预算测算说明》。

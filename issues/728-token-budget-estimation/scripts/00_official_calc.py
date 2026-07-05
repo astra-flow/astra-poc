@@ -106,7 +106,7 @@ def main():
     print(f'  调研月费用: {data["total_month_fee"]:,.0f} 元')
     print(f'  全公司人数: {data["PERSONS"]} 人')
     print(f'  人均月费用: {data["month_fee_per"]:.0f} 元/人/月')
-    print(f'  波动系数: {data["WAVE_FACTOR"]}')
+    print(f'  业务增长率: {data["WAVE_FACTOR"]}')
     print(f'  年预算: {data["total_year_fee_wan"]:.1f} 万元')
     print(f'  人均月Token: {data["month_token_per_M"]:.0f} 百万 = '
           f'{data["month_token_per_yi"]:.2f} 亿/人/月')

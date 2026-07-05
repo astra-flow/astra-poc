@@ -70,27 +70,80 @@ MODEL_MAP = {
 }
 
 
+def _is_summary_row(ws, row, key_col):
+    """判断是否为合计行：首列（A列）为空，且该行有数据（人数/费用列有值）"""
+    a_val = ws.cell(row=row, column=1).value
+    key_val = ws.cell(row=row, column=key_col).value
+    # 合计行特征：A列和关键字段都为空，但其他列有值
+    if a_val is not None:
+        return False
+    if key_val is not None:
+        return False
+    # 确认该行确实有数据（不是空行）
+    for c in range(2, ws.max_column + 1):
+        if ws.cell(row=row, column=c).value is not None:
+            return True
+    return False
+
+
 def calc_persons():
-    """从调研表合计行计算总人数（各场景人数求和）"""
+    """从调研表数据行计算总人数（各场景人数求和），并与合计行对比校验"""
     wb = openpyxl.load_workbook(SURVEY_XLSX, data_only=True)
     ws1 = wb['应用产品']
     ws2 = wb['基础软件']
     ws3 = wb['其他业务']
 
-    last_row = ws1.max_row
-    p1 = float(ws1.cell(row=last_row, column=12).value or 0)
-    p2 = float(ws1.cell(row=last_row, column=19).value or 0)
-    p3 = float(ws1.cell(row=last_row, column=26).value or 0)
-    p4 = float(ws1.cell(row=last_row, column=33).value or 0)
-    app_persons = p1 + p2 + p3 + p4
+    # 应用产品：从数据行累加各场景人数（跳过合计行）
+    app_persons = 0
+    summary_persons = {'p1': 0, 'p2': 0, 'p3': 0, 'p4': 0}
+    for r in range(3, ws1.max_row + 1):
+        if _is_summary_row(ws1, r, 2):  # 合计行：产品列为空
+            # 记录合计行值用于校验
+            summary_persons['p1'] = float(ws1.cell(row=r, column=12).value or 0)
+            summary_persons['p2'] = float(ws1.cell(row=r, column=19).value or 0)
+            summary_persons['p3'] = float(ws1.cell(row=r, column=26).value or 0)
+            summary_persons['p4'] = float(ws1.cell(row=r, column=33).value or 0)
+            continue
+        p1 = float(ws1.cell(row=r, column=12).value or 0)
+        p2 = float(ws1.cell(row=r, column=19).value or 0)
+        p3 = float(ws1.cell(row=r, column=26).value or 0)
+        p4 = float(ws1.cell(row=r, column=33).value or 0)
+        summary_persons['p1'] -= p1
+        summary_persons['p2'] -= p2
+        summary_persons['p3'] -= p3
+        summary_persons['p4'] -= p4
+        app_persons += p1 + p2 + p3 + p4
 
-    last_row2 = ws2.max_row
-    base_persons = float(ws2.cell(row=last_row2, column=6).value or 0)
+    # 基础软件
+    base_persons = 0
+    base_summary = 0
+    for r in range(3, ws2.max_row + 1):
+        if _is_summary_row(ws2, r, 1):  # 合计行：模块列为空
+            base_summary = float(ws2.cell(row=r, column=6).value or 0)
+            continue
+        base_persons += float(ws2.cell(row=r, column=6).value or 0)
 
-    last_row3 = ws3.max_row
-    other_persons = float(ws3.cell(row=last_row3, column=2).value or 0)
+    # 其他业务
+    other_persons = 0
+    other_summary = 0
+    for r in range(2, ws3.max_row + 1):
+        if _is_summary_row(ws3, r, 1):  # 合计行：团队列为空
+            other_summary = float(ws3.cell(row=r, column=2).value or 0)
+            continue
+        other_persons += float(ws3.cell(row=r, column=2).value or 0)
 
-    return int(app_persons + base_persons + other_persons)
+    # 校验：数据行累加值应与合计行一致
+    total = int(app_persons + base_persons + other_persons)
+    summary_total = int(sum(summary_persons.values()) + base_summary + other_summary)
+    if total != summary_total:
+        print(f'⚠ 人数校验不一致: 数据行累加={total}, 合计行={summary_total}')
+        print(f'  应用产品: 累加={app_persons}, 合计={sum(summary_persons.values())}')
+        print(f'  基础软件: 累加={base_persons}, 合计={base_summary}')
+        print(f'  其他业务: 累加={other_persons}, 合计={other_summary}')
+    else:
+        print(f'✓ 人数校验通过: 数据行累加={total} == 合计行={summary_total}')
+
+    return total
 
 
 def get_survey_meta():
@@ -100,10 +153,12 @@ def get_survey_meta():
     ws2 = wb['基础软件']
     ws3 = wb['其他业务']
     
-    # 应用产品线
+    # 应用产品线（跳过合计行）
     product_lines = set()
     app_records = 0
     for r in range(3, ws1.max_row + 1):
+        if _is_summary_row(ws1, r, 2):
+            continue
         product = ws1.cell(row=r, column=2).value
         if product:
             product_lines.add(str(product).strip())
@@ -112,10 +167,12 @@ def get_survey_meta():
             if ws1.cell(row=r, column=c).value:
                 app_records += 1
     
-    # 基础软件模块（每个模块有开发+日志分析2个场景）
+    # 基础软件模块（跳过合计行，每个模块有开发+日志分析2个场景）
     base_modules = set()
     base_records = 0
     for r in range(3, ws2.max_row + 1):
+        if _is_summary_row(ws2, r, 1):
+            continue
         module = ws2.cell(row=r, column=1).value
         if module:
             base_modules.add(str(module).strip())
@@ -124,19 +181,28 @@ def get_survey_meta():
     # 场景列表
     scenes = ['PRD生成', '架构图生成', '代码生成', '测试脚本', '基础软件开发', '日志分析', '其他业务']
     
-    # 覆盖人数（调研表实际覆盖，各场景合计行求和，与 calc_persons 一致）
-    last = ws1.max_row
-    p1 = float(ws1.cell(row=last, column=12).value or 0)
-    p2 = float(ws1.cell(row=last, column=19).value or 0)
-    p3 = float(ws1.cell(row=last, column=26).value or 0)
-    p4 = float(ws1.cell(row=last, column=33).value or 0)
-    app_p = p1 + p2 + p3 + p4
+    # 覆盖人数（从数据行累加，与 calc_persons 一致）
+    app_p = 0
+    for r in range(3, ws1.max_row + 1):
+        if _is_summary_row(ws1, r, 2):
+            continue
+        p1 = float(ws1.cell(row=r, column=12).value or 0)
+        p2 = float(ws1.cell(row=r, column=19).value or 0)
+        p3 = float(ws1.cell(row=r, column=26).value or 0)
+        p4 = float(ws1.cell(row=r, column=33).value or 0)
+        app_p += p1 + p2 + p3 + p4
     
-    last2 = ws2.max_row
-    base_p = float(ws2.cell(row=last2, column=6).value or 0)
+    base_p = 0
+    for r in range(3, ws2.max_row + 1):
+        if _is_summary_row(ws2, r, 1):
+            continue
+        base_p += float(ws2.cell(row=r, column=6).value or 0)
     
-    last3 = ws3.max_row
-    other_p = float(ws3.cell(row=last3, column=2).value or 0)
+    other_p = 0
+    for r in range(2, ws3.max_row + 1):
+        if _is_summary_row(ws3, r, 1):
+            continue
+        other_p += float(ws3.cell(row=r, column=2).value or 0)
     
     return {
         'product_lines': len(product_lines),

@@ -621,7 +621,9 @@ def get_all_data():
 
     # 人均口径
     month_fee_per = total_month_fee / PERSONS
-    month_token_per_M = sum(r['mt_M'] for r in results) / PERSONS
+    total_month_tokens_M = sum(r['mt_M'] for r in results)
+    overall_wp = total_month_fee / total_month_tokens_M if total_month_tokens_M > 0 else 0
+    month_token_per_M = total_month_tokens_M / PERSONS
     month_token_per_yi = month_token_per_M / MILLION_TO_YI
     year_token_per_yi = total_year_token_yi / PERSONS
     year_fee_per = total_year_fee_wan * 10000 / PERSONS
@@ -673,6 +675,7 @@ def get_all_data():
         'year_token_per_yi': year_token_per_yi,
         'year_fee_per': year_fee_per,
         'WAVE_FACTOR': WAVE_FACTOR,
+        'overall_wp': overall_wp,
         'CACHE_HIT_RATE': CACHE_HIT_RATE,
         'INPUT_OUTPUT_RATIO': INPUT_OUTPUT_RATIO,
         'MILLION_TO_YI': MILLION_TO_YI,

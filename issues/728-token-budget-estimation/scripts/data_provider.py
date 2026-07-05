@@ -124,13 +124,13 @@ def get_survey_meta():
     # 场景列表
     scenes = ['PRD生成', '架构图生成', '代码生成', '测试脚本', '基础软件开发', '日志分析', '其他业务']
     
-    # 覆盖人数（调研表实际覆盖，取各场景合计行最大值）
+    # 覆盖人数（调研表实际覆盖，各场景合计行求和，与 calc_persons 一致）
     last = ws1.max_row
     p1 = float(ws1.cell(row=last, column=12).value or 0)
     p2 = float(ws1.cell(row=last, column=19).value or 0)
     p3 = float(ws1.cell(row=last, column=26).value or 0)
     p4 = float(ws1.cell(row=last, column=33).value or 0)
-    app_p = max(p1, p2, p3, p4)
+    app_p = p1 + p2 + p3 + p4
     
     last2 = ws2.max_row
     base_p = float(ws2.cell(row=last2, column=6).value or 0)

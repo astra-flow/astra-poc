@@ -57,6 +57,28 @@
       "free_token_monthly_m": 50,
       "notes": "免费Token默认优先消耗Agent Plan/Coding Plan套餐内额度"
     },
+    "trae": {
+      "name": "Trae CN（火山引擎）",
+      "type": "AI编程助手（IDE）",
+      "pricing_url": "https://www.volcengine.com/product/trae",
+      "plans": {
+        "team": {
+          "name": "团队版",
+          "price_per_seat_month": 149,
+          "credits_per_seat_month": 0,
+          "min_seats": 1,
+          "notes": "无起购限制，超级代码补全30M Tokens"
+        },
+        "flagship": {
+          "name": "旗舰版",
+          "price_per_seat_month": 259,
+          "credits_per_seat_month": 0,
+          "min_seats": 3,
+          "notes": "3席位起购，代码补全不限量，企业级安全管控"
+        }
+      },
+      "notes": "Trae 是 AI Coding IDE，与 ArkClaw（数字员工平台）独立计费"
+    },
     "workbuddy": {
       "name": "WorkBuddy（腾讯）",
       "type": "AI编程助手",
@@ -82,8 +104,10 @@
     },
     "all_plans_ranked": [
       {"vendor": "qoder_cn", "plan": "teams", "price": 99, "credits": 3000},
+      {"vendor": "trae", "plan": "team", "price": 149, "credits": 0},
       {"vendor": "qoder_cn", "plan": "vpc", "price": 199, "credits": 3000},
       {"vendor": "arkclaw", "plan": "standard", "price": 198, "credits": 25000},
+      {"vendor": "trae", "plan": "flagship", "price": 259, "credits": 0},
       {"vendor": "workbuddy", "plan": "enterprise", "price": 316, "credits": 2000},
       {"vendor": "arkclaw", "plan": "advanced", "price": 698, "credits": 100000}
     ]

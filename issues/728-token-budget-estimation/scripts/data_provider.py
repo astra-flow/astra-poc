@@ -33,9 +33,32 @@ def load_prices():
 
 
 def load_seat_prices():
-    """加载席位费 JSON"""
+    """加载席位费 JSON，展平为产品维度（每个产品一个 vendor 条目）"""
     with open(SEAT_PRICES_JSON, 'r', encoding='utf-8') as f:
-        return json.load(f)
+        data = json.load(f)
+    flat = {}
+    for vk, vv in data['vendors'].items():
+        vendor_name = vv['name']
+        for prod in vv['products']:
+            prod_key = f"{vendor_name} {prod['name']}"
+            entry = {
+                'name': f"{vendor_name} {prod['name']}",
+                'vendor_name': vendor_name,
+                'product_name': prod['name'],
+                'type': prod['type'],
+                'plans': prod['plans'],
+                'pricing_url': prod.get('pricing_url', ''),
+            }
+            if prod.get('resource_pack'):
+                entry['resource_pack'] = prod['resource_pack']
+            if prod.get('free_token_monthly_m'):
+                entry['free_token_monthly_m'] = prod['free_token_monthly_m']
+            if prod.get('token_packs'):
+                entry['token_packs'] = prod['token_packs']
+            if prod.get('notes'):
+                entry['notes'] = prod['notes']
+            flat[prod_key] = entry
+    return flat
 
 
 def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=None):
@@ -55,7 +78,7 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
                        未分组的供应商单独列出
     """
     seat_data = load_seat_prices()
-    vendors = seat_data['vendors']
+    vendors = seat_data  # 已展平，直接使用
 
     result = {
         'persons': persons,
@@ -77,11 +100,10 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         non_dev_persons += float(ws2.cell(row=r, column=13).value or 0)  # 日志分析人数
     non_dev_persons = int(non_dev_persons)
 
-    # 各供应商席位人数（默认全部，Trae 扣除非开发）
+    # 各供应商席位人数（默认全部）
     seat_persons = {}
     for key in vendors:
         seat_persons[key] = persons
-    seat_persons['trae'] = persons - non_dev_persons  # Trae 只给开发人员
 
     for key, v in vendors.items():
         plans = v['plans']
@@ -90,11 +112,16 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         if not priced_plans:
             continue
 
+        # 先确定该产品席位人数（用于 VPC 门槛判断）
+        product_name = v.get('product_name', '')
+        if 'Trae' in product_name:
+            sp = persons - non_dev_persons  # Trae 只给开发人员
+        else:
+            sp = persons
+
         # 按策略选方案
         if prefer_vpc:
             vpc_keys = [k for k in priced_plans if 'vpc' in k.lower() or 'vpc' in priced_plans[k].get('notes', '').lower()]
-            # 排除起购门槛超过总人数的 VPC 方案
-            vpc_keys = [k for k in vpc_keys if priced_plans[k].get('min_seats', 1) <= persons]
             if vpc_keys:
                 best_plan_key = min(vpc_keys, key=lambda k: priced_plans[k]['price_per_seat_month'])
             else:
@@ -106,7 +133,6 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         # 使用折后价（如果有）
         effective_price = best.get('discounted_price') or best['price_per_seat_month']
 
-        sp = seat_persons.get(key, persons)
         seat_month = effective_price * sp
         seat_annual = seat_month * 12
 
@@ -124,7 +150,7 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         # 净Token预算 = 原Token预算 - 赠送积分价值
         net_token_budget = token_budget_wan - credit_value / 10000
 
-        # ArkClaw 特殊：每月赠送 50M 免费 Token
+        # 免费 Token（如 ArkClaw 每月赠送 50M）
         free_token_value = 0
         if 'free_token_monthly_m' in v:
             free_token_value = v['free_token_monthly_m'] * sp * 12  # 年Token(M)
@@ -147,6 +173,8 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
 
         result['vendors'][key] = {
             'name': v['name'],
+            'vendor_name': v.get('vendor_name', ''),
+            'product_name': product_name,
             'type': v['type'],
             'plan_name': best['name'],
             'price_per_seat_month': best['price_per_seat_month'],
@@ -621,7 +649,7 @@ def get_all_data():
         {
             'name': '字节系（火山引擎）',
             'type': 'AI编程助手+数字员工平台',
-            'vendors': ['arkclaw', 'trae'],
+            'vendors': ['火山引擎 ArkClaw 企业版', '火山引擎 Trae CN'],
             'persons': PERSONS,
         }
     ]

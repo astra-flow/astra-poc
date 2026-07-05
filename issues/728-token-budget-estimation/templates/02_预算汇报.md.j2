@@ -11,15 +11,15 @@ status: 评审中
 
 ## 1. 预算整体情况
 
-> 基于内部调研数据，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度预算合计约 {{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元**，含以下两项采购：
+> 基于内部调研数据，按实际使用费用 × 官方刊例价测算，**{{ PERSONS }} 人年度预算合计约 {{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.qoder_cn.seat_annual / 10000) }} 万元**，含以下两项采购：
 
 | 采购项 | 年预算 | 说明 |
 |:------|:------|:-----|
 | Token 资源包 | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 覆盖 6 个 AI 应用场景的模型调用费用 |
-| 席位费 | **{{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元** | AI 编程助手及数字员工平台企业版席位 |
-| **合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** | — |
+| 席位费 | **{{ "%.1f"|format(seat_budget.bundles.qoder_cn.seat_annual / 10000) }} 万元** | AI 编程助手及数字员工平台企业版席位（最低价方案） |
+| **合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.qoder_cn.seat_annual / 10000) }} 万元** | — |
 
-> 席位费按官网最低价框算，{{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月。
+> 席位费按"全家桶"口径对比（AI 编程 + 数字员工一体），最低为 **Qoder CN 全家桶（阿里）199 元/席位/月**（含 VPC）。
 
 ## 2. 预算方法说明
 
@@ -41,10 +41,11 @@ status: 评审中
 
 | 步骤 | 说明 |
 |:----|:-----|
-| ① 确定覆盖人数 | 与资源包预算一致，{{ PERSONS }} 人（Trae 排除日志分析场景，覆盖 {{ seat_budget.vendors.trae.seat_persons }} 人） |
-| ② 官网比价取最低价 | 四家供应商中最低为 {{ seat_budget.lowest_seat_vendor }} {{ seat_budget.lowest_seat_price }} 元/席位/月 |
+| ① 确定覆盖人数 | 与资源包预算一致，{{ PERSONS }} 人 |
+| ② 全家桶口径比价 | 三家"全家桶"方案（AI 编程 + 数字员工一体）中最低为 **Qoder CN 全家桶 199 元/席位/月**（含 VPC） |
 | ③ 赠送积分可折现 | 席位赠送的 Credits 按厂商资源包单价折为等值金额，从 Token 预算中扣减 |
 
+> **全家桶口径说明**：Qoder CN 和 WorkBuddy 为一体化方案（AI 编程 + 数字员工），字节系需 **Trae（AI 编程）+ ArkClaw（数字员工）** 两个产品合并才能对标，合并后加权单价约 {{ "%.0f"|format(seat_budget.bundles.byte.price_per_seat_month) }} 元/席位/月。
 > 各供应商方案对比详见《AI平台席位费预算测算说明》。
 
 ## 3. 核心数据
@@ -57,8 +58,8 @@ status: 评审中
 | 月总费用（资源包） | {{ "{:,.0f}".format(total_month_fee) }} 元 | 各团队实际使用费用汇总 |
 | 人均月费用（资源包） | **{{ "%.0f"|format(month_fee_per) }} 元/人/月** | 含 {{ "%.0f"|format((WAVE_FACTOR - 1) * 100) }}% 业务增长率后约 {{ "%.0f"|format(month_fee_per * WAVE_FACTOR) }} 元 |
 | 年预算（资源包） | **{{ "%.1f"|format(total_year_fee_wan) }} 万元** | 月费用 × 12 × {{ WAVE_FACTOR }} |
-| 年预算（席位费） | **{{ "%.1f"|format(seat_budget.lowest_seat_annual / 10000) }} 万元** | {{ seat_budget.lowest_seat_vendor }}，{{ seat_budget.lowest_seat_price }}元/席位/月 |
-| **年预算合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.lowest_seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
+| 年预算（席位费） | **{{ "%.1f"|format(seat_budget.bundles.qoder_cn.seat_annual / 10000) }} 万元** | Qoder CN 全家桶 VPC 版（最低价方案） |
+| **年预算合计** | **{{ "%.1f"|format(total_year_fee_wan + seat_budget.bundles.qoder_cn.seat_annual / 10000) }} 万元** | 资源包 + 席位费 |
 
 ### 3.2 按模型分布
 
@@ -94,8 +95,15 @@ status: 评审中
 
 ### 4.2 席位费采购
 
-席位费按官网最低价框预算，**{{ seat_budget.lowest_seat_vendor }}（{{ seat_budget.lowest_seat_price }} 元/席位/月）** 为最低方案。
+按"全家桶"口径对比（AI 编程 + 数字员工一体），**Qoder CN 全家桶（阿里）VPC 版（199 元/席位/月）** 为最低方案。
 
+| 全家桶方案 | 组成 | 年席位费 | 席位单价 |
+|:----------|:-----|:--------:|:--------:|
+| **Qoder CN 全家桶（阿里）** | 一体化方案 | {{ "%.0f"|format(seat_budget.bundles.qoder_cn.seat_annual) }} 元 | **199 元/月** |
+| 字节系全家桶（火山引擎） | Trae + ArkClaw | {{ "%.0f"|format(seat_budget.bundles.byte.seat_annual) }} 元 | {{ "%.0f"|format(seat_budget.bundles.byte.price_per_seat_month) }} 元/月 |
+| WorkBuddy 全家桶（腾讯） | 一体化方案 | {{ "%.0f"|format(seat_budget.bundles.workbuddy.seat_annual) }} 元 | 316 元/月 |
+
+> 字节系需 Trae（AI 编程）+ ArkClaw（数字员工）两个产品合并才能对标 Qoder CN 和 WorkBuddy 的一体化方案。
 > 席位赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.0f"|format(seat_budget.vendors.qoder_cn.credit_value) }} 元。
 
 ## 5. 详细测算

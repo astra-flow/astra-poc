@@ -143,6 +143,16 @@ def main():
             print(f'    {gname:<22}{g["seat_annual"]:>10,.0f}元{g["credit_value"]:>10,.0f}元'
                   f'{g["net_token_budget"]:>10.1f}万{g["total_annual"]:>10,.0f}元')
     print()
+    # 全家桶对比（AI Coding + 数字员工一体）
+    if sb.get('bundles'):
+        print(f'    {"全家桶对比（AI编程+数字员工）":<30}{"年席位费":>12}{"席位单价":>10}')
+        print('    ' + '-' * 55)
+        for bk, b in sb['bundles'].items():
+            pp = f'{b["price_per_seat_month"]}元/月' if b.get('price_per_seat_month') else '—'
+            print(f'    {b["name"]:<30}{b["seat_annual"]:>10,.0f}元{pp:>10}')
+            for sv in b.get('sub_vendors', []):
+                print(f'      ├ {sv["name"]:<28}{sv["seat_annual"]:>10,.0f}元')
+    print()
     print(f'    注：Trae 仅覆盖开发人员（排除日志分析场景 127 人），席位={sb["vendors"]["trae"]["seat_persons"]}人')
     print(f'    注：净Token预算 = 原Token预算({sb["token_budget_wan"]:.1f}万) - 赠送积分折现')
     print(f'    注：ArkClaw每月赠送50M免费Token，未折算为金额')

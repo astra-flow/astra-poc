@@ -196,6 +196,50 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
                     combined['sub_vendors'].append(sv)
             result['groups'][gname] = combined
 
+    # 全家桶对比（AI Coding + 数字员工一体）
+    bundles = {}
+    # Qoder CN 全家桶：QoderWork CN（数字员工）已含在 Qoder CN 套件中
+    if 'qoder_cn' in result['vendors']:
+        q = result['vendors']['qoder_cn']
+        bundles['qoder_cn'] = {
+            'name': 'Qoder CN 全家桶（阿里）',
+            'type': 'AI编程+数字员工',
+            'seat_annual': q['seat_annual'],
+            'price_per_seat_month': q['price_per_seat_month'],
+            'credits_monthly': q['credits_monthly'],
+            'credit_value': q['credit_value'],
+            'total_annual': q['total_annual'],
+            'sub_vendors': [q],
+        }
+    # WorkBuddy 全家桶：含 AI Coding + 数字员工
+    if 'workbuddy' in result['vendors']:
+        w = result['vendors']['workbuddy']
+        bundles['workbuddy'] = {
+            'name': 'WorkBuddy 全家桶（腾讯）',
+            'type': 'AI编程+数字员工',
+            'seat_annual': w['seat_annual'],
+            'price_per_seat_month': w['price_per_seat_month'],
+            'credits_monthly': w['credits_monthly'],
+            'credit_value': w['credit_value'],
+            'total_annual': w['total_annual'],
+            'sub_vendors': [w],
+        }
+    # 字节系全家桶：Trae（AI Coding）+ ArkClaw（数字员工）
+    if '字节系（火山引擎）' in result.get('groups', {}):
+        g = result['groups']['字节系（火山引擎）']
+        avg_price = g['seat_annual'] / 12 / persons if persons > 0 else 0
+        bundles['byte'] = {
+            'name': '字节系全家桶（火山引擎）',
+            'type': 'AI编程+数字员工',
+            'seat_annual': g['seat_annual'],
+            'price_per_seat_month': round(avg_price, 2),
+            'credits_monthly': g['credits_monthly'],
+            'credit_value': g['credit_value'],
+            'total_annual': g['total_annual'],
+            'sub_vendors': g['sub_vendors'],
+        }
+    result['bundles'] = bundles
+
     # 找最低席位费（仅比较有价格的方案）
     priced_vendors = {k: v for k, v in result['vendors'].items() if v['price_per_seat_month'] is not None}
     if priced_vendors:

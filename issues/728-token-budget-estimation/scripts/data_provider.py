@@ -59,9 +59,12 @@ def calc_seat_budget(persons, token_budget_wan):
 
     for key, v in vendors.items():
         plans = v['plans']
-        # 取该供应商最低价方案
-        best_plan_key = min(plans.keys(), key=lambda k: plans[k]['price_per_seat_month'])
-        best = plans[best_plan_key]
+        # 取该供应商最低价方案（跳过价格为 null 的私有版/VPC版）
+        priced_plans = {k: p for k, p in plans.items() if p.get('price_per_seat_month') is not None}
+        if not priced_plans:
+            continue
+        best_plan_key = min(priced_plans.keys(), key=lambda k: priced_plans[k]['price_per_seat_month'])
+        best = priced_plans[best_plan_key]
 
         seat_month = best['price_per_seat_month'] * persons
         seat_annual = seat_month * 12
@@ -75,7 +78,6 @@ def calc_seat_budget(persons, token_budget_wan):
         if rp:
             credit_value = credits_annual * rp['credit_unit_price']
         else:
-            # ArkClaw 没有资源包定价，用免费Token折算
             credit_value = 0
 
         # 净Token预算 = 原Token预算 - 赠送积分价值
@@ -85,6 +87,20 @@ def calc_seat_budget(persons, token_budget_wan):
         free_token_value = 0
         if 'free_token_monthly_m' in v:
             free_token_value = v['free_token_monthly_m'] * persons * 12  # 年Token(M)
+
+        # 所有方案明细（含VPC/私有版）
+        all_plans = []
+        for pk, plan in plans.items():
+            pp = plan.get('price_per_seat_month')
+            all_plans.append({
+                'name': plan['name'],
+                'price_per_seat_month': pp,
+                'credits_per_seat_month': plan.get('credits_per_seat_month', 0),
+                'min_seats': plan.get('min_seats', 1),
+                'notes': plan.get('notes', ''),
+                'is_priced': pp is not None,
+                'seat_annual': pp * persons * 12 if pp is not None else None,
+            })
 
         result['vendors'][key] = {
             'name': v['name'],
@@ -104,6 +120,7 @@ def calc_seat_budget(persons, token_budget_wan):
             'net_token_budget': net_token_budget,
             'total_annual': seat_annual + token_budget_wan * 10000,
             'notes': best.get('notes', ''),
+            'all_plans': all_plans,
         }
 
     # 找最低席位费

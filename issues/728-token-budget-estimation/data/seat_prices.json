@@ -40,18 +40,25 @@
       "pricing_url": "https://www.volcengine.com/article/7318996461085696037",
       "plans": {
         "standard": {
-          "name": "标准坐席",
+          "name": "标准坐席（SaaS）",
           "price_per_seat_month": 198,
           "credits_per_seat_month": 25000,
           "min_seats": 1,
           "notes": "每5小时1,200次请求，每月赠送50M免费Token"
         },
         "advanced": {
-          "name": "高级坐席",
+          "name": "高级坐席（SaaS）",
           "price_per_seat_month": 698,
           "credits_per_seat_month": 100000,
           "min_seats": 1,
           "notes": "每5小时6,000次请求，每月赠送50M免费Token"
+        },
+        "dedicated": {
+          "name": "专属版（VPC/私有部署）",
+          "price_per_seat_month": null,
+          "credits_per_seat_month": null,
+          "min_seats": null,
+          "notes": "支持专属VPC部署、私有化部署，价格需联系火山引擎商务获取"
         }
       },
       "free_token_monthly_m": 50,
@@ -85,11 +92,25 @@
       "pricing_url": "https://cloud.tencent.com/document/product/1749/105816",
       "plans": {
         "enterprise": {
-          "name": "企业版",
+          "name": "企业版（SaaS）",
           "price_per_seat_month": 316,
           "credits_per_seat_month": 2000,
           "min_seats": 100,
           "notes": "100坐席起购，Credits团队内共享，对话问答不限频"
+        },
+        "vpc": {
+          "name": "企业专享版（VPC）",
+          "price_per_seat_month": 316,
+          "credits_per_seat_month": 2000,
+          "min_seats": 100,
+          "notes": "100坐席起购，VPC专享部署、专属网络访问"
+        },
+        "private": {
+          "name": "企业私有化版",
+          "price_per_seat_month": null,
+          "credits_per_seat_month": null,
+          "min_seats": null,
+          "notes": "完全私有化部署、定制化开发，价格需联系腾讯云商务获取"
         }
       },
       "notes": "2026年5月15日起执行新计费方案，企业版由158元调整为316元"
@@ -103,13 +124,16 @@
       "annual_per_seat": 1188
     },
     "all_plans_ranked": [
-      {"vendor": "qoder_cn", "plan": "teams", "price": 99, "credits": 3000},
-      {"vendor": "trae", "plan": "team", "price": 149, "credits": 0},
-      {"vendor": "qoder_cn", "plan": "vpc", "price": 199, "credits": 3000},
-      {"vendor": "arkclaw", "plan": "standard", "price": 198, "credits": 25000},
-      {"vendor": "trae", "plan": "flagship", "price": 259, "credits": 0},
-      {"vendor": "workbuddy", "plan": "enterprise", "price": 316, "credits": 2000},
-      {"vendor": "arkclaw", "plan": "advanced", "price": 698, "credits": 100000}
+      {"vendor": "qoder_cn", "plan": "teams", "price": 99, "credits": 3000, "type": "SaaS"},
+      {"vendor": "trae", "plan": "team", "price": 149, "credits": 0, "type": "SaaS"},
+      {"vendor": "arkclaw", "plan": "standard", "price": 198, "credits": 25000, "type": "SaaS"},
+      {"vendor": "qoder_cn", "plan": "vpc", "price": 199, "credits": 3000, "type": "VPC"},
+      {"vendor": "trae", "plan": "flagship", "price": 259, "credits": 0, "type": "SaaS"},
+      {"vendor": "workbuddy", "plan": "enterprise", "price": 316, "credits": 2000, "type": "SaaS"},
+      {"vendor": "workbuddy", "plan": "vpc", "price": 316, "credits": 2000, "type": "VPC"},
+      {"vendor": "arkclaw", "plan": "advanced", "price": 698, "credits": 100000, "type": "SaaS"},
+      {"vendor": "arkclaw", "plan": "dedicated", "price": null, "credits": null, "type": "VPC/私有"},
+      {"vendor": "workbuddy", "plan": "private", "price": null, "credits": null, "type": "私有化"}
     ]
   }
 }

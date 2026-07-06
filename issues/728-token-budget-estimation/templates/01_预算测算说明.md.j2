@@ -54,6 +54,20 @@ $$
 
 Token 量仅作为规模参考，用于采购申请填写和供应商询价。反推方法：用各模型的官方刊例价计算加权单价，再用费用 ÷ 单价得到 Token 量。
 
+**加权单价计算公式：**
+
+$$
+P_{加权} = \frac{(P_{命中} \times {{ CACHE_HIT_RATE }} + P_{未命中} \times {{ 1 - CACHE_HIT_RATE }}) \times {{ INPUT_OUTPUT_RATIO[0] }} + P_{输出} \times {{ INPUT_OUTPUT_RATIO[1] }}}{4}
+$$
+
+> 其中输入:输出 = {{ INPUT_OUTPUT_RATIO[0] }}:{{ INPUT_OUTPUT_RATIO[1] }}，缓存命中率 = {{ CACHE_HIT_RATE * 100 }}%。参考 DeepSeek 官方推荐的代码生成场景典型值取中值设定。
+
+**Token 量反推公式：**
+
+$$
+Q_{年}(\text{百万}) = \frac{F_{月} \times 12}{P_{加权}}
+$$
+
 **官方刊例价：**
 
 | 模型族 | 厂商 | 输入(缓存命中) | 输入(缓存未命中) | 输出 | 加权单价 |

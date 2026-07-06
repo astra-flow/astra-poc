@@ -13,20 +13,27 @@ status: 评审中
 
 本文档为 AI 编程助手及数字员工平台企业版席位费采购的费用测算附件，说明席位费预算的测算依据、供应商比价逻辑，确保预算可追溯、可审计、逻辑自洽。
 
-## 2. 对比结论
+## 2. 假设与约束
+
+1. **优先采购 VPC 版**：基于数据安全考虑，优先采购支持 VPC（虚拟私有云）部署的企业版，实现数据与其他租户的逻辑/物理隔离。各厂商 VPC 方案情况如下：ArkClaw 标准版内置 VPC 逻辑隔离；WorkBuddy 企业专享版同价含 VPC；Qoder CN VPC 版需加价 100 元/月（199 元 vs 标准版 99 元）。
+2. **席位费与 Token 资源包独立采购**：各厂商均提供席位费与 Token 资源包的独立采购方案，席位费仅覆盖 AI 编程助手及数字员工平台企业版的使用权限，不包含模型调用额度。Token 资源包采购另行测算。
+3. **按全家桶口径比价**：各厂商均提供 AI 编程助手及数字员工平台两类产品，部分厂商提供一体化全家桶方案（如 Qoder CN），部分厂商为两款独立产品（如火山引擎的 Trae + ArkClaw）。为便于横向比价，本次测算按全家桶口径（AI 编程 + 数字员工一体）进行预算测算，确保各厂商报价可比。
+4. **按实际使用人数测算**：各厂商席位费按实际使用人数测算，按官网公开定价框算预算上限，实际采购可通过商务谈判获得折扣。d
+
+## 3. 对比结论
 
 按 {{ seat_budget.persons }} 人测算，各供应商报价及对比结论如下：
 
-### 2.1 按产品类型分类
+### 3.1 按产品类型分类
 
 | 类型 | 产品 | 最低单价 | 说明 |
 |:-----|------|:--------:|------|
 | AI 编程助手 | Qoder CN / Trae / WorkBuddy | **Qoder CN 企业标准版 99 元/月/席** | Qoder CN 最低；Trae SaaS 企业旗舰版 259 元/月/席 |
 | 数字员工平台 | ArkClaw 企业版 / QoderWork CN | **ArkClaw 标准坐席 198 元/月/席** | QoderWork CN 含在 Qoder CN 一体化方案内 |
 
-> **注意**：火山引擎的 ArkClaw（数字员工）和 Trae（AI 编程）为两款独立产品，非融合计费，不可简单叠加为"火山最低价"。AI 编程与数字员工如需同一厂商提供，请参考 2.2 全家桶口径。
+> **说明**：火山引擎的 ArkClaw（数字员工）和 Trae（AI 编程）为两款独立产品，非融合计费。AI 编程与数字员工同一厂商整体价格对比，请参考 3.2 全家桶口径。
 
-### 2.2 全家桶口径（AI 编程 + 数字员工一体）
+### 3.2 全家桶口径（AI 编程 + 数字员工一体）
 
 | 方案 | 组成 | 年席位费 | 加权单价 |
 |:-----|:-----|:--------:|:--------:|
@@ -34,34 +41,17 @@ status: 评审中
 | 字节系组合（火山） | Trae（AI 编程）+ ArkClaw（数字员工） | {{ "%.2f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/月/席 |
 | WorkBuddy（腾讯） | AI 编程 + 数字员工一体化 | {{ "%.2f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/月/席 |
 
+> 说明：
 > **全家桶最低价**：Qoder CN 全家桶 VPC 版 **199 元/月/席**（含 VPC），详见《AI平台预算汇报》。
+> **Trae 仅覆盖开发人员**：Trae 为 IDE 插件型 AI 编程助手，仅覆盖 {{ seat_budget.vendors["火山引擎 Trae CN"].seat_persons }} 名开发人员（需排除非开发场景 {{ seat_budget.persons - seat_budget.vendors["火山引擎 Trae CN"].seat_persons }} 人）。
 
-### 2.3 预算金额
+### 3.3 预算金额
 
 | 采购项 | 预算金额 |
 |--------|:--------:|
 | 席位费（全家桶最低价方案） | **{{ "{:,.2f}".format(seat_budget.bundles.aliyun.seat_annual) }} 元** |
 
 > 以上为按官网公开定价框算的预算上限，实际采购可通过商务谈判获得折扣。
-
-## 3. 供应商方案一览
-
-### 3.1 全部方案
-
-| 供应商 | 方案 | 席位单价 | 起购 | 备注 |
-|--------|------|:--------:|:----:|------|
-{% for k, v in seat_budget.vendors.items() -%}
-{% for p in v.all_plans -%}
-| {{ v.name }} | {{ p.name }} | {% if p.is_priced %}{{ p.price_per_seat_month }}元/月{% else %}需询价{% endif %} | {% if p.min_seats %}{{ p.min_seats }}席{% else %}—{% endif %} | {{ p.notes }} |
-{% endfor -%}
-{% endfor %}
-
-## 4. 假设与约束
-
-1. **VPC/私有化方案需询价**：ArkClaw 标准版内置 VPC 逻辑隔离；WorkBuddy 企业专享版同价含 VPC；Qoder CN VPC 版需加价 100 元/月（199 元 vs 标准版 99 元）。
-2. **席位费与 Token 资源包独立采购**：两者为不同采购标的，可分别与不同供应商签约。
-3. **赠送免费 Token**：ArkClaw 每月赠送 50M 免费 Token，未折算为金额，可在 Token 资源包采购时统一处理。
-4. **Trae 仅覆盖开发人员**：Trae 为 IDE 插件型 AI 编程助手，仅覆盖 {{ seat_budget.vendors["火山引擎 Trae CN"].seat_persons }} 名开发人员（排除日志分析等非开发场景 {{ seat_budget.persons - seat_budget.vendors["火山引擎 Trae CN"].seat_persons }} 人）。
 
 ## 附录：数据来源
 
@@ -98,3 +88,4 @@ status: 评审中
 | 2 | ArkClaw 企业版计费说明 | <https://www.volcengine.com/docs/87732/2272732> |
 | 3 | Trae CN 企业版 | <https://www.volcengine.com/product/trae> |
 | 4 | WorkBuddy 定价 | <https://www.codebuddy.cn/docs/workbuddy/Pricing> |
+

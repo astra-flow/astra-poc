@@ -628,6 +628,13 @@ def get_all_data():
     year_token_per_yi = total_year_token_yi / PERSONS
     year_fee_per = total_year_fee_wan * 10000 / PERSONS
 
+    # ===== 取整统一口径 =====
+    # 年 Token 需求量取整到千（百万单位），避免零头
+    # 综合加权单价取整到分，重算年度预算，确保三数对应
+    rnd_year_token_M = (total_year_token_yi * 100 // 1000) * 1000  # 取整到千（百万）
+    rnd_overall_wp = 1.89  # 元/百万 Token（取整到分）
+    rnd_year_fee_yuan = int(rnd_year_token_M * rnd_overall_wp)  # 取整预算
+
     # 供应商集中度
     deepseek_fee = sum(r['fee'] for r in results if 'DeepSeek' in r['model'])
     glm_fee = sum(r['fee'] for r in results if 'GLM' in r['model'])
@@ -666,8 +673,10 @@ def get_all_data():
         'scenes': scenes,
         'total_month_fee': total_month_fee,
         'total_year_fee_wan': total_year_fee_wan,
-        'total_year_fee_yuan': total_year_fee_yuan,
+        'total_year_fee_yuan': rnd_year_fee_yuan,  # 取整后的年度预算（元）
         'total_year_token_yi': total_year_token_yi,
+        'rnd_year_token_M': rnd_year_token_M,  # 取整后的年 Token 量（百万）
+        'rnd_overall_wp': rnd_overall_wp,  # 取整后的综合加权单价（元/百万 Token）
         'PERSONS': PERSONS,
         'month_fee_per': month_fee_per,
         'month_token_per_M': month_token_per_M,

@@ -632,7 +632,7 @@ def get_all_data():
     # 年 Token 需求量取整到千（百万单位），避免零头
     # 综合加权单价取整到分，重算年度预算，确保三数对应
     rnd_year_token_M = (total_year_token_yi * 100 // 1000) * 1000  # 取整到千（百万）
-    rnd_overall_wp = 1.89  # 元/百万 Token（取整到分）
+    rnd_overall_wp = round(total_year_fee_yuan / rnd_year_token_M, 2)  # 元/百万 Token（取整到分）
     rnd_year_fee_yuan = int(rnd_year_token_M * rnd_overall_wp)  # 取整预算
 
     # 供应商集中度

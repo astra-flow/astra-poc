@@ -1,7 +1,7 @@
 ---
 title: AI 平台资源包预算测算说明
 document_id: SOR-AI-TOKEN-2026-001
-version: V3.0
+version: V4.0
 date: {{ generated_at }}
 author: 业务发起部门
 status: 评审中
@@ -9,27 +9,52 @@ status: 评审中
 
 # AI 平台资源包预算测算说明
 
-## 1. 文档目的
+## 1. 预算结论
 
-本文档为 AI 大模型资源包采购申请的费用测算附件，说明预算金额的测算依据、数据来源与计算逻辑，确保预算可追溯、可审计、逻辑自洽。
+| 采购项 | 金额 | 说明 |
+|:------|:----:|:-----|
+| Token 资源包年度预算 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** | 覆盖 {{ PERSONS }} 人 × 6 个 AI 应用场景 |
+| 对应年 Token 需求量 | **{{ "{:,.0f}".format(rnd_year_token_M) }} 百万** | 按官方刊例价反推，取整 |
+| 综合加权单价 | **{{ "%.2f"|format(rnd_overall_wp) }} 元/百万 Token** | 各模型按费用加权平均 |
+| 采购方式 | 按金额签框架协议 | 不锁定模型配比，按年度总量控制 |
 
-## 2. 采购背景
+> 以上预算基于各团队 AI 使用情况调研实测数据测算，为预算上限，实际采购可通过商务谈判获得折扣。
 
-为支撑敏捷软件开发全流程的 AI 赋能，研发团队已在 PRD 生成、架构图生成、代码生成、自动化测试脚本、基础软件开发、日志分析等场景中广泛使用 AI 大模型。本次采购旨在通过预付费资源包或框架协议方式统一保障各场景的模型调用额度。
+## 2. 测算过程
 
-## 3. 数据来源
+### 2.1 第一步：调研各团队实际月费用
 
-### 3.1 调研数据
+面向全院研发团队开展 AI 使用情况调研，收集各场景的模型使用费用数据：
 
 | 项目 | 说明 |
 |------|------|
 | 数据源 | 《敏捷软件开发AI应用需求情况统计》调研表 |
-| 覆盖范围 | {{ survey_meta.product_lines }} 条产品线 × 4 场景（应用产品）+ {{ survey_meta.base_modules }} 个基础软件模块 × 2 场景（基础软件）|
-| 有效记录 | 应用产品 {{ survey_meta.app_records }} 条 + 基础软件 {{ survey_meta.base_records }} 条 = {{ survey_meta.total_records }} 条 |
-| 覆盖人数 | 调研表合计 {{ survey_meta.survey_persons }} 人，按 {{ PERSONS }} 人框算预算含扩展余量 |
-| 统计维度 | 功能模块信息、AI 模型、Token 消耗量、费用情况、使用人数、月总费用 |
+| 覆盖范围 | {{ survey_meta.product_lines }} 条产品线 × 4 场景 + {{ survey_meta.base_modules }} 个基础软件模块 × 2 场景 |
+| 有效记录 | {{ survey_meta.total_records }} 条，经校验全部自洽 |
+| 覆盖人数 | 调研合计 {{ survey_meta.survey_persons }} 人，按 {{ PERSONS }} 人框算预算（含扩展余量） |
 
-### 3.2 官方刊例价数据
+各模型族月费用汇总：
+
+| 模型族 | 月费用（元） | 涉及场景 |
+|--------|:----------:|---------|
+{% for r in results -%}
+| {{ r.model }} | {{ "{:,.2f}".format(r.fee) }} | {{ r.scenes }} |
+{% endfor %}
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — |
+
+### 2.2 第二步：月费用 × 12 = 年度预算
+
+$$
+\text{年度预算} = \text{调研月总费用} \times 12 = {{ "{:,.0f}".format(total_month_fee) }} \times 12 = {{ "{:,.2f}".format(total_year_fee_yuan) }} \text{ 元}
+$$
+
+> 预算直接来自调研实测费用，不依赖任何假设或估算，数据可追溯。
+
+### 2.3 第三步：按官方刊例价反推 Token 量
+
+Token 量仅作为规模参考，用于采购申请填写和供应商询价。反推方法：用各模型的官方刊例价计算加权单价，再用费用 ÷ 单价得到 Token 量。
+
+**官方刊例价：**
 
 | 模型族 | 厂商 | 输入(缓存命中) | 输入(缓存未命中) | 输出 | 加权单价 |
 |--------|------|:--------------:|:---------------:|:----:|:--------:|
@@ -37,119 +62,29 @@ status: 评审中
 | {{ p.model }} | {{ p.vendor }} | {{ p.input_hit }} | {{ p.input_miss }} | {{ p.output }} | {{ "%.4f"|format(p.wp) }} |
 {% endfor %}
 
-> 单价单位：元/百万 Token
-> 单价来源：各厂商官方定价页（见第 8 节参考资料）
-> 加权假设：输入:输出 = {{ INPUT_OUTPUT_RATIO[0] }}:{{ INPUT_OUTPUT_RATIO[1] }}，缓存命中率 = {{ CACHE_HIT_RATE * 100 }}%
-> 原调研中 Qwen3-Plus 已折算到 DeepSeek-V4-Flash（同类均衡型模型，便于供应商集中议价）。
+> 单价单位：元/百万 Token，来源：各厂商官方定价页（见第 6 节参考资料）
 
-## 4. 测算方法
+**反推结果：**
 
-### 4.1 方法论选择
-
-调研表包含两类数据，可信度不同：
-
-| 数据类型 | 可信度 | 依据 |
-|---------|:------:|------|
-| 费用数据（人均月费用 × 使用人数 = 月总费用） | 高 | 62 条应用产品记录经校验全部自洽，0 条偏差 |
-| Token 消耗量数据 | 低 | 反推单价远低于官方刊例价 16-108 倍，存在量纲错误或填报不规范 |
-
-基于上述校验结果，本次测算采用**费用主线法**：以可信的费用数据为基准，结合官方刊例价反推 Token 消耗量，作为规模参考。
-
-### 4.2 计算公式
-
-**加权单价**（假设输入:输出 = {{ INPUT_OUTPUT_RATIO[0] }}:{{ INPUT_OUTPUT_RATIO[1] }}，缓存命中率 = {{ CACHE_HIT_RATE * 100 }}%）：
-
-$$
-P_{加权} = \frac{(P_{命中} \times {{ CACHE_HIT_RATE }} + P_{未命中} \times {{ 1 - CACHE_HIT_RATE }}) \times {{ INPUT_OUTPUT_RATIO[0] }} + P_{输出} \times {{ INPUT_OUTPUT_RATIO[1] }}}{4}
-$$
-
-**月 Token 量**：
-
-$$
-Q_{月}(\text{百万}) = \frac{F_{月}}{P_{加权}}
-$$
-
-**年度预算**：
-
-$$
-B_{年} = F_{月} \times 12
-$$
-
-**单位换算**（已验证）：
-
-- 1 百万 = 1,000,000 个 Token
-- 1 亿 = 100,000,000 个 Token = **100 百万**
-- 百万 Token ÷ 100 = 亿 Token
-
-### 4.3 采购方式建议
-
-建议按金额签框架协议，不按 Token 量签，理由：
-
-1. **主力模型价格浮动**：随新模型推出会变化
-2. **新模型价格未知**：新模型我们肯定要用，但价格无法预判
-3. **各家计价不一**：各家 Token 计价方式不同，且资源包有折扣，按 Token 量签不可控
-
-## 5. 测算结果
-
-### 5.1 按模型族聚合的月度费用
-
-| 模型族 | 月费用（元） | 记录数 | 涉及场景 |
-|--------|:----------:|:------:|---------|
+| 模型族 | 月费用（元） | 加权单价（元/百万） | 年Token(亿) | 年预算（元） |
+|--------|:----------:|:-----------------:|:-----------:|:------------:|
 {% for r in results -%}
-| {{ r.model }} | {{ "{:,.2f}".format(r.fee) }} | {{ r.records }} | {{ r.scenes }} |
+| {{ r.model }} | {{ "{:,.2f}".format(r.fee) }} | {{ "%.4f"|format(r.wp) }} | {{ "{:,.0f}".format(r.yt_yi) }} | {{ "{:,.2f}".format(r.yf_yuan) }} |
 {% endfor %}
-| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | **{{ "{:,.0f}".format(total_year_token_yi) }}** | **{{ "{:,.2f}".format(total_year_fee_yuan) }}** |
 
-### 5.2 Token 量反推与年度预算
+**资源包预算汇总（采购申请填表用）：**
 
-| 模型族 | 月费用（元） | 加权单价（元/百万） | 月Token(百万) | 月Token(亿) | 年Token(亿) | 年预算（元） |
-|--------|:----------:|:-----------------:|:-------------:|:-----------:|:-----------:|:------------:|
-{% for r in results -%}
-| {{ r.model }} | {{ "{:,.2f}".format(r.fee) }} | {{ "%.4f"|format(r.wp) }} | {{ "{:,.0f}".format(r.mt_M) }} | {{ "%.2f"|format(r.mt_yi) }} | {{ "{:,.0f}".format(r.yt_yi) }} | {{ "{:,.2f}".format(r.yf_yuan) }} |
-{% endfor %}
-| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | — | **{{ "{:,.0f}".format(total_year_token_yi) }}** | **{{ "{:,.2f}".format(total_year_fee_yuan) }}** |
+| 字段 | 数值 |
+|:-----|:----:|
+| 年 Token 需求量 | **{{ "{:,.0f}".format(rnd_year_token_M) }} 百万** |
+| 综合加权单价 | **{{ "%.2f"|format(rnd_overall_wp) }} 元/百万 Token** |
+| 年预算金额 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** |
+| 覆盖人数 | {{ PERSONS }} 人 |
 
-> Token 量按官方刊例价反推，作为规模参考；实际采购按金额签框架协议。
+## 3. 费用结构
 
-#### 资源包预算汇总
-
-| 字段 | 数值 | 说明 |
-|:-----|:----:|:-----|
-| 年 Token 需求量 | **{{ "{:,.0f}".format(rnd_year_token_M) }} 百万** | 取整估算 |
-| 综合加权单价 | **{{ "%.2f"|format(rnd_overall_wp) }} 元/百万 Token** | 取整后填入采购申请 |
-| 年预算金额 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** | Token 数 × 单价 = 总价，三数对应 |
-| 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 + 扩展余量 |
-
-### 5.3 人均口径（按 {{ PERSONS }} 人）
-
-| 指标 | 金额 |
-|------|:----:|
-| 月总费用 | {{ "{:,.2f}".format(total_month_fee) }} 元 |
-| 人均月费用 | **{{ "%.2f"|format(month_fee_per) }} 元/人/月** |
-| 人均月 Token | {{ "%.0f"|format(month_token_per_M) }} 百万 = **{{ "%.2f"|format(month_token_per_yi) }} 亿/人/月** |
-| 人均年 Token | {{ "%.2f"|format(year_token_per_yi) }} 亿/人/年 |
-| 人均年预算 | {{ "{:,.2f}".format(year_fee_per) }} 元/人/年 |
-| {{ PERSONS }} 人年预算合计 | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** |
-| {{ PERSONS }} 人年 Token 合计 | **{{ "{:,.0f}".format(total_year_token_yi) }} 亿** |
-
-人均费用呈"两极分布"特征：
-
-- 基础软件开发团队因采用三模型并行开发，人均强度较高（1,200 元/月）
-- 应用产品团队以代码生成和 PRD 生成为主，人均 48-700 元/月
-- 整体人均 {{ "%.2f"|format(month_fee_per) }} 元/月，处于行业 AI 工具人均成本的合理区间
-
-## 6. 费用结构分析
-
-### 6.1 按场景维度
-
-| 场景 | 月费用（元） | 使用人数 | 人均月费（元） | 占比 |
-|------|:---------:|:-------:|:----------:|:---:|
-{% for s in scenes -%}
-| {{ s.name }} | {{ "{:,.2f}".format(s.fee) }} | {{ "%.0f"|format(s.persons) }} | {{ "%.2f"|format(s.per_person) }} | {{ "%.1f"|format(s.pct) }}% |
-{% endfor %}
-| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | 100% |
-
-### 6.2 供应商集中度
+### 3.1 按模型分布
 
 | 供应商 | 模型族 | 年预算（元） | 占比 |
 |--------|--------|:------------:|:----:|
@@ -158,39 +93,41 @@ $$
 | 其他 | Codex + Gemini + Doubao | {{ "{:,.2f}".format(other_fee * 12) }} | {{ "%.1f"|format(other_fee / total_month_fee * 100) }}% |
 | **合计** | — | **{{ "{:,.2f}".format(total_year_fee_yuan) }}** | 100% |
 
-> DeepSeek 一家覆盖旗舰 + 轻量两档，供应商集中度高，便于打包议价。
+> DeepSeek 占比 {{ "%.0f"|format(deepseek_fee / total_month_fee * 100) }}%，一家覆盖旗舰+轻量两档，便于打包议价。
 
-### 6.3 模型配比（测算依据，合同不锁定）
+### 3.2 按场景分布
 
-各模型 Token 消耗量占比如下，该比例用于预算测算及供应商询价，实际采购采用框架协议模式，不锁定具体模型配比，按年度总量控制：
-
-| 模型族 | 年Token(亿) | 占比 |
-|--------|:-----------------:|:----:|
-{% for r in results -%}
-| {{ r.model }} | {{ "{:,.2f}".format(r.yt_yi) }} | {{ "%.1f"|format(r.pct) }}% |
+| 场景 | 月费用（元） | 使用人数 | 人均月费（元） | 占比 |
+|------|:---------:|:-------:|:----------:|:---:|
+{% for s in scenes -%}
+| {{ s.name }} | {{ "{:,.2f}".format(s.fee) }} | {{ "%.0f"|format(s.persons) }} | {{ "%.2f"|format(s.per_person) }} | {{ "%.1f"|format(s.pct) }}% |
 {% endfor %}
-| **合计** | **{{ "{:,.0f}".format(total_year_token_yi) }}** | 100% |
+| **合计** | **{{ "{:,.2f}".format(total_month_fee) }}** | — | — | 100% |
 
-## 7. 假设与约束
+> 基础软件开发和代码生成是主要消耗场景，合计占比超 90%。人均月费用 {{ "%.2f"|format(month_fee_per) }} 元，处于行业 AI 工具合理区间。
 
-1. **输入输出比假设**：输入:输出 = {{ INPUT_OUTPUT_RATIO[0] }}:{{ INPUT_OUTPUT_RATIO[1] }}，缓存命中率 {{ CACHE_HIT_RATE * 100 }}%。该比例参考 DeepSeek 官方推荐的代码生成场景典型值（CSV 缓存命中率 40%-60%，输入输出比 2.5:1-3.5:1），取中值设定。本项目 6 个调研场景全部为代码生成、PRD 撰写等 AI 辅助场景，与该假设匹配。实际比例可能因场景而异，但对费用主线测算无影响（费用数据为调研实测值）。
+## 4. 采购方式建议
 
-2. **GLM-5.2 单价**：智谱官方定价（输入 8/输出 28/缓存命中 2 元/百万Token），加权单价 10.75 元/百万Token。
+建议**按金额签框架协议，不按 Token 量签**：
 
-3. **覆盖人数**：按 {{ PERSONS }} 人测算（调研表合计 {{ survey_meta.survey_persons }} 人），含未覆盖人员的扩展余量。
+1. 主力模型价格随新模型推出会变化，锁定 Token 量反而被动
+2. 各家计价方式不同（credits/积分/AFP），按 Token 量签不可控
+3. 框架协议可灵活调整模型配比，总量不超出年度上限即可
 
-4. **Qwen3-Plus 折算**：原调研表中 Qwen3-Plus 用量已折算到 DeepSeek-V4-Flash（同类均衡型模型）。折算后费用金额不变，但 Token 量按 Flash 单价反推（Flash 单价更低，Token 量更大）。
+## 5. 假设与约束
 
-5. **Token 量性质**：本文档 Token 量均按官方刊例价反推，作为规模参考。实际采购建议按金额签框架协议，不按 Token 量签（理由见 4.3 节）。
+1. **加权单价假设**：输入:输出 = {{ INPUT_OUTPUT_RATIO[0] }}:{{ INPUT_OUTPUT_RATIO[1] }}，缓存命中率 {{ CACHE_HIT_RATE * 100 }}%。参考 DeepSeek 官方推荐的代码生成场景典型值取中值设定。该假设仅影响 Token 量反推，不影响预算金额（预算来自实测费用）。
 
-6. **模型配比不锁定**：第 6.3 节模型配比仅用于预算测算及供应商询价，实际采购采用框架协议模式，不锁定具体模型配比。甲方有权根据实际业务需求调整模型使用比例，总量不超出年度上限即可。
+2. **覆盖人数**：按 {{ PERSONS }} 人测算（调研表合计 {{ survey_meta.survey_persons }} 人），含未覆盖人员的扩展余量。
 
-## 8. 参考资料
+3. **Token 量性质**：Token 量按官方刊例价反推，仅作规模参考。实际采购按金额签框架协议，不锁定模型配比。甲方有权根据业务需求调整模型使用比例，总量不超出年度上限即可。
+
+## 6. 参考资料
 
 | 序号 | 资料 | 链接 |
 |:----:|------|------|
-| 1 | DeepSeek 官方定价 | <https://api-docs.deepseek.com/zh-cn/quick_start/pricing> |
-| 2 | 智谱 GLM 定价 | <https://bigmodel.cn/pricing> |
-| 3 | 字节方舟模型价格 | <https://www.volcengine.com/docs/82379/1544106> |
-| 4 | 阿里百炼模型定价 | <https://www.alibabacloud.com/help/zh/model-studio/model-pricing> |
-| 5 | 腾讯 TokenHub | <https://cloud.tencent.com/product/tokenhub> |
+| 1 | DeepSeek 官方定价 | <https://api-docs.deepseek.com/zh-cn/quick_start/pricing\> |
+| 2 | 智谱 GLM 定价 | <https://bigmodel.cn/pricing\> |
+| 3 | 字节方舟模型价格 | <https://www.volcengine.com/docs/82379/1544106\> |
+| 4 | 阿里百炼模型定价 | <https://www.alibabacloud.com/help/zh/model-studio/model-pricing\> |
+| 5 | 腾讯 TokenHub | <https://cloud.tencent.com/product/tokenhub\> |

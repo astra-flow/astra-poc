@@ -7,7 +7,7 @@ author: 业务发起部门
 status: 评审中
 ---
 
-# AI 平台席位费预算测算说明
+# 附件5_企业级AI平台席位费预算测算说明
 
 ## 1. 文档目的
 
@@ -37,13 +37,12 @@ status: 评审中
 
 | 方案 | 组成 | 年席位费 | 加权单价 |
 |:-----|:-----|:--------:|:--------:|
-| **Qoder CN（阿里）** | AI 编程 + 数字员工一体化 | {{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual) }} 元 | **199 元/月/席** |
-| 字节系组合（火山） | Trae（AI 编程）+ ArkClaw（数字员工） | {{ "%.2f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/月/席 |
-| WorkBuddy（腾讯） | AI 编程 + 数字员工一体化 | {{ "%.2f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/月/席 |
+| **Qoder CN（阿里）** | AI 编程 + 数字员工一体化 | {{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual) }} 元 | **199 元/人月** |
+| 字节系组合（火山） | Trae（AI 编程）+ ArkClaw（数字员工） | {{ "%.2f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/人月 |
+| WorkBuddy（腾讯） | AI 编程 + 数字员工一体化 | {{ "%.2f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/人月 |
 
 > 说明：
-> **全家桶最低价**：Qoder CN 全家桶 VPC 版 **199 元/月/席**（含 VPC），详见《AI平台预算汇报》。
-> **Trae 仅覆盖开发人员**：Trae 为 IDE 插件型 AI 编程助手，仅覆盖 {{ seat_budget.vendors["火山引擎 Trae CN"].seat_persons }} 名开发人员（需排除非开发场景 {{ seat_budget.persons - seat_budget.vendors["火山引擎 Trae CN"].seat_persons }} 人）。
+> **全家桶最低价**：Qoder CN 全家桶 VPC 版 **199 元/人月**（含 VPC），详见《AI平台预算汇报》。
 
 ### 3.3 预算金额
 
@@ -57,7 +56,7 @@ status: 评审中
 
 ### A.1 官网公开定价
 
-| 厂商 | 方案 | 席位单价 | 月赠送Credits | 起购门槛 | 来源 |
+| 厂商 | 方案 | 单价（元/人月） | 月赠送Credits | 起购门槛 | 来源 |
 |------|------|:--------:|:------------:|:--------:|------|
 {% for k, v in seat_budget.vendors.items() -%}
 {% for p in v.all_plans -%}

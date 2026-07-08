@@ -7,7 +7,7 @@ author: 业务发起部门
 status: 评审中
 ---
 
-# AI 平台预算汇报
+# 附件3_企业级AI平台预算整体说明
 
 ## 1. 预算整体情况
 
@@ -19,7 +19,7 @@ status: 评审中
 | 席位费 | **{{ "{:,.2f}".format(seat_budget.bundles.aliyun.seat_annual) }} 元** | AI 编程助手及数字员工平台企业版席位（最低价方案） |
 | **合计** | **{{ "{:,.2f}".format(total_year_fee_yuan + seat_budget.bundles.aliyun.seat_annual) }} 元** | — |
 
-> 席位费按"全家桶"口径对比（AI 编程 + 数字员工一体），最低为 **Qoder CN 全家桶（阿里）199 元/席位/月**（含 VPC）。
+> 席位费按"全家桶"口径对比（AI 编程 + 数字员工一体），最低为 **Qoder CN 全家桶（阿里）199 元/人月**（含 VPC）。
 
 ## 2. 核心数据
 
@@ -27,11 +27,11 @@ status: 评审中
 
 | 指标 | 数值 | 说明 |
 |:-----|:----:|:-----|
-| 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 {{ survey_meta.survey_persons }} 人 + 扩展余量 |
+| 覆盖人数 | {{ PERSONS }} 人 | 调研覆盖 {{ survey_meta.survey_persons }} 人（截止2026年底预计在岗人数） |
 | 月总费用（资源包） | {{ "{:,.2f}".format(total_month_fee) }} 元 | 各团队实际使用费用汇总 |
-| 人均月费用（资源包） | **{{ "%.2f"|format(month_fee_per) }} 元/人/月** |
+| 人均月费用（资源包） | **{{ "%.2f"|format(month_fee_per) }} 元/人/月** | |
 | 年预算（资源包） | **{{ "{:,.2f}".format(total_year_fee_yuan) }} 元** | 各团队调研月费用 × 12 个月，按官方刊例价测算 |
-| 年预算（席位费） | **{{ "{:,.2f}".format(seat_budget.bundles.aliyun.seat_annual) }} 元** | {{ PERSONS }} 人 × Qoder CN 全家桶 VPC 版 199 元/月 × 12（最低价方案） |
+| 年预算（席位费） | **{{ "{:,.2f}".format(seat_budget.bundles.aliyun.seat_annual) }} 元** | {{ PERSONS }} 人 × Qoder CN 全家桶 VPC 版 199 元/人月 × 12（最低价方案） |
 | **年预算合计** | **{{ "{:,.2f}".format(total_year_fee_yuan + seat_budget.bundles.aliyun.seat_annual) }} 元** | 资源包 + 席位费 |
 
 ### 2.2 资源包预算说明
@@ -78,13 +78,13 @@ status: 评审中
 
 ### 3.2 席位费采购
 
-按"全家桶"口径对比（AI 编程 + 数字员工一体），**Qoder CN 全家桶（阿里）VPC 版（199 元/席位/月）** 为最低方案。
+按"全家桶"口径对比（AI 编程 + 数字员工一体），**Qoder CN 全家桶（阿里）VPC 版（199 元/人月）** 为最低方案。
 
-| 全家桶方案 | 组成 | 年席位费 | 席位单价 |
+| 全家桶方案 | 组成 | 年席位费 | 人月单价 |
 |:----------|:-----|:--------:|:--------:|
-| **Qoder CN 全家桶（阿里）** | 一体化方案 | {{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual) }} 元 | **199 元/月** |
-| 字节系全家桶（火山引擎） | Trae + ArkClaw | {{ "%.2f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/月 |
-| WorkBuddy 全家桶（腾讯） | 一体化方案 | {{ "%.2f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/月 |
+| **Qoder CN 全家桶（阿里）** | 一体化方案 | {{ "%.2f"|format(seat_budget.bundles.aliyun.seat_annual) }} 元 | **199 元/人月** |
+| 字节系全家桶（火山引擎） | Trae + ArkClaw | {{ "%.2f"|format(seat_budget.bundles.volcengine.seat_annual) }} 元 | {{ "%.2f"|format(seat_budget.bundles.volcengine.price_per_seat_month) }} 元/人月 |
+| WorkBuddy 全家桶（腾讯） | 一体化方案 | {{ "%.2f"|format(seat_budget.bundles.tencent.seat_annual) }} 元 | 316 元/人月 |
 
 > 字节系需 Trae（AI 编程）+ ArkClaw（数字员工）两个产品合并才能对标 Qoder CN 和 WorkBuddy 的一体化方案。
 > 席位赠送的 Credits 可按厂商资源包单价折现，从 Token 预算中扣减。Qoder CN 企业资源包 80 元/2000 Credits（0.04 元/Credit），年赠送 Credits 折现约 {{ "%.2f"|format(seat_budget.vendors["阿里云 Qoder CN"].credit_value) }} 元。
@@ -92,3 +92,4 @@ status: 评审中
 ## 4. 详细测算
 
 完整的测算过程、公式推导、假设约束及数据校验，详见《AI平台资源包预算测算说明》和《AI平台席位费预算测算说明》。
+

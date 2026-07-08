@@ -126,13 +126,13 @@ def main():
     print(f'    总人数: {sb["persons"]} 人')
     print(f'    最低席位费: {sb["lowest_seat_vendor"]} {sb["lowest_seat_price"]}元/席位/月')
     print()
-    print(f'    {"供应商":<22}{"方案":<20}{"席位人数":>8}{"席位单价":>10}{"年席位费":>12}{"月Credits":>12}{"积分价值":>12}{"净Token预算":>12}{"年度总预算":>12}')
+    print(f'    {"供应商":<22}{"方案":<20}{"席位人数":>8}{"人月单价":>10}{"年席位费":>12}{"月Credits":>12}{"积分价值":>12}{"净Token预算":>12}{"年度总预算":>12}')
     print('    ' + '-' * 120)
     for k, v in sb['vendors'].items():
         pp = v['price_per_seat_month']
         # 如果有折后价，显示折后价
         has_discount = any(p.get('discounted_price') for p in v.get('all_plans', []) if p.get('is_priced'))
-        price_str = f'{pp}元/月'
+        price_str = f'{pp}元/人月'
         print(f'    {v["name"]:<22}{v["plan_name"]:<20}{v["seat_persons"]:>6}人'
               f'{price_str:>10}'
               f'{v["seat_annual"]:>10,.2f}元{v["credits_monthly"]:>10,.0f}'
@@ -149,15 +149,14 @@ def main():
     print()
     # 全家桶对比（AI Coding + 数字员工一体）
     if sb.get('bundles'):
-        print(f'    {"全家桶对比（AI编程+数字员工）":<30}{"年席位费":>12}{"席位单价":>10}')
+        print(f'    {"全家桶对比（AI编程+数字员工）":<30}{"年席位费":>12}{"人月单价":>10}')
         print('    ' + '-' * 55)
         for bk, b in sb['bundles'].items():
-            pp = f'{b["price_per_seat_month"]}元/月' if b.get('price_per_seat_month') else '—'
+            pp = f'{b["price_per_seat_month"]}元/人月' if b.get('price_per_seat_month') else '—'
             print(f'    {b["name"]:<30}{b["seat_annual"]:>10,.2f}元{pp:>10}')
             for sv in b.get('sub_vendors', []):
                 print(f'      ├ {sv["name"]:<28}{sv["seat_annual"]:>10,.2f}元')
     print()
-    print(f'    注：Trae 仅覆盖开发人员（排除日志分析场景 127 人），席位={sb["vendors"]["火山引擎 Trae CN"]["seat_persons"]}人')
     print(f'    注：净Token预算 = 原Token预算({sb["token_budget_wan"] * 10000:,.2f}元) - 赠送积分折现')
     print(f'    注：ArkClaw每月赠送50M免费Token，未折算为金额')
 

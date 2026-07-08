@@ -89,17 +89,6 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         'lowest_seat_annual': None,
     }
 
-    # 计算非开发场景人数（用于 Trae 扣减）
-    # 日志分析场景 127 人，非开发人员，不需要 Trae
-    wb = openpyxl.load_workbook(SURVEY_XLSX, data_only=True)
-    ws2 = wb['基础软件']
-    non_dev_persons = 0
-    for r in range(3, ws2.max_row + 1):
-        if _is_summary_row(ws2, r, 1):
-            continue
-        non_dev_persons += float(ws2.cell(row=r, column=13).value or 0)  # 日志分析人数
-    non_dev_persons = int(non_dev_persons)
-
     # 各供应商席位人数（默认全部）
     seat_persons = {}
     for key in vendors:
@@ -112,12 +101,9 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
         if not priced_plans:
             continue
 
-        # 先确定该产品席位人数（用于 VPC 门槛判断）
+        # 确定该产品席位人数
+        sp = persons
         product_name = v.get('product_name', '')
-        if 'Trae' in product_name:
-            sp = persons - non_dev_persons  # Trae 只给开发人员
-        else:
-            sp = persons
 
         # 按策略选方案
         if prefer_vpc:
@@ -135,6 +121,9 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
 
         seat_month = effective_price * sp
         seat_annual = seat_month * 12
+        # 人月计价：数量 = 人数 × 12，单价 = 元/人月（price_per_seat_month 即人月单价）
+        quantity_person_months = sp * 12
+        unit_price_person_month = effective_price
 
         # 赠送积分价值：每月赠送 Credits × 人数 × 12 × 积分单价
         credits_monthly = best.get('credits_per_seat_month', 0) * sp
@@ -183,6 +172,8 @@ def calc_seat_budget(persons, token_budget_wan, prefer_vpc=True, vendor_groups=N
             'seat_persons': sp,
             'seat_monthly': seat_month,
             'seat_annual': seat_annual,
+            'quantity_person_months': quantity_person_months,
+            'unit_price_person_month': unit_price_person_month,
             'credits_monthly': credits_monthly,
             'credits_annual': credits_annual,
             'credit_unit_price': rp['credit_unit_price'] if rp else None,
@@ -439,9 +430,9 @@ def get_survey_meta():
         module = ws2.cell(row=r, column=1).value
         if module:
             base_modules.add(str(module).strip())
-            base_records += 2  # 每个模块有开发+日志分析2个场景
+            base_records += 1  # 每个模块仅开发 1 个场景
     
-    # 场景列表（日志分析已合并到基础软件开发）
+    # 场景列表
     scenes = ['PRD生成', '架构图生成', '代码生成', '测试脚本', '基础软件开发', '其他业务']
     
     # 覆盖人数（从数据行累加，与 calc_persons 一致）
@@ -516,15 +507,12 @@ def parse_survey():
             continue
         fee_dev = float(ws2.cell(row=r, column=7).value or 0)
         persons_dev = float(ws2.cell(row=r, column=6).value or 0)
-        fee_log = float(ws2.cell(row=r, column=14).value or 0)
-        persons_log = float(ws2.cell(row=r, column=13).value or 0)
         for sm in ['DeepSeek-V4-Pro', 'DeepSeek-V4-Flash', 'GLM-5.2']:
-            agg[sm]['月总费用'] += fee_dev / 3 + fee_log / 3
-            agg[sm]['记录数'] += 2
+            agg[sm]['月总费用'] += fee_dev / 3
+            agg[sm]['记录数'] += 1
             agg[sm]['场景集'].add('基础软件开发')
-        # 日志分析合并到基础软件开发
-        scene_agg['基础软件开发']['fee'] += fee_dev + fee_log
-        scene_agg['基础软件开发']['persons'] += persons_dev + persons_log
+        scene_agg['基础软件开发']['fee'] += fee_dev
+        scene_agg['基础软件开发']['persons'] += persons_dev
 
     # 其他业务
     ws3 = wb['其他业务']

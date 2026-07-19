@@ -1,103 +1,131 @@
 """
 Batch 5: 多轮稳定性测试 - 精选图表跑 3 轮，验证输出一致性
-每轮用相同 prompt 生成，文件名自动带时间戳区分
+使用新 Prompt Builder API（Chart + DesignTokens + StylePreset）
 """
-from .design.tokens import color_hex, token, MORANDI, SLATE, BRANCH
-from .design.prompts import base_style, build_prompt, title, no_line
+from prompt.aesthetic import DesignTokens, StylePreset
+from prompt.semantic import Chart, Phase, Swimlane
+from prompt.icon import IconPicker
+from prompt.builder import PromptBuilder
 
 
 def get_batch_stability():
     """返回 5 张精选图表，每张跑 3 轮 = 15 次生成"""
+    t = DesignTokens.from_palette(
+        {"bg": "#F0F2F5", "dark": "#2C3E50", "accent": "#D4A04A", "warm_gray": "#8E8E93", "primary": "#4A6FA5"},
+        card_bg_cycle=["#F0F2F5", "#EFF5F0", "#F5F2EF", "#F2EFF5"],
+    )
     tests = []
-    
-    # 精选 5 种代表性图表，每种只定义一次 prompt
-    # 通过 run_batch 的循环机制自然跑多轮
-    
-    # 1. 客户旅程地图（P0，效果最好）
+
+    # 1. 客户旅程地图
     tests.append({
         "name": "stability_customer_journey",
-        "prompt": build_prompt([
-            f"生成一张专业的客户旅程地图，{base_style()}",
-            f"展示'在线教育平台'的用户体验流程，泳道式布局，横向时间轴。",
-            title("在线教育平台 - 客户旅程地图"),
-            "横向5个阶段：",
-            f"阶段1（{MORANDI['light_blue_gray']}背景）：'发现' - 包含'搜索引擎'、'社交媒体'、'朋友推荐'",
-            f"阶段2（{MORANDI['light_blue_gray']}背景）：'注册' - 包含'浏览首页'、'查看课程'、'注册账号'",
-            f"阶段3（{MORANDI['light_blue_gray']}背景）：'体验' - 包含'试听课程'、'选择课程'、'完成支付'",
-            f"阶段4（{MORANDI['light_blue_gray']}背景）：'学习' - 包含'观看视频'、'完成作业'、'互动问答'",
-            f"阶段5（{MORANDI['light_blue_gray']}背景）：'推荐' - 包含'获得证书'、'分享成果'、'推荐朋友'",
-            "情绪曲线：发现→中等、注册→较高、体验→低、学习→高、推荐→很高",
-            f"底部泳道（{MORANDI['light_blue_gray']}背景）：'机会点' - 阶段3下方'简化支付流程'，阶段5下方'推荐奖励机制'",
-            no_line(),
-        ]),
-        # 跑 3 轮
+        "prompt": PromptBuilder(
+            semantic=Chart.customer_journey(
+                title="在线教育平台 - 客户旅程地图",
+                steps=[
+                    Phase("发现", items=["搜索引擎", "社交媒体", "朋友推荐"]),
+                    Phase("注册", items=["浏览首页", "查看课程", "注册账号"]),
+                    Phase("体验", items=["试听课程", "选择课程", "完成支付"]),
+                    Phase("学习", items=["观看视频", "完成作业", "互动问答"]),
+                    Phase("推荐", items=["获得证书", "分享成果", "推荐朋友"]),
+                ],
+                emotion_lane=Swimlane(label="情绪曲线", items=[
+                    IconPicker.text("笑脸", label="中等"),
+                    IconPicker.text("笑脸", label="较高"),
+                    IconPicker.text("哭脸", label="低"),
+                    IconPicker.text("笑脸", label="高"),
+                    IconPicker.text("笑脸", label="很高"),
+                ], display_mode="icon"),
+                opportunity_lane=Swimlane(label="机会点", items=["简化支付流程", "推荐奖励机制"], display_mode="text"),
+                tokens=t,
+            ),
+            aesthetic=StylePreset.consulting(),
+            tokens=t,
+            no_line=True,
+        ).build(),
         "rounds": 3,
     })
-    
-    # 2. 能力成熟度模型（P0，阶梯式布局）
+
+    # 2. 能力成熟度模型
     tests.append({
         "name": "stability_maturity_model",
-        "prompt": build_prompt([
-            f"生成一张专业的能力成熟度模型图，{base_style()}",
-            f"展示'研发效能'从 L1 到 L4 的演进阶段，从左到右递进布局。",
-            title("研发效能能力成熟度模型"),
-            "四个阶段从左到右水平排列：",
-            f"阶段1（{MORANDI['light_blue_gray']}背景）：'L1 初始级' - 包含'手工构建'、'无自动化'、'经验驱动'",
-            f"阶段2（{MORANDI['light_blue_gray']}背景）：'L2 规范级' - 包含'CI/CD流水线'、'单元测试'、'代码规范'",
-            f"阶段3（{MORANDI['light_green_gray']}背景）：'L3 量化级' - 包含'DORA度量'、'自动化测试'、'全链路监控'",
-            f"阶段4（{MORANDI['light_orange_gray']}背景）：'L4 优化级' - 包含'AI辅助开发'、'持续优化'、'工程文化'",
-            "每个阶段上方圆形等级标识：L1灰色、L2蓝色、L3绿色、L4金色",
-            no_line(),
-        ]),
+        "prompt": PromptBuilder(
+            semantic=Chart(title="研发效能能力成熟度模型", tokens=t)
+                .add_phase_row([
+                    Phase("L1 初始级", items=["手工构建", "无自动化", "经验驱动"]),
+                    Phase("L2 规范级", items=["CI/CD流水线", "单元测试", "代码规范"]),
+                    Phase("L3 量化级", items=["DORA度量", "自动化测试", "全链路监控"]),
+                    Phase("L4 优化级", items=["AI辅助开发", "持续优化", "工程文化"]),
+                ], label="4个成熟度阶段")
+                .build(),
+            aesthetic=StylePreset.consulting(),
+            tokens=t,
+            no_line=True,
+        ).build(),
         "rounds": 3,
     })
-    
-    # 3. 分支模型对比图（P0，泳道对比布局）
+
+    # 3. 分支模型对比图
     tests.append({
         "name": "stability_branch_comparison",
-        "prompt": build_prompt([
-            f"生成一张专业的分支模型对比图，{base_style()}",
-            f"横向泳道式布局，每种分支模型一行。",
-            title("四种分支模型对比"),
-            "四种模型从上到下垂直排列：",
-            f"第1行（{MORANDI['light_blue_gray']}背景）：'Git Flow' - "
-            f"标签：{BRANCH['main']}色'main'、{BRANCH['develop']}色'develop'、{BRANCH['feature']}色'feature'、"
-            f"{BRANCH['release']}色'release'、{BRANCH['hotfix']}色'hotfix'",
-            f"第2行（{MORANDI['light_green_gray']}背景）：'GitHub Flow' - "
-            f"标签：{BRANCH['main']}色'main'、{BRANCH['feature']}色'feature'",
-            f"第3行（{MORANDI['light_orange_gray']}背景）：'GitLab Flow' - "
-            f"标签：{BRANCH['main']}色'main'、{BRANCH['develop']}色'staging'、{BRANCH['main']}色'production'、{BRANCH['feature']}色'feature'",
-            f"第4行（{MORANDI['light_purple_gray']}背景）：'Trunk-Based' - "
-            f"标签：{BRANCH['main']}色'main'、{BRANCH['feature']}色'短分支'",
-            "每行底部灰色小字说明适用场景",
-            no_line(),
-        ]),
+        "prompt": PromptBuilder(
+            semantic=Chart.branch_comparison(
+                title="四种分支模型对比",
+                branches=[
+                    ("Git Flow", ["main", "develop", "feature", "release", "hotfix"]),
+                    ("GitHub Flow", ["main", "feature"]),
+                    ("GitLab Flow", ["main", "staging", "production", "feature"]),
+                    ("Trunk-Based", ["main", "短分支"]),
+                ],
+                tokens=t,
+            ).build(),
+            aesthetic=StylePreset.consulting(),
+            tokens=t,
+            no_line=True,
+        ).build(),
         "rounds": 3,
     })
-    
-    # 4. 服务蓝图（P1，多层泳道）
+
+    # 4. 服务蓝图
     tests.append({
         "name": "stability_service_blueprint",
-        "prompt": build_prompt([
-            f"生成一张专业的服务蓝图，{base_style()}",
-            f"展示'在线课程平台'的多层交互，泳道布局。",
-            title("在线课程平台 - 服务蓝图"),
-            "从上到下5个泳道：",
-            f"泳道1（{MORANDI['light_blue_gray']}背景）：'物理证据' - '搜索结果'、'课程详情'、'支付页面'、'播放器'",
-            f"泳道2（{MORANDI['light_green_gray']}背景）：'用户行为' - '搜索课程'、'浏览详情'、'完成支付'、'开始学习'",
-            f"泳道3（{MORANDI['light_orange_gray']}背景）：'前台服务' - '推荐课程'、'提供试听'、'发送确认'",
-            f"泳道4（{MORANDI['light_purple_gray']}背景）：'后台服务' - '推荐算法'、'订单处理'、'权限开通'",
-            f"泳道5（{MORANDI['light_blue_gray']}背景）：'支持系统' - '搜索服务'、'支付网关'、'学习管理'",
-            no_line(),
-        ]),
+        "prompt": PromptBuilder(
+            semantic=Chart(title="在线课程平台 - 服务蓝图", tokens=t)
+                .add_swimlane_row(Swimlane(label="物理证据", items=["搜索结果", "课程详情", "支付页面", "播放器"]), label="泳道1")
+                .add_swimlane_row(Swimlane(label="用户行为", items=["搜索课程", "浏览详情", "完成支付", "开始学习"]), label="泳道2")
+                .add_swimlane_row(Swimlane(label="前台服务", items=["推荐课程", "提供试听", "发送确认"]), label="泳道3")
+                .add_swimlane_row(Swimlane(label="后台服务", items=["推荐算法", "订单处理", "权限开通"]), label="泳道4")
+                .add_swimlane_row(Swimlane(label="支持系统", items=["搜索服务", "支付网关", "学习管理"]), label="泳道5")
+                .build(),
+            aesthetic=StylePreset.consulting(),
+            tokens=t,
+            no_line=True,
+        ).build(),
         "rounds": 3,
     })
-    
-    # 5. 价值流图（P2，含数字标注）
+
+    # 5. 价值流图
     tests.append({
         "name": "stability_value_stream",
-        "prompt": build_prompt([
-            f"生成一张专业的价值流图，{base_style()}",
+        "prompt": PromptBuilder(
+            semantic=Chart(title="需求交付价值流图", tokens=t)
+                .add_phase_row([
+                    Phase("需求提出", annotations=["2h"]),
+                    Phase("需求评审", annotations=["4h"]),
+                    Phase("技术设计", annotations=["8h"]),
+                    Phase("开发实现", annotations=["40h"]),
+                    Phase("测试验证", annotations=["16h"]),
+                    Phase("发布上线", annotations=["2h"]),
+                ], label="6个交付步骤")
+                .build(),
+            aesthetic=StylePreset.consulting(),
+            tokens=t,
+            no_line=True,
+        ).build(),
+        "rounds": 3,
+    })
+
+    return tests
             f"展示需求交付端到端流程及时效。",
             title("需求交付价值流图"),
             "横向6个步骤卡片（从左到右水平排列）：",

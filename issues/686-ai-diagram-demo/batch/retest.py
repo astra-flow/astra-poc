@@ -37,7 +37,7 @@ def get_batch_retest():
                     ], display_mode="icon"),
                     opportunity_lane=Swimlane(label="机会点", items=["简化支付流程", "推荐奖励机制"], display_mode="text"),
                     tokens=t,
-                ),
+                ).build(),
                 aesthetic=StylePreset.consulting(),
                 tokens=t,
                 no_line=True,

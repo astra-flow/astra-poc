@@ -38,7 +38,7 @@ def get_batch_stability():
                 ], display_mode="icon"),
                 opportunity_lane=Swimlane(label="机会点", items=["简化支付流程", "推荐奖励机制"], display_mode="text"),
                 tokens=t,
-            ),
+            ).build(),
             aesthetic=StylePreset.consulting(),
             tokens=t,
             no_line=True,
@@ -125,20 +125,4 @@ def get_batch_stability():
         "rounds": 3,
     })
 
-    return tests
-            f"展示需求交付端到端流程及时效。",
-            title("需求交付价值流图"),
-            "横向6个步骤卡片（从左到右水平排列）：",
-            "步骤1（蓝色边框）：'需求提出' - 下方标注'2h'",
-            "步骤2（蓝色边框）：'需求评审' - 下方标注'4h'",
-            "步骤3（蓝色边框）：'技术设计' - 下方标注'8h'",
-            "步骤4（蓝色边框）：'开发实现' - 下方标注'40h'",
-            "步骤5（蓝色边框）：'测试验证' - 下方标注'16h'",
-            "步骤6（蓝色边框）：'发布上线' - 下方标注'2h'",
-            "底部汇总区（浅灰色容器框）：总前置时间72h、总处理时间72h、增值比60%",
-            no_line(),
-        ]),
-        "rounds": 3,
-    })
-    
     return tests

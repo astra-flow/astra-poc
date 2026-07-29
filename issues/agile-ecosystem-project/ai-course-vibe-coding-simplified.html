@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Coding 实战工作坊 — 课程提纲</title>
+<style>
+  :root { --primary: #1a1a2e; --accent: #e94560; --accent2: #0f3460; --bg: #fafafa; --card-bg: #ffffff; --text: #2d3436; --border: #e0e0e0; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.8; font-size: 15px;
+  }
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
+    color: #fff; padding: 56px 40px 40px; text-align: center;
+  }
+  .hero h1 { font-size: 2.2em; font-weight: 800; margin-bottom: 6px; }
+  .hero .subtitle { font-size: 1.1em; opacity: .85; font-weight: 300; }
+  .container { max-width: 760px; margin: 0 auto; padding: 32px 24px; }
+  section { margin-bottom: 36px; }
+  h2 {
+    font-size: 1.5em; font-weight: 700; color: var(--primary);
+    margin-bottom: 6px; padding-bottom: 6px;
+    border-bottom: 3px solid var(--accent); display: inline-block;
+  }
+  p { margin-bottom: 6px; }
+  .table-wrap { overflow-x: auto; margin: 10px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .93em; }
+  th, td { padding: 9px 12px; border: 1px solid var(--border); text-align: left; vertical-align: top; }
+  th { background: var(--primary); color: #fff; font-weight: 600; font-size: .88em; }
+  tr:nth-child(even) td { background: #f9f9f9; }
+  .day-header {
+    color: #fff; border-radius: 8px; padding: 12px 20px;
+    margin: 20px 0 14px; font-size: 1.05em; font-weight: 700;
+  }
+  .day-header.day1 { background: linear-gradient(135deg, #0984e3, #0f3460); }
+  .day-header.day2 { background: linear-gradient(135deg, #e17055, #d63031); }
+  .tl-item { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .tl-num {
+    width: 28px; height: 28px; border-radius: 50%; background: var(--accent);
+    color: #fff; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: .85em; flex-shrink: 0;
+  }
+  .tl-body { background: var(--card-bg); border-radius: 6px; padding: 10px 14px; border: 1px solid var(--border); flex: 1; }
+  .tl-body h4 { margin: 0 0 3px; font-size: .98em; }
+  .tl-body p { font-size: .93em; margin-bottom: 0; }
+  .next-step {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: #fff; border-radius: 10px; padding: 24px 28px;
+    margin: 24px 0; text-align: center;
+  }
+  .next-step h2 { color: #fff; border-bottom: none; font-size: 1.3em; margin-bottom: 8px; }
+  .next-step p { font-size: .98em; opacity: .9; }
+  footer {
+    background: var(--primary); color: rgba(255,255,255,.7);
+    text-align: center; padding: 24px; font-size: .82em; margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Vibe Coding 实战工作坊</h1>
+  <p class="subtitle">2 天 · 用 AI 做出可复用、可迭代的电商运营工具</p>
+</div>
+
+<div class="container">
+
+<section>
+  <h2>一、课程概览</h2>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>项目</th><th>说明</th></tr>
+      <tr><td>时长</td><td>2 天（每天 7 小时）</td></tr>
+      <tr><td>学员</td><td>已有 AI 使用基础，能手搓 HTML 或小工具</td></tr>
+      <tr><td>Day 1</td><td>掌握 Vibe Coding 系统方法，独立完成一个电商场景小应用</td></tr>
+      <tr><td>Day 2</td><td>学会沉淀可复用经验，团队协作完成 Hackathon 项目</td></tr>
+    </table>
+  </div>
+
+  <p style="color:var(--text-light);font-size:.93em;">学员画像：数据运营、直播运营、客服岗位，平均 28 岁。核心诉求——从"能写出代码片段"升级到"能独立交付完整可用的应用，并让经验可复用"。</p>
+</section>
+
+<section>
+  <h2>二、课程安排</h2>
+
+  <div class="day-header day1">Day 1：Vibe Coding 系统化</div>
+
+  <div class="tl-item">
+    <div class="tl-num">1</div>
+    <div class="tl-body">
+      <h4>开场：Vibe Coding 是什么</h4>
+      <p>从 Andrej Karpathy 2025 年创造的概念讲起——用自然语言描述意图，AI 生成代码，你来审查和迭代。</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-num">2</div>
+    <div class="tl-body">
+      <h4>结构化 Prompt 工程</h4>
+      <p>从"随手写 prompt 碰运气"到"结构化描述，效果稳定可预期"。实操：用结构化方法重写课前作业，对比差异。</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-num">3</div>
+    <div class="tl-body">
+      <h4>工具链实操</h4>
+      <p>从需求描述到一键部署的全流程。讲师演示 + 学员跟做，确保每人跑通完整链路。实操：搭建「电商数据查询工具」，30 分钟内拿到可分享链接。</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-num">4</div>
+    <div class="tl-body">
+      <h4>电商场景深度实战</h4>
+      <p>覆盖数据运营（日报自动化）、直播运营（数据看板）、客服（智能知识库）、通用（竞品监控）四大场景。每人选自己岗位的场景搭建 MVP。</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-num">5</div>
+    <div class="tl-body">
+      <h4>成果展示 + 组队</h4>
+      <p>每人展示 Day 1 作品，讲师点评。自由组队，为 Day 2 Hackathon 选题。</p>
+    </div>
+  </div>
+
+  <div class="day-header day2">Day 2：经验沉淀 + Hackathon</div>
+
+  <div class="tl-item">
+    <div class="tl-num">6</div>
+    <div class="tl-body">
+      <h4>把经验沉淀为可复用模板</h4>
+      <p>你脑子里知道怎么做，但 AI 不知道——怎么让 AI 知道？讲解如何把数据口径、设计规范、常见坑写成 AI 可读的知识模板。实操：为 Day 1 的项目写模板，再用模板让 AI 重新生成，对比前后差异。</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-num">7</div>
+    <div class="tl-body">
+      <h4>团队 Hackathon</h4>
+      <p>2-3 人一组，电商场景自由选题。要求：必须部署上线 + 产出至少一个可复用模板。推荐选题：直播数据看板、客服知识库 chatbot、大促作战指挥屏、运营日报自动生成器、差评智能分析工具。</p>
+    </div>
+  </div>
+
+  <div class="tl-item">
+    <div class="tl-num">8</div>
+    <div class="tl-body">
+      <h4>项目展示 + 总结</h4>
+      <p>每组演示 + 点评。讲师总结高频问题与最佳实践。课后作业：完善项目 + 收集改进点。</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>三、学员收获</h2>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>维度</th><th>课前</th><th>课后</th></tr>
+      <tr><td>AI 协作</td><td>随手写 prompt，碰运气</td><td>结构化 Prompt，效果稳定</td></tr>
+      <tr><td>工具链</td><td>可能只用过 ChatGPT 对话</td><td>掌握需求→开发→部署的完整链路</td></tr>
+      <tr><td>交付能力</td><td>能写出代码片段</td><td>独立交付 + 团队协作完成完整可运行的应用</td></tr>
+      <tr><td>知识沉淀</td><td>每次重新写 prompt</td><td>经验可复用、可共享</td></tr>
+      <tr><td>场景贴合</td><td>通用 demo</td><td>电商运营场景定制，直接可用于工作</td></tr>
+    </table>
+  </div>
+</section>
+
+<section>
+  <h2>四、Vibe Coding 的局限</h2>
+
+  <p>Vibe Coding 显著降低了软件开发的门槛，让非技术人员也能快速实现想法。但 Karpathy 在提出这个概念时也明确指出，它更适合"周末小项目"。当应用数量增多、团队规模扩大后，以下问题会逐渐显现：</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>能解决的</th><th>暂时解决不了的</th></tr>
+      <tr><td>一个人快速搭建工具</td><td>团队多人协作时，输出质量参差不齐</td></tr>
+      <tr><td>单次对话完成一个功能</td><td>需求变更后，AI 缺乏对历史上下文的持续理解</td></tr>
+      <tr><td>快速验证想法、做出 Demo</td><td>代码质量、安全性、可维护性的系统保障</td></tr>
+      <tr><td>凭个人经验写 prompt</td><td>将经验体系化，让团队稳定复现</td></tr>
+    </table>
+  </div>
+
+  <p>这些问题并非 Vibe Coding 的缺陷，而是它的边界。当团队需要跨越这个边界时，需要一套更系统的方法——智能体工程。</p>
+
+  <div class="next-step">
+    <h2>进阶课程：智能体工程实战</h2>
+    <p>当团队需要跨越 Vibe Coding 的边界，建立体系化的 AI 协作能力时，我们有更系统的进阶课程。</p>
+  </div>
+</section>
+
+<section>
+  <h2>五、讲师介绍</h2>
+
+  <div class="table-wrap">
+    <table>
+      <tr><td style="width:80px;font-weight:700;">讲师</td><td>Wayne Su</td></tr>
+      <tr><td style="font-weight:700;">背景</td><td>前独角兽创业公司商业化产品总监、百度商业运营平台主任架构师、微博商业运营平台技术负责人。先后服务过四家五百强、一家独角兽，十余年互联网商业化与平台架构经验，SAFe SPC 认证敏捷教练。</td></tr>
+      <tr><td style="font-weight:700;">专注</td><td>智能体工程（Agentic Engineering）方法论、AI 协作体系设计、规模化敏捷组织转型、研发效能度量与改进。先后服务过 4 家企业、100+ 团队，深度实践 AI-Native 研发模式。</td></tr>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  <p>Vibe Coding 实战工作坊 · 课程提纲 &nbsp;|&nbsp; 2026 年 7 月</p>
+</footer>
+
+</body>
+</html>

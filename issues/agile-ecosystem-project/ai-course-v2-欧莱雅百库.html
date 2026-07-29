@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 进阶实战课程设计方案 v2.0 — 欧莱雅百库</title>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #e94560;
+    --accent2: #0f3460;
+    --bg: #fafafa;
+    --card-bg: #ffffff;
+    --text: #2d3436;
+    --text-light: #636e72;
+    --border: #e0e0e0;
+    --tag-bg: #f0f0f0;
+    --success: #00b894;
+    --warning: #fdcb6e;
+    --info: #74b9ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 15px;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent2) 100%);
+    color: #fff;
+    padding: 80px 40px 60px;
+    text-align: center;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 13px;
+    letter-spacing: .08em;
+    margin-bottom: 18px;
+    text-transform: uppercase;
+  }
+  .hero h1 { font-size: 2.6em; font-weight: 800; margin-bottom: 12px; letter-spacing: .02em; }
+  .hero .subtitle { font-size: 1.15em; opacity: .85; font-weight: 300; }
+  .hero .meta { margin-top: 24px; font-size: .88em; opacity: .7; }
+
+  /* ── Container ── */
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px; }
+
+  /* ── Sections ── */
+  section { margin-bottom: 56px; }
+  h2 {
+    font-size: 1.7em;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid var(--accent);
+    display: inline-block;
+  }
+  h3 {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 32px 0 12px;
+  }
+  h4 {
+    font-size: 1.05em;
+    font-weight: 700;
+    margin: 20px 0 8px;
+    color: #444;
+  }
+  p { margin-bottom: 12px; }
+  ul, ol { padding-left: 24px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    border: 1px solid var(--border);
+  }
+  .card.accent-left {
+    border-left: 4px solid var(--accent);
+  }
+
+  /* ── Tables ── */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .93em;
+  }
+  th, td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: .88em;
+    letter-spacing: .02em;
+  }
+  tr:nth-child(even) td { background: #f9f9f9; }
+
+  /* ── Tags ── */
+  .tag {
+    display: inline-block;
+    background: var(--tag-bg);
+    border-radius: 4px;
+    padding: 2px 10px;
+    font-size: .82em;
+    margin: 0 2px 4px 0;
+    letter-spacing: .02em;
+  }
+  .tag.red { background: #ffe0e0; color: #c0392b; }
+  .tag.green { background: #d5f5e3; color: #1e8449; }
+  .tag.blue { background: #d6eaf8; color: #2471a3; }
+  .tag.yellow { background: #fef9e7; color: #b7950b; }
+  .tag.purple { background: #e8daef; color: #7d3c98; }
+
+  /* ── Comparison Grid ── */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 0;
+  }
+  .compare-grid .col {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid var(--border);
+  }
+  .compare-grid .col h4 {
+    margin-top: 0;
+    font-size: 1em;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--accent);
+  }
+
+  /* ── Flow Steps ── */
+  .flow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 20px 0;
+    justify-content: center;
+  }
+  .flow-step {
+    background: var(--card-bg);
+    border: 2px solid var(--accent);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: center;
+    min-width: 120px;
+    flex: 1;
+  }
+  .flow-step .step-num {
+    font-size: 1.8em;
+    font-weight: 800;
+    color: var(--accent);
+  }
+  .flow-step .step-label { font-size: .88em; margin-top: 4px; color: var(--text-light); }
+  .flow-arrow { display: flex; align-items: center; font-size: 1.5em; color: var(--accent); }
+
+  /* ── Highlight Box ── */
+  .highlight-box {
+    background: linear-gradient(135deg, #fef9e7, #fef5e7);
+    border-left: 4px solid var(--warning);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .highlight-box.info {
+    background: linear-gradient(135deg, #eaf2f8, #e8f0fe);
+    border-left-color: var(--info);
+  }
+  .highlight-box.danger {
+    background: linear-gradient(135deg, #fdedec, #fdecea);
+    border-left-color: #e74c3c;
+  }
+
+  /* ── Timeline ── */
+  .timeline { margin: 20px 0; }
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .timeline-item .tl-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: .9em;
+    flex-shrink: 0;
+  }
+  .timeline-item .tl-content {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    flex: 1;
+  }
+  .timeline-item .tl-content h4 { margin-top: 0; }
+
+  /* ── Layer Diagram ── */
+  .layer-diagram {
+    margin: 20px 0;
+  }
+  .layer-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .layer-label {
+    width: 180px;
+    font-weight: 700;
+    font-size: .9em;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .layer-bar {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 6px;
+    color: #fff;
+    font-size: .88em;
+  }
+  .layer-bar.l1 { background: #00b894; }
+  .layer-bar.l2 { background: #0984e3; }
+  .layer-bar.l3 { background: #6c5ce7; }
+  .layer-bar.l4 { background: #e17055; }
+
+  /* ── Footer ── */
+  footer {
+    background: var(--primary);
+    color: rgba(255,255,255,.7);
+    text-align: center;
+    padding: 32px 24px;
+    font-size: .85em;
+    margin-top: 60px;
+  }
+
+  /* ── Component Grid (六类构件两行三列) ── */
+  .comp-grid-2row {
+    margin: 20px 0;
+  }
+  .comp-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+  }
+  .comp-item {
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: center;
+    min-width: 120px;
+    flex: 1 1 0;
+    color: #2d3436;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    max-width: 200px;
+  }
+  .comp-item .comp-name {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .comp-item .comp-desc {
+    font-size: .85em;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .comp-item .comp-role {
+    font-size: .78em;
+    opacity: .75;
+  }
+  .comp-arrow {
+    color: var(--text-light);
+    font-size: 1.3em;
+    font-weight: 700;
+    flex: 0 0 auto;
+  }
+  .comp-cross-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.4em;
+    font-weight: 700;
+    padding: 2px 0;
+    line-height: 1;
+  }
+  @media (max-width: 768px) {
+    .comp-row { flex-direction: column; }
+    .comp-arrow { transform: rotate(90deg); }
+    .comp-item { max-width: none; }
+  }
+
+  /* ── Course Flow (课程体系总览) ── */
+  .course-flow {
+    margin: 20px 0;
+  }
+  .cf-phase {
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    border: 1px solid var(--border);
+    margin-bottom: 0;
+  }
+  .cf-phase-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    color: #fff;
+    font-weight: 700;
+  }
+  .cf-phase-header.pre  { background: linear-gradient(135deg, #636e72, #2d3436); }
+  .cf-phase-header.day1 { background: linear-gradient(135deg, #0984e3, #0f3460); }
+  .cf-phase-header.day2 { background: linear-gradient(135deg, #e17055, #d63031); }
+  .cf-phase-header.post { background: linear-gradient(135deg, #00b894, #009432); }
+  .cf-phase-icon { font-size: 1.2em; }
+  .cf-phase-label { font-size: 1.1em; }
+  .cf-phase-time { margin-left: auto; font-size: .88em; opacity: .85; font-weight: 400; }
+  .cf-phase-body {
+    padding: 16px 20px;
+  }
+  .cf-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: .93em;
+    line-height: 1.6;
+  }
+  .cf-item:last-child { border-bottom: none; }
+  .cf-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+  .cf-arrow {
+    text-align: center;
+    color: var(--accent);
+    font-size: 1.3em;
+    padding: 4px 0;
+    line-height: 1;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { font-size: 12px; }
+    .hero { padding: 30px 20px; }
+    .hero h1 { font-size: 1.8em; }
+    .container { max-width: 100%; padding: 20px; }
+    .card { box-shadow: none; break-inside: avoid; }
+    section { page-break-inside: avoid; }
+  }
+  @media (max-width: 768px) {
+    .hero { padding: 40px 20px 30px; }
+    .hero h1 { font-size: 1.6em; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .flow-steps { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+    .layer-row { flex-direction: column; align-items: flex-start; }
+    .layer-label { text-align: left; width: auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<div class="hero">
+  <div class="badge">AI 进阶实战课程 · 方案 v2.0</div>
+  <h1>从 Vibe Coding 到 Agentic Engineering</h1>
+  <p class="subtitle">构建 AI 协作体系，让每一次 AI 使用都成为可复用的知识资产</p>
+  <p class="meta">客户：欧莱雅百库 &nbsp;|&nbsp; 2026 年 7 月 &nbsp;|&nbsp; 设计：苏威</p>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════ 一、课程定位升级 ═══════════════ -->
+<section>
+  <h2>一、课程定位升级</h2>
+
+  <h3>1.1 从 v1.0 到 v2.0 的核心变化</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>维度</th><th>v1.0（纯 Vibe Coding）</th><th>v2.0（Vibe Coding + 智能体工程）</th></tr>
+      <tr><td><strong>定位</strong></td><td>"教你用 AI 写代码"</td><td>"教你建立 AI 协作体系"</td></tr>
+      <tr><td><strong>核心资产</strong></td><td>代码产出物</td><td><strong>知识资产</strong>（指令、技能、上下文）</td></tr>
+      <tr><td><strong>方法论</strong></td><td>Prompt 技巧集合</td><td><strong>四层协作模型 × 持续改进引擎</strong></td></tr>
+      <tr><td><strong>天花板</strong></td><td>能做 Demo，但无法持续迭代</td><td>能建立<strong>自我进化的 AI 工作流</strong></td></tr>
+      <tr><td><strong>课后价值</strong></td><td>学员会用工具</td><td>学员能<strong>教别人用、能持续优化</strong></td></tr>
+    </table>
+  </div>
+
+  <h3>1.2 为什么需要智能体工程</h3>
+  <p>学员已有的痛点，与智能体工程回答的映射：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>学员现状</th><th>智能体工程的回答</th></tr>
+      <tr><td>"AI 写出来的代码，过两周我自己都看不懂"</td><td><span class="tag blue">Context Engineering</span> 上下文管理</td></tr>
+      <tr><td>"每次都要重新写一大段 prompt"</td><td><span class="tag green">Skill 化</span> 知识资产沉淀</td></tr>
+      <tr><td>"同一个问题，AI 这次答对下次答错"</td><td><span class="tag purple">Harness</span> 质量保障</td></tr>
+      <tr><td>"不知道 AI 还能帮我做什么"</td><td><span class="tag red">Signal</span> 驱动的能力发现</td></tr>
+      <tr><td>"做出来的东西不知道怎么继续优化"</td><td><span class="tag yellow">持续改进引擎</span> 迭代方法</td></tr>
+    </table>
+  </div>
+
+  <div class="highlight-box info">
+    <strong>核心命题</strong>：Vibe Coding 是"术"，Agentic Engineering 是"道"。术可以让你跑得快，道可以让你走得远。
+  </div>
+</section>
+
+<!-- ═══════════════ 二、课程体系总览 ═══════════════ -->
+<section>
+  <h2>二、课程体系总览</h2>
+
+  <!-- 课程四阶段流程 -->
+  <div class="course-flow">
+    <!-- 课前 -->
+    <div class="cf-phase">
+      <div class="cf-phase-header pre">
+        <span class="cf-phase-icon">📋</span>
+        <span class="cf-phase-label">课前</span>
+        <span class="cf-phase-time">T-1 周</span>
+      </div>
+      <div class="cf-phase-body">
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span>环境准备 + 课前作业：用 AI 实现一个数据看板页面</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span>学员提交作业 + 自评痛点</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-arrow">▼</div>
+
+    <!-- Day 1 -->
+    <div class="cf-phase">
+      <div class="cf-phase-header day1">
+        <span class="cf-phase-icon">🔧</span>
+        <span class="cf-phase-label">Day 1</span>
+        <span class="cf-phase-time">7h · 从 Vibe Coding 到 Agentic Engineering</span>
+      </div>
+      <div class="cf-phase-body">
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>开场</strong>：为什么你明明会用 AI，但做不出好产品？</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块一</strong>：Vibe Coding 系统性方法</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块二</strong>：认识 Agentic Engineering</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块三</strong>：四层协作模型 — 你的 AI 协作体系</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块四</strong>：实战 — 搭建你的第一个 Agent 工作流</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-arrow">▼</div>
+
+    <!-- Day 2 -->
+    <div class="cf-phase">
+      <div class="cf-phase-header day2">
+        <span class="cf-phase-icon">🚀</span>
+        <span class="cf-phase-label">Day 2</span>
+        <span class="cf-phase-time">7h · 持续改进引擎 + 项目实战</span>
+      </div>
+      <div class="cf-phase-body">
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块五</strong>：如何发现 AI 的改进机会</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块六</strong>：知识冲刺 — 如何深度掌握一个领域</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块七</strong>：能力锻造 + 经验沉淀 — 把经验变成可复用资产</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块八</strong>：自由项目 Hackathon</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span><strong>模块九</strong>：项目展示 + 学习路径</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="cf-arrow">▼</div>
+
+    <!-- 课后 -->
+    <div class="cf-phase">
+      <div class="cf-phase-header post">
+        <span class="cf-phase-icon">🔄</span>
+        <span class="cf-phase-label">课后</span>
+        <span class="cf-phase-time">4 周 · 持续改进实践</span>
+      </div>
+      <div class="cf-phase-body">
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span>Week 1-2：信号收集 + 知识冲刺</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span>Week 3：能力锻造 + 线上答疑</span>
+        </div>
+        <div class="cf-item">
+          <span class="cf-dot"></span>
+          <span>Week 4：复利沉淀 + 结业答辩</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap" style="margin-top:28px;">
+    <table>
+      <tr><th>阶段</th><th>时长</th><th>核心目标</th></tr>
+      <tr><td>课前</td><td>T-1 周</td><td>环境就绪 + 基线评估</td></tr>
+      <tr><td>Day 1</td><td>7h</td><td>从"会用 AI"到"理解 AI 协作本质"</td></tr>
+      <tr><td>Day 2</td><td>7h</td><td>掌握持续改进引擎 + 交付完整项目</td></tr>
+      <tr><td>课后</td><td>4 周</td><td>持续改进实践，内化方法论</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ 三、模块详解 ═══════════════ -->
+<section>
+  <h2>三、模块详解</h2>
+
+  <!-- ── 开场 ── -->
+  <div class="card accent-left">
+    <h3 style="margin-top:0;">开场：为什么你明明会用 AI，但做不出好产品？（30min）</h3>
+    <p><strong>核心问题</strong>：从"手搓 HTML"到"交付可维护产品"，中间缺了什么？</p>
+    <div class="table-wrap">
+      <table>
+        <tr><th>场景</th><th>普通用法</th><th>智能体工程用法</th></tr>
+        <tr>
+          <td>写一个直播数据看板</td>
+          <td>一次 prompt 出代码 → 复制粘贴 → 跑起来就完</td>
+          <td>先写 spec → AI 生成 → 审查 → 迭代 → 沉淀为可复用模板</td>
+        </tr>
+        <tr>
+          <td>一周后需求变更</td>
+          <td>重新写 prompt，AI 忘了之前的上下文</td>
+          <td>有 Skill 文件记录上下文，AI 秒懂之前做了什么</td>
+        </tr>
+        <tr>
+          <td>同事也想用</td>
+          <td>发一段 prompt 给他，效果不一样</td>
+          <td>发一个 Skill 文件 + 使用说明，效果一致</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 模块一 ── -->
+  <h3>模块一：Vibe Coding 系统性方法（1.5h）</h3>
+  <p><strong>定位</strong>：学员的"舒适区"起点，但需要系统化。</p>
+
+  <h4>1.1 结构化 Prompt 工程（30min）</h4>
+  <div class="highlight-box">
+    <strong>Prompt 五要素模板</strong><br>
+    <code>[角色]</code> 你是一个资深前端工程师<br>
+    <code>[上下文]</code> 我们正在为一个电商运营团队开发直播数据看板<br>
+    <code>[任务]</code> 创建一个 React 组件，展示单场直播的核心指标<br>
+    <code>[约束]</code> 使用 Tailwind CSS，数据从 props 传入，支持移动端响应式<br>
+    <code>[输出格式]</code> 完整的 .tsx 文件，含类型定义和注释
+  </div>
+  <p><strong>练习</strong>：用课前作业重新做一遍，对比代码质量差异。</p>
+
+  <h4>1.2 多轮对话管理（20min）</h4>
+  <ul>
+    <li><strong>何时开新对话</strong>：话题切换超过 50% 时</li>
+    <li><strong>何时继续对话</strong>：在同一功能上迭代时</li>
+    <li><strong>上下文抢救技巧</strong>：让 AI 输出"当前项目状态摘要"，粘贴到新对话</li>
+    <li><strong>Checkpoint 策略</strong>：每完成一个独立功能，git commit 或复制代码快照</li>
+  </ul>
+
+  <h4>1.3 工具链选型（20min）</h4>
+  <div class="compare-grid">
+    <div class="col">
+      <h4>路径 A：零部署路径（非技术岗首选）</h4>
+      <p>Bolt.new / Lovable → 描述需求 → AI 生成全栈应用 → 一键部署 → 可分享链接</p>
+    </div>
+    <div class="col">
+      <h4>路径 B：专业开发路径（有代码基础可选）</h4>
+      <p>Cursor / Windsurf → 本地开发 → Git → Vercel / Cloudflare 部署</p>
+    </div>
+  </div>
+
+  <h4>1.4 动手实操（20min）</h4>
+  <p>用 Bolt.new 搭建「电商数据查询小工具」，30 分钟内拿到可分享链接。</p>
+
+  <!-- ── 模块二 ── -->
+  <h3>模块二：认识 Agentic Engineering（1.5h）</h3>
+  <p><strong>定位</strong>：从"我会用 AI"升级到"我理解 AI 协作的本质"。</p>
+
+  <h4>2.1 从一个故事开始（15min）</h4>
+  <div class="highlight-box danger">
+    <strong>真实案例</strong>：某团队用 AI 开发了 10 个内部工具，但 3 个月后 7 个已经无法维护。为什么？<br>
+    <strong>答案</strong>：他们把 AI 当成"一次性代码生成器"，而不是"持续协作伙伴"。
+  </div>
+
+  <h4>2.2 核心定义</h4>
+  <div class="highlight-box">
+    <strong>Agentic Engineering（智能体工程）</strong>：将非确定性 LLM 系统演化为可靠协作体系的工程学科。核心资产是<strong>知识</strong>（指令、技能、上下文），而非代码；演化方式是持续反馈驱动的改进，而非一次性版本发布。
+  </div>
+
+  <h4>2.3 与传统软件工程的根本差异</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>传统软件工程</th><th>Agentic Engineering</th></tr>
+      <tr><td>核心资产是<strong>代码</strong></td><td>核心资产是<strong>知识</strong>（指令、技能、上下文）</td></tr>
+      <tr><td>质量靠单元测试 + CI</td><td>质量靠场景验证 + 持续观测 + 反馈循环</td></tr>
+      <tr><td>演化方式是版本发布</td><td>演化方式是 Signal 驱动的连续涌现</td></tr>
+      <tr><td>设计单元是模块/服务</td><td>设计单元是 Agent + Skill + Instruction 的组合</td></tr>
+    </table>
+  </div>
+
+  <h4>2.4 三个交叉技能集</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>技能集</th><th>你已经具备的</th><th>需要学习的</th></tr>
+      <tr><td>产品思维</td><td>理解业务场景、知道用户要什么</td><td>如何把模糊需求转化为 AI 可执行的 spec</td></tr>
+      <tr><td>工程能力</td><td>能写代码、会调试</td><td>版本控制、可观测性、故障恢复</td></tr>
+      <tr><td>领域知识工程</td><td>懂电商运营、懂数据</td><td>如何把领域经验转化为 AI 可消费的知识</td></tr>
+    </table>
+  </div>
+
+  <h4>2.5 六类构件体系（乐高类比）</h4>
+  <div class="comp-grid-2row">
+    <div class="comp-row">
+      <div class="comp-item" style="background:#ffeaa7;">
+        <div class="comp-name">Context</div>
+        <div class="comp-desc">组装说明书</div>
+        <div class="comp-role">决定拼什么</div>
+      </div>
+      <div class="comp-arrow">→</div>
+      <div class="comp-item" style="background:#fab1a0;">
+        <div class="comp-name">Instruction</div>
+        <div class="comp-desc">底板</div>
+        <div class="comp-role">始终生效的底线规则</div>
+      </div>
+      <div class="comp-arrow">→</div>
+      <div class="comp-item" style="background:#81ecec;">
+        <div class="comp-name">Skill</div>
+        <div class="comp-desc">积木块</div>
+        <div class="comp-role">按需加载的知识模块</div>
+      </div>
+    </div>
+    <div class="comp-cross-arrow">↓</div>
+    <div class="comp-row">
+      <div class="comp-item" style="background:#74b9ff;">
+        <div class="comp-name">Agent</div>
+        <div class="comp-desc">拼装工人</div>
+        <div class="comp-role">消费知识的执行主体</div>
+      </div>
+      <div class="comp-arrow">→</div>
+      <div class="comp-item" style="background:#a29bfe;color:#fff;">
+        <div class="comp-name">Prompt</div>
+        <div class="comp-desc">启动按钮</div>
+        <div class="comp-role">触发工作流</div>
+      </div>
+      <div class="comp-arrow">→</div>
+      <div class="comp-item" style="background:#fd79a8;color:#fff;">
+        <div class="comp-name">Hook</div>
+        <div class="comp-desc">质检员</div>
+        <div class="comp-role">事件驱动的检查点</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>学员现状</th><th>缺失的构件</th><th>后果</th></tr>
+      <tr><td>每次复制粘贴 prompt</td><td><span class="tag green">Skill</span></td><td>无法复用，效果不稳定</td></tr>
+      <tr><td>prompt 里塞满各种规则</td><td><span class="tag blue">Instruction</span></td><td>每次都要重新写，容易遗漏</td></tr>
+      <tr><td>从不用 git</td><td><span class="tag purple">Hook</span></td><td>代码改坏了无法回退</td></tr>
+      <tr><td>不知道 AI 还能做什么</td><td><span class="tag red">Signal</span></td><td>能力边界停滞</td></tr>
+    </table>
+  </div>
+
+  <!-- ── 模块三 ── -->
+  <h3>模块三：四层协作模型 — 你的 AI 协作体系（2h）</h3>
+  <p><strong>定位</strong>：从"个人使用 AI"升级到"建立 AI 协作体系"。</p>
+
+  <h4>3.1 四层模型总览</h4>
+  <div class="layer-diagram">
+    <div class="layer-row">
+      <div class="layer-label">治理层</div>
+      <div class="layer-bar l4">复盘习惯、改进机制、知识管理 → 让能力持续进化</div>
+    </div>
+    <div class="layer-row" style="justify-content:center; font-size:1.2em; color:var(--text-light); margin:4px 0;">↕</div>
+    <div class="layer-row">
+      <div class="layer-label">协作层</div>
+      <div class="layer-bar l2">Prompt 模板、Skill 文件、AI 协作流程 → 你和 AI 怎么配合</div>
+    </div>
+    <div class="layer-row" style="justify-content:center; font-size:1.2em; color:var(--text-light); margin:4px 0;">↕</div>
+    <div class="layer-row">
+      <div class="layer-label">工具层</div>
+      <div class="layer-bar l3">Bolt.new、Cursor、API、数据源 → 用什么工具干活</div>
+    </div>
+    <div class="layer-row" style="justify-content:center; font-size:1.2em; color:var(--text-light); margin:4px 0;">↕</div>
+    <div class="layer-row">
+      <div class="layer-label">业务层</div>
+      <div class="layer-bar l1">数据看板、客服 chatbot、直播话术助手 → 最终产出什么价值</div>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>核心洞察</strong>：问题总在业务层感知，根因总在上层。修复优先级：离业务最近的上层缺口优先。
+  </div>
+
+  <h4>3.2 电商场景映射</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>层</th><th>电商场景中的含义</th><th>举例</th></tr>
+      <tr><td>业务层</td><td>你做的数据看板、客服 chatbot</td><td>看板数据不准</td></tr>
+      <tr><td>协作层</td><td>你的 prompt 模板、Skill 文件</td><td>prompt 没写清楚数据口径</td></tr>
+      <tr><td>工具层</td><td>Bolt.new、Cursor、API</td><td>工具不支持直接从数据库拉数据</td></tr>
+      <tr><td>治理层</td><td>你的复盘习惯、改进机制</td><td>没人复盘为什么看板数据不准</td></tr>
+    </table>
+  </div>
+
+  <h4>3.3 层间归因练习（互动）</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>场景</th><th>表面问题</th><th>根因在哪层？</th></tr>
+      <tr><td>AI 生成的图表颜色太丑</td><td>业务层</td><td><span class="tag blue">协作层</span>：prompt 没指定配色方案</td></tr>
+      <tr><td>同一个需求，AI 每次输出不一样</td><td>业务层</td><td><span class="tag blue">协作层 + 治理层</span>：缺 Skill 标准化 + 缺质量检查机制</td></tr>
+      <tr><td>想做实时数据看板但 AI 说做不了</td><td>业务层</td><td><span class="tag purple">工具层</span>：工具链不支持实时数据接入</td></tr>
+      <tr><td>团队 5 个人用 AI，效果参差不齐</td><td>业务层</td><td><span class="tag red">治理层</span>：没有统一 prompt 模板和培训</td></tr>
+    </table>
+  </div>
+
+  <h4>3.4 Skill 文件模板（实操）</h4>
+  <div class="card">
+    <pre style="background:#f5f5f5;padding:16px;border-radius:6px;overflow-x:auto;font-size:.88em;"><code># 直播数据看板开发 Skill
+
+## 适用场景
+当需要开发电商直播运营数据看板时使用。
+
+## 数据口径约定
+- GMV：含退款前金额
+- 转化率：下单人数 / 观看人数
+- 客单价：GMV / 下单人数
+
+## 设计规范
+- 配色：主色 #FF6B35（品牌橙），辅色 #004E89（深蓝）
+- 图表库：Recharts
+- 移动端适配：768px 断点
+
+## 常见问题
+- 数据为 0 时显示 "-" 而非 "0"
+- 日期格式统一为 YYYY-MM-DD</code></pre>
+  </div>
+
+  <!-- ── 模块四 ── -->
+  <h3>模块四：实战 — 搭建你的第一个 Agent 工作流（1.5h）</h3>
+  <div class="card accent-left">
+    <h4 style="margin-top:0;">任务：电商运营数据报告生成器</h4>
+    <p><strong>功能</strong>：输入一个日期范围，自动生成一份结构化运营数据报告（Markdown 格式）。</p>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="tl-dot">1</div>
+        <div class="tl-content"><h4>写 Spec（10min）</h4>用结构化 prompt 描述需求</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot">2</div>
+        <div class="tl-content"><h4>搭 Skill（10min）</h4>把数据口径、报告格式沉淀为 Skill 文件</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot">3</div>
+        <div class="tl-content"><h4>AI 开发（40min）</h4>用 Bolt.new 或 Cursor 实现</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot">4</div>
+        <div class="tl-content"><h4>部署（10min）</h4>拿到可分享链接</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot">5</div>
+        <div class="tl-content"><h4>改进记录（10min）</h4>记录本次协作的改进点</div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot">6</div>
+        <div class="tl-content"><h4>组内互评（10min）</h4>交换试用，收集反馈</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 模块五 ── -->
+  <h3>模块五：如何发现 AI 的改进机会（1h）</h3>
+  <p><strong>定位</strong>：持续改进引擎的第一步，也是最容易被忽略的一步。</p>
+
+  <h4>5.1 什么是改进信号</h4>
+  <p><strong>定义</strong>：改进信号是"你的 AI 协作体系哪里不对劲"的早期线索。</p>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>层</th><th>改进信号示例</th></tr>
+      <tr><td>业务层</td><td>"看板加载太慢了"、"数据好像不对"</td></tr>
+      <tr><td>协作层</td><td>"prompt 写太长了"、"AI 总误解我的意思"</td></tr>
+      <tr><td>工具层</td><td>"这个工具不支持导出 Excel"、"API 又挂了"</td></tr>
+      <tr><td>治理层</td><td>"团队没人知道怎么用这个工具"、"上次的 bug 又出现了"</td></tr>
+    </table>
+  </div>
+
+  <h4>5.2 两种改进信号</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>类型</th><th>本质</th><th>电商场景示例</th></tr>
+      <tr><td><span class="tag red">问题型</span></td><td>已经出了问题，需要修复</td><td>看板数据口径错误，导致运营决策失误</td></tr>
+      <tr><td><span class="tag green">机会型</span></td><td>还没出问题，但发现了机会</td><td>看到竞品用 AI 做了个很好的客服 chatbot</td></tr>
+    </table>
+  </div>
+
+  <!-- ── 模块六 ── -->
+  <h3>模块六：知识冲刺 — 如何深度掌握一个领域（1.5h）</h3>
+  <p><strong>定位</strong>：持续改进引擎的第二步 — 当发现"能力缺口"时，如何系统性地填补。</p>
+
+  <h4>6.1 四步学习法</h4>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="step-num">①</div>
+      <div class="step-label"><strong>探问</strong><br>提出正确的问题<br><small>看病时描述症状</small></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">②</div>
+      <div class="step-label"><strong>命题化</strong><br>模糊问题→清晰陈述<br><small>医生给出初步诊断</small></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">③</div>
+      <div class="step-label"><strong>确证</strong><br>验证理解是否正确<br><small>做检查确认诊断</small></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="step-num">④</div>
+      <div class="step-label"><strong>嵌入</strong><br>知识→可执行操作<br><small>开药方</small></div>
+    </div>
+  </div>
+
+  <h4>6.2 电商场景示例</h4>
+  <p><strong>场景</strong>：想做竞品直播监控工具，但不知道怎么做。</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>步骤</th><th>时间</th><th>内容</th><th>产出</th></tr>
+      <tr><td>① 探问</td><td>15min</td><td>竞品监控需要哪些数据？数据从哪来？技术难点？</td><td>核心问题列表</td></tr>
+      <tr><td>② 命题化</td><td>15min</td><td>核心命题：用 AI 做竞品直播数据采集+对比分析可行</td><td>初步方案草稿</td></tr>
+      <tr><td>③ 确证</td><td>15min</td><td>用 Bolt.new 快速搭建 MVP 验证 + 同事试用反馈</td><td>验证完成的方案</td></tr>
+      <tr><td>④ 嵌入</td><td>15min</td><td>沉淀为 Skill 文件 + 使用指南</td><td>可复用 Skill</td></tr>
+    </table>
+  </div>
+
+  <!-- ── 模块七 ── -->
+  <h3>模块七：能力锻造 + 经验沉淀 — 把经验变成可复用资产（1.5h）</h3>
+  <p><strong>定位</strong>：持续改进引擎的第三、四步 — 从"知道"到"做到"，从"做到"到"持续做到"。</p>
+
+  <h4>7.1 能力锻造</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>形态</th><th>是什么</th><th>电商场景举例</th></tr>
+      <tr><td><span class="tag green">Skill 文件</span></td><td>可复用的知识模块</td><td><code>直播数据看板开发.md</code></td></tr>
+      <tr><td><span class="tag blue">团队规范</span></td><td>始终生效的规则</td><td>"所有运营数据看板必须支持 Excel 导出"</td></tr>
+      <tr><td><span class="tag yellow">Prompt 模板</span></td><td>触发特定工作流</td><td>"生成直播复盘报告" prompt</td></tr>
+      <tr><td><span class="tag purple">检查清单</span></td><td>自动/手动检查点</td><td>每次部署前检查数据口径一致性</td></tr>
+    </table>
+  </div>
+
+  <h4>7.2 经验沉淀的复利效应</h4>
+  <div class="highlight-box">
+    <strong>核心洞察</strong>：单次知识沉淀的价值随复用次数增长而指数放大。<br><br>
+    第 1 次：花 2h 写 Skill → 节省后续 AI 协作 0.5h 摸索<br>
+    第 5 次：累计节省 2.5h，ROI = 1.25<br>
+    第 20 次：累计节省 10h，ROI = 5<br>
+    第 100 次：累计节省 50h，ROI = 25
+  </div>
+
+  <h4>经验沉淀三问</h4>
+  <ol>
+    <li>这次工作产生了哪些<strong>稳定可复用的知识</strong>？（排除一次性操作日志）</li>
+    <li>沉淀到哪个层级最合适？（Skill / 规范 / Prompt 模板 / 团队 wiki）</li>
+    <li>下一个使用这条知识的场景是什么？（验证复用性）</li>
+  </ol>
+
+  <h4>7.3 团队 AI 知识库建议结构</h4>
+  <div class="card">
+    <pre style="background:#f5f5f5;padding:16px;border-radius:6px;font-size:.88em;"><code>team-ai-kb/
+├── skills/           # 可复用的 Skill 文件
+│   ├── 直播数据看板.md
+│   ├── 客服FAQ生成.md
+│   └── 竞品监控.md
+├── prompts/          # Prompt 模板库
+│   ├── 数据报告生成.md
+│   └── 页面原型生成.md
+├── instructions/     # 团队编码规范
+│   └── 前端开发规范.md
+└── signals/          # 改进信号收集
+    └── 2026-07.md</code></pre>
+  </div>
+
+  <!-- ── 模块八 ── -->
+  <h3>模块八：自由项目 Hackathon（2.5h）</h3>
+  <div class="card accent-left">
+    <h4 style="margin-top:0;">规则</h4>
+    <ul>
+      <li>2-3 人一组，自由组队</li>
+      <li>选题范围：电商运营场景下的任意效率工具</li>
+      <li>时间限制：2h 开发 + 0.5h 展示</li>
+    </ul>
+  </div>
+
+  <h4>选题要求</h4>
+  <ol>
+    <li>必须是电商运营场景下的真实痛点</li>
+    <li>必须产出至少一个 Skill 文件</li>
+    <li>必须完成改进信号收集（至少 3 条）</li>
+    <li>必须部署上线（拿到可分享链接）</li>
+  </ol>
+
+  <h4>评判标准</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>维度</th><th>权重</th><th>说明</th></tr>
+      <tr><td>业务价值</td><td>30%</td><td>解决了真实痛点</td></tr>
+      <tr><td>完成度</td><td>25%</td><td>可运行、可演示</td></tr>
+      <tr><td>知识资产化</td><td>25%</td><td>Skill 文件质量、Prompt 模板可复用性</td></tr>
+      <tr><td>创新性</td><td>10%</td><td>有独特思路</td></tr>
+      <tr><td>演示效果</td><td>10%</td><td>表达清晰</td></tr>
+    </table>
+  </div>
+
+  <h4>推荐选题库</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>选题</th><th>场景</th><th>难度</th></tr>
+      <tr><td>智能客服知识库</td><td>上传 FAQ 文档 → AI 自动检索回答</td><td><span class="tag green">适中</span></td></tr>
+      <tr><td>大促作战指挥屏</td><td>实时展示核心指标（GMV、订单量、库存预警）</td><td><span class="tag yellow">中等</span></td></tr>
+      <tr><td>直播选品推荐助手</td><td>基于历史数据推荐高转化商品组合</td><td><span class="tag yellow">中等</span></td></tr>
+      <tr><td>差评智能分析工具</td><td>AI 分析差评 → 生成改进建议</td><td><span class="tag green">适中</span></td></tr>
+      <tr><td>团队排班表生成器</td><td>输入约束 → AI 自动生成排班</td><td><span class="tag green">适中</span></td></tr>
+      <tr><td>运营日报自动生成</td><td>输入数据 → AI 生成结构化日报</td><td><span class="tag green">适中</span></td></tr>
+    </table>
+  </div>
+
+  <!-- ── 模块九 ── -->
+  <h3>模块九：项目展示 + 持续学习路径（1h）</h3>
+
+  <h4>9.1 能力成长自评</h4>
+  <div class="table-wrap">
+    <table>
+      <tr><th>级别</th><th>特征</th><th>你现在在哪？</th></tr>
+      <tr><td>入门</td><td>偶尔用 AI 问问题</td><td>临时使用</td></tr>
+      <tr><td>规范</td><td>有固定 prompt，但每次都要改</td><td>有意识使用</td></tr>
+      <tr><td>体系化</td><td>有 prompt 模板，开始建 Skill 库</td><td>工具链初建</td></tr>
+      <tr><td>持续进化</td><td>有个人 Skill 库，定期复盘改进，能教别人</td><td>系统化运行</td></tr>
+    </table>
+  </div>
+  <p><strong>课程目标</strong>：每人至少达到 <span class="tag green">体系化</span> 级别。</p>
+
+  <h4>9.2 持续学习路径</h4>
+  <div class="flow-steps" style="flex-wrap:nowrap;">
+    <div class="flow-step" style="border-color:var(--success);">
+      <div class="step-num" style="color:var(--success);">L1</div>
+      <div class="step-label"><strong>本课程目标</strong><br><small>体系化</small><br>能独立交付 AI 应用<br>有 Skill 文件<br>理解四层归因</div>
+    </div>
+    <div class="flow-arrow" style="color:var(--success);">→</div>
+    <div class="flow-step" style="border-color:var(--info);">
+      <div class="step-num" style="color:var(--info);">L2</div>
+      <div class="step-label"><strong>课后 3 个月</strong><br><small>系统化</small><br>有个人 Skill 库<br>定期收集改进信号<br>定期复盘实践</div>
+    </div>
+    <div class="flow-arrow" style="color:var(--info);">→</div>
+    <div class="flow-step" style="border-color:var(--accent);">
+      <div class="step-num" style="color:var(--accent);">L3</div>
+      <div class="step-label"><strong>课后 6 个月</strong><br><small>持续进化</small><br>能教别人用方法论<br>团队知识库建设<br>开始沉淀复用资产</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 四、课后跟进方案 ═══════════════ -->
+<section>
+  <h2>四、课后跟进方案（4 周持续改进）</h2>
+
+  <h3>4.1 整体设计</h3>
+  <p>将课后 4 周设计为一个完整的实践循环，让学员在实践中内化方法论：</p>
+
+  <div class="flow-steps" style="flex-wrap:nowrap;">
+    <div class="flow-step" style="border-color:#e17055;">
+      <div class="step-num" style="color:#e17055;">W1</div>
+      <div class="step-label"><strong>信号收集</strong><br><small>Signal</small><br>每人提交 5 个改进点<br>标注问题层级</div>
+    </div>
+    <div class="flow-arrow" style="color:#e17055;">→</div>
+    <div class="flow-step" style="border-color:#0984e3;">
+      <div class="step-num" style="color:#0984e3;">W2</div>
+      <div class="step-label"><strong>知识冲刺</strong><br><small>深度研究</small><br>选 1 个问题深度研究<br>输出 Skill 文件</div>
+    </div>
+    <div class="flow-arrow" style="color:#0984e3;">→</div>
+    <div class="flow-step" style="border-color:#6c5ce7;">
+      <div class="step-num" style="color:#6c5ce7;">W3</div>
+      <div class="step-label"><strong>能力锻造</strong><br><small>Forge</small><br>线上答疑<br>优秀 Skill 展示<br>工具链进阶</div>
+    </div>
+    <div class="flow-arrow" style="color:#6c5ce7;">→</div>
+    <div class="flow-step" style="border-color:#00b894;">
+      <div class="step-num" style="color:#00b894;">W4</div>
+      <div class="step-label"><strong>经验沉淀</strong><br><small>持续积累</small><br>结业答辩<br>个人 AI 知识库展示</div>
+    </div>
+  </div>
+
+  <h3>4.2 每周安排</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>阶段</th><th>作业内容</th><th>社群运营</th></tr>
+      <tr><td><strong>Week 1</strong></td><td>完善课堂项目 + 收集 5 个改进信号（标注层级）</td><td>每日一个"AI 信号识别"技巧</td></tr>
+      <tr><td><strong>Week 2</strong></td><td>选 1 个改进点做深度研究，输出 Skill 文件</td><td>每日一个"知识冲刺"案例</td></tr>
+      <tr><td><strong>Week 3</strong></td><td>线上答疑（1h 直播）+ 优秀 Skill 展示</td><td>每周评选 3 个最佳 Skill</td></tr>
+      <tr><td><strong>Week 4</strong></td><td>结业答辩：展示个人 AI 知识库 + 完整项目</td><td>颁发结业证书</td></tr>
+    </table>
+  </div>
+
+  <h3>4.3 30 天社群内容日历</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>周</th><th>主题</th><th>每日内容示例</th></tr>
+      <tr><td>Week 1</td><td>改进信号识别</td><td>今天你的 AI 协作哪里不对劲？→ 如何归因到四层</td></tr>
+      <tr><td>Week 2</td><td>知识冲刺</td><td>如何用 AI 快速掌握一个陌生领域？→ 四步学习法</td></tr>
+      <tr><td>Week 3</td><td>能力锻造</td><td>如何把经验写成 AI 能读懂的 Skill？→ 模板分享</td></tr>
+      <tr><td>Week 4</td><td>经验沉淀</td><td>你的 AI 知识库值多少钱？→ ROI 计算</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ═══════════════ 五、交付建议 ═══════════════ -->
+<section>
+  <h2>五、交付建议</h2>
+
+  <h3>5.1 交付形式</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>项目</th><th>建议</th></tr>
+      <tr><td>总时长</td><td>2 天（每天 7 小时，含午休）</td></tr>
+      <tr><td>学员规模</td><td>30-50 人/期（配 1 名讲师 + 1-2 名助教）</td></tr>
+      <tr><td>场地要求</td><td>每人一台电脑 + 稳定网络 + 投屏</td></tr>
+      <tr><td>前置准备</td><td>课前 1 周下发环境准备清单 + 学员自评 AI 使用水平</td></tr>
+    </table>
+  </div>
+
+  <h3>5.2 时间分配</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>模块类别</th><th>时长</th><th>占比</th></tr>
+      <tr><td>Vibe Coding 实操</td><td>3h</td><td>25%</td></tr>
+      <tr><td>方法论/理论</td><td>5h</td><td>42%</td></tr>
+      <tr><td>项目实战</td><td>2.5h</td><td>21%</td></tr>
+      <tr><td>展示/总结</td><td>1.5h</td><td>12%</td></tr>
+    </table>
+  </div>
+  <p>方法论占比 42%，但全部绑定实操环节，避免"干讲理论"。</p>
+
+  <h3>5.3 环境准备清单（课前下发）</h3>
+  <div class="card">
+    <ul>
+      <li>✅ 注册 Bolt.new 账号（<a href="https://bolt.new">https://bolt.new</a>）</li>
+      <li>✅ 注册 GitHub 账号</li>
+      <li>✅ 安装 VS Code（可选，用于进阶路径）</li>
+      <li>✅ 安装 Cursor 或 Windsurf（可选，用于进阶路径）</li>
+      <li>✅ 准备一个自己工作中的真实数据场景（用于自由项目环节）</li>
+      <li>✅ 课前作业：用任意 AI 工具实现一个数据看板页面，截图发群</li>
+    </ul>
+  </div>
+
+  <h3>5.4 分批次交付建议（2000 人规模）</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>批次</th><th>学员</th><th>策略</th></tr>
+      <tr><td>第 1 批</td><td>各部门种子选手（30-50 人）</td><td>重点培养，后续可担任内部 AI 教练</td></tr>
+      <tr><td>第 2-4 批</td><td>核心业务部门</td><td>按部门分批，种子选手担任助教</td></tr>
+      <tr><td>第 5-8 批</td><td>其余部门</td><td>可精简为 1 天版本（侧重实操）</td></tr>
+    </table>
+  </div>
+
+  <h3>5.5 种子选手培养路径</h3>
+  <div class="flow-steps" style="flex-wrap:nowrap;">
+    <div class="flow-step" style="border-color:var(--accent);">
+      <div class="step-num" style="color:var(--accent);">第 1 批</div>
+      <div class="step-label"><strong>种子选手</strong><br><small>30-50 人</small></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--info);">
+      <div class="step-num" style="color:var(--info);">1 个月</div>
+      <div class="step-label"><strong>能力升级</strong><br><small>L4 → L5</small></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--success);">
+      <div class="step-num" style="color:var(--success);">3 个月</div>
+      <div class="step-label"><strong>独立带组</strong><br><small>能做知识冲刺</small></div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color:var(--accent2);">
+      <div class="step-num" style="color:var(--accent2);">6 个月</div>
+      <div class="step-label"><strong>内部 AI Coach</strong><br><small>带第 2-4 批学员</small></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ 六、总结 ═══════════════ -->
+<section>
+  <h2>六、总结</h2>
+
+  <h3>本课程的独特价值</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>对比维度</th><th>市面上常见的 AI 课程</th><th>本课程</th></tr>
+      <tr><td>教什么</td><td>"怎么用 ChatGPT/Cursor"</td><td>"怎么建立 AI 协作体系"</td></tr>
+      <tr><td>核心资产</td><td>代码片段</td><td>知识资产（Skill、Prompt、方法论）</td></tr>
+      <tr><td>天花板</td><td>能做 Demo</td><td>能持续进化</td></tr>
+      <tr><td>课后支持</td><td>微信群答疑</td><td>4 周持续改进实践</td></tr>
+      <tr><td>可复制性</td><td>依赖个人悟性</td><td>有方法论、有模板、有成熟度模型</td></tr>
+    </table>
+  </div>
+
+  <h3>理论支撑</h3>
+  <p>本课程的方法论核心来自 <strong>AI 协作体系设计</strong> 领域的最佳实践：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>理论模块</th><th>课程中的对应</th></tr>
+      <tr><td><strong>四层协作模型</strong></td><td>模块三：帮学员理解 AI 协作问题的根因在哪一层</td></tr>
+      <tr><td><strong>持续改进引擎</strong>（发现→学习→锻造→沉淀）</td><td>模块五/六/七：给学员一套可操作的迭代方法论</td></tr>
+      <tr><td><strong>AI 协作工具箱</strong>（Skill、Prompt 模板、规范、检查清单）</td><td>模块二：让学员知道如何把经验变成可复用资产</td></tr>
+      <tr><td><strong>能力成长阶梯</strong>（入门→规范→体系化→持续进化）</td><td>模块九：给学员一个清晰的成长路径</td></tr>
+    </table>
+  </div>
+
+  <div class="highlight-box info">
+    <strong>核心理念</strong>：不教"AI 能做什么"，而是教"你用 AI 能交付什么"——并建立一套让这个能力持续进化的体系。
+  </div>
+</section>
+
+<!-- ═══════════════ 附录：后续知识冲刺清单 ═══════════════ -->
+<section>
+  <h2>附录：后续知识冲刺清单</h2>
+  <p>课程提纲为骨架，以下模块需要在后续进一步打磨：</p>
+  <div class="table-wrap">
+    <table>
+      <tr><th>#</th><th>冲刺主题</th><th>产出物</th><th>优先级</th></tr>
+      <tr><td>1</td><td>Skill 文件标准模板</td><td>电商场景标准化 Skill 模板（含示例）</td><td><span class="tag red">高</span></td></tr>
+      <tr><td>2</td><td>改进信号收集方法</td><td>适合非技术团队的轻量级收集工具</td><td><span class="tag red">高</span></td></tr>
+      <tr><td>3</td><td>能力成长评估问卷</td><td>学员自评用的四阶段评估工具</td><td><span class="tag yellow">中</span></td></tr>
+      <tr><td>4</td><td>电商场景案例库</td><td>3-5 个完整的知识冲刺示例</td><td><span class="tag red">高</span></td></tr>
+      <tr><td>5</td><td>课后 30 天内容日历</td><td>每日推送的具体内容</td><td><span class="tag yellow">中</span></td></tr>
+      <tr><td>6</td><td>讲师手册</td><td>每模块的详细教案、关键提问、常见问题应对</td><td><span class="tag yellow">中</span></td></tr>
+    </table>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <p>AI 进阶实战课程设计方案 v2.0 &nbsp;|&nbsp; 客户：欧莱雅百库 &nbsp;|&nbsp; 2026 年 7 月</p>
+  <p style="margin-top:6px;">方法论基于 AI 协作体系设计领域的最佳实践 &nbsp;|&nbsp; 四层协作模型 × 持续改进引擎</p>
+</footer>
+
+</body>
+</html>

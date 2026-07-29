@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>汽车行业 AI-Native 规模化敏捷生态建设 — 战略方案</title>
+<style>
+  :root {
+    --primary: #1a365d; --accent: #2b6cb0; --light-bg: #f7fafc;
+    --border: #e2e8f0; --text: #2d3748; --muted: #718096;
+    --green: #276749; --green-bg: #c6f6d5; --blue: #2b6cb0; --blue-bg: #bee3f8;
+    --orange: #975a16; --orange-bg: #fefcbf; --red: #9b2c2c; --red-bg: #fed7d7;
+    --purple: #6b46c1; --purple-bg: #e9d8fd;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: var(--text); line-height: 1.7; background: #fff; padding: 0;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+    color: #fff; padding: 48px 40px; text-align: center;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; letter-spacing: 1px; }
+  .header .meta { font-size: 14px; opacity: .8; }
+  .header .meta span { margin: 0 12px; }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  .section { margin-bottom: 40px; }
+  .section-title {
+    font-size: 20px; font-weight: 700; color: var(--primary);
+    padding-bottom: 8px; border-bottom: 2px solid var(--accent); margin-bottom: 16px;
+  }
+  .section-subtitle { font-size: 16px; font-weight: 600; color: var(--accent); margin: 24px 0 12px; }
+  p { margin-bottom: 12px; text-align: justify; }
+  .highlight-box {
+    background: var(--light-bg); border-left: 4px solid var(--accent);
+    padding: 16px 20px; margin: 16px 0; border-radius: 0 6px 6px 0;
+  }
+  .highlight-box p { margin-bottom: 4px; }
+  table {
+    width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;
+  }
+  th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
+  th { background: var(--light-bg); font-weight: 600; color: var(--primary); }
+  .tag {
+    display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;
+  }
+  .tag-blue { background: var(--blue-bg); color: var(--blue); }
+  .tag-green { background: var(--green-bg); color: var(--green); }
+  .tag-orange { background: var(--orange-bg); color: var(--orange); }
+  .tag-red { background: var(--red-bg); color: var(--red); }
+  ul, ol { margin: 8px 0 12px 20px; }
+  li { margin-bottom: 6px; }
+
+  .exec-summary {
+    background: var(--light-bg); border-radius: 8px; padding: 24px;
+    font-size: 15px; line-height: 1.9;
+  }
+  .exec-summary strong { color: var(--accent); }
+
+  .trend-cards {
+    display: flex; gap: 16px; margin: 16px 0;
+  }
+  .trend-card {
+    flex: 1; border: 1px solid var(--border); border-radius: 8px; padding: 16px;
+  }
+  .trend-card h4 { font-size: 14px; margin-bottom: 8px; }
+  .trend-card.t1 { border-left: 4px solid var(--red); }
+  .trend-card.t1 h4 { color: var(--red); }
+  .trend-card.t2 { border-left: 4px solid var(--blue); }
+  .trend-card.t2 h4 { color: var(--blue); }
+  .trend-card.t3 { border-left: 4px solid var(--green); }
+  .trend-card.t3 h4 { color: var(--green); }
+  .trend-card p { font-size: 13px; margin-bottom: 0; }
+
+  .arch-wrapper {
+    border: 2px solid var(--border); border-radius: 10px; padding: 24px 20px 16px;
+    margin: 20px 0;
+  }
+  .arch-top { display: flex; gap: 16px; margin-bottom: 20px; align-items: stretch; }
+  .arch-wheel {
+    flex: 1; padding: 24px 16px; border-radius: 8px; text-align: center;
+  }
+  .arch-wheel-left { background: var(--blue-bg); color: var(--primary); }
+  .arch-wheel-right { background: var(--green-bg); color: var(--green); }
+  .arch-wheel h4 { font-size: 15px; }
+  .arch-flywheel {
+    display: flex; align-items: center; justify-content: center;
+    margin: 6px 0 16px; font-size: 13px; color: var(--muted);
+  }
+  .arch-flywheel .arrow { font-size: 18px; margin: 0 8px; color: var(--accent); }
+  .arch-base {
+    background: var(--primary); color: #fff; padding: 16px; border-radius: 8px;
+    text-align: center; font-weight: 700; margin-top: 4px;
+  }
+  .arch-base h4 { font-size: 15px; margin-bottom: 4px; }
+  .arch-base p { font-size: 13px; font-weight: 400; opacity: .85; margin-bottom: 0; text-align: center; }
+
+  .three-pillar {
+    display: flex; gap: 16px; margin: 16px 0;
+  }
+  .pillar {
+    flex: 1; border-radius: 8px; padding: 16px; text-align: center;
+  }
+  .pillar:first-child { background: #faf5ff; border: 1px solid #d6bcfa; }
+  .pillar:nth-child(2) { background: #fff5f5; border: 1px solid #feb2b2; }
+  .pillar:last-child { background: #f0fff4; border: 1px solid #9ae6b4; }
+  .pillar-header {
+    font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 6px;
+  }
+  .pillar-desc { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .pillar-sub { font-size: 11px; color: var(--accent); font-weight: 600; }
+
+  .bmc-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 8px; overflow: hidden; margin: 16px 0; font-size: 13px;
+  }
+  .bmc-cell {
+    background: #fff; padding: 12px 10px; min-height: 80px;
+  }
+  .bmc-cell h5 {
+    font-size: 12px; color: var(--muted); margin-bottom: 6px;
+    text-transform: uppercase; letter-spacing: .5px;
+  }
+  .bmc-cell p { font-size: 12px; margin-bottom: 3px; text-align: left; }
+  .bmc-cell.kp { background: #faf5ff; }
+  .bmc-cell.ka { background: #fff5f5; }
+  .bmc-cell.kr { background: #fffaf0; }
+  .bmc-cell.vp { background: #f0fff4; }
+  .bmc-cell.cr { background: #ebf8ff; }
+  .bmc-cell.ch { background: #fff5f5; }
+  .bmc-cell.cs { background: #faf5ff; }
+  .bmc-cell.rs { background: #f0fff4; }
+  .bmc-cell.ct { background: #fffaf0; }
+
+  .footer {
+    text-align: center; padding: 24px; color: var(--muted);
+    font-size: 13px; border-top: 1px solid var(--border); margin-top: 40px;
+  }
+  @media (max-width: 640px) {
+    .header { padding: 32px 20px; }
+    .header h1 { font-size: 22px; }
+    .container { padding: 24px 16px; }
+    .trend-cards { flex-direction: column; }
+    .arch-top { flex-direction: column; }
+    .three-pillar { flex-direction: column; }
+    .bmc-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>汽车行业 AI-Native 规模化敏捷生态建设</h1>
+  <div class="meta">
+    <span>版本 V5.3</span>
+    <span>2026-07-22</span>
+    <span>状态：讨论稿</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 执行摘要 -->
+  <div class="section">
+    <div class="section-title">一、执行摘要</div>
+    <div class="exec-summary">
+      <p>以<strong>智能体工程方法论</strong>为底座，与 Scrum Org CN 深度共创 AI-Native 敏捷方法论，同步推进<strong>AI 原生平台 MVP 建设与内部核心场景验证</strong>，构建<strong>行业联盟生态</strong>和<strong>AI 原生平台</strong>双增长飞轮，用 AI 重新定义规模化敏捷的可行性，帮助一汽及更多企业重塑为 AI-Native 的全面敏捷组织。</p>
+    </div>
+  </div>
+
+  <!-- 行业趋势与机会窗口 -->
+  <div class="section">
+    <div class="section-title">二、行业趋势与机会窗口</div>
+
+    <div class="section-subtitle">三大趋势交汇</div>
+    <div class="trend-cards">
+      <div class="trend-card t1">
+        <h4>规模化敏捷的治理困境</h4>
+        <p>传统规模化敏捷方法论在切入市场时已失去敏捷"小而美"的优势，用复杂治理解决大规模协同，治理越复杂执行越走样。</p>
+      </div>
+      <div class="trend-card t2">
+        <h4>AI 转型缺少方法论</h4>
+        <p>行业普遍讨论 AI Agent 如何写代码、调 Prompt，但无人回答：一个组织如何从"人干活"平滑过渡到"人+AI 混合干活"？</p>
+      </div>
+      <div class="trend-card t3">
+        <h4>国家政策窗口</h4>
+        <p>2025 WAIC 体现国家高规格重视 AI，制造业 AI-Native 转型方法论是行业空白，率先输出即占据先机。</p>
+      </div>
+    </div>
+
+    <div class="highlight-box">
+      <p><strong>核心判断</strong>：传统规模化敏捷到了必须用 AI 重构的拐点，而市场上只有技术框架，没有治理驱动的方法论——这正是我们的机会。</p>
+    </div>
+  </div>
+
+  <!-- 我们的独特优势 -->
+  <div class="section">
+    <div class="section-title">三、我们的独特优势</div>
+
+    <div class="section-subtitle">灵犀实战验证：一汽 31 个战队规模化敏捷实践</div>
+    <p>灵犀规模化敏捷经过 2 年实践，31 个战队并行开发，量化结果已验证：需求变更率从 >30% 降至 <8%，环境搭建从 3 小时降至 10 分钟。国内首个《中国企业规模化敏捷白皮书》核心案例，顺位第一。这是行业内极少见的真实规模化敏捷场景，也是我们区别于纯方法论团队的核心壁垒。</p>
+
+    <div class="section-subtitle">Scrum Org CN：传统敏捷根基</div>
+    <p>SAFe 多年金牌合作伙伴、Scrum.org.cn 创始人，与 Scrum.org 深度绑定。我方在咨询落地和对外输出方面，都需要 Scrum Org CN 的认证体系和国际资质作为支撑。双方理念契合、知识互补，是深度共创伙伴而非买卖关系。</p>
+
+    <div class="highlight-box">
+      <p><strong>差异化定位</strong>：Scrum Org CN 的深厚传统敏捷根基 + 灵犀 31 个战队的实战场景 + 智能体工程方法论的战略方向，构成市场上唯一能从传统敏捷平滑演进到 AI-Native 敏捷的完整方案。AI 原生平台背靠一汽国企政策优势，别人复制不了。</p>
+    </div>
+  </div>
+
+  <!-- 双增长飞轮战略 -->
+  <div class="section">
+    <div class="section-title">四、双增长飞轮战略</div>
+
+    <div class="arch-wrapper">
+      <div class="arch-top">
+        <div class="arch-wheel arch-wheel-left">
+          <h4>行业联盟生态</h4>
+        </div>
+        <div class="arch-wheel arch-wheel-right">
+          <h4>AI 原生平台</h4>
+        </div>
+      </div>
+      <div class="arch-flywheel">
+        <span>建立信任，引入客户</span>
+        <span class="arrow">&#8644;</span>
+        <span>锁定客户，数据反哺</span>
+      </div>
+      <div class="arch-base">
+        <h4>智能体工程方法论</h4>
+      </div>
+    </div>
+
+    <div class="section-subtitle">战略目标</div>
+    <table>
+      <tr><th style="width:15%;">层次</th><th style="width:25%;">核心内容</th><th style="width:30%;">解决的问题</th><th style="width:30%;">预期成果</th></tr>
+      <tr>
+        <td><strong>方法论</strong><br><span class="tag tag-blue">底座</span></td>
+        <td>与 Scrum Org CN 共创 AI-Native 敏捷方法论，融合传统敏捷与智能体工程</td>
+        <td>行业缺少"人与 AI 协同"的工程方法论；传统规模化敏捷治理过重</td>
+        <td>填补行业空白，用 AI 降低转型门槛、提升执行一致性</td>
+      </tr>
+      <tr>
+        <td><strong>行业联盟生态</strong><br><span class="tag tag-green">入口</span></td>
+        <td>PSM/PSPO 认证 → 定制化课程 → 咨询项目 → AI-Native 成熟度评估<br>SEMM 认证作为可选短期成果</td>
+        <td>内部缺敏捷认证体系；咨询能力薄弱；行业标准话语权缺失</td>
+        <td>建立信任入口，产生现金流，培养内部咨询师，支撑国家海外战略</td>
+      </tr>
+      <tr>
+        <td><strong>AI 原生平台</strong><br><span class="tag tag-orange">载体</span></td>
+        <td>AI 资产管理 + AI-Native 业务孵化<br>FDE 为第一用户，吃自己的狗粮</td>
+        <td>方法论落地缺载体；Token 成本不可控；AI 业务平台缺统一底座</td>
+        <td>构建技术壁垒，持续收入，聚合 Token 需求议价</td>
+      </tr>
+    </table>
+
+    <div class="section-subtitle">智能体工程方法论：战略底座</div>
+    <div class="three-pillar">
+      <div class="pillar">
+        <div class="pillar-header">Agent 本体论</div>
+        <div class="pillar-desc">静态结构：Agent 是什么</div>
+        <div class="pillar-sub">7 构成维度 + 4 元属性</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-header">Agent 工作环境</div>
+        <div class="pillar-desc">静态环境：Agent 如何工作</div>
+        <div class="pillar-sub">广义环境 + 自动质检</div>
+      </div>
+      <div class="pillar">
+        <div class="pillar-header">持续进化机制</div>
+        <div class="pillar-desc">动态演化：本体与环境共同进化</div>
+        <div class="pillar-sub">演化理论 + 操作引擎</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:8px;">三大支柱构成完整的智能体工程方法论体系——定义 Agent 是什么、如何工作、如何持续进化</p>
+    <p>这套方法论是双增长飞轮的战略底座，目前处于持续构建阶段。我们将以 FDE 战队为第一用户，吃自己的狗粮，在平台建设过程中逐步验证和完善方法论。长远来看，它将为 AI-Native 敏捷转型提供效率、质量和创新三个维度的系统支撑。</p>
+
+    <div class="section-subtitle">飞轮一：行业联盟生态</div>
+    <table>
+      <tr><th>层级</th><th>内容</th><th>合作方</th><th>预计投入</th></tr>
+      <tr><td>认证授权</td><td>PSM/PSPO 等 10+ 认证，终身有效</td><td>Scrum Org CN</td><td>认证考试费用</td></tr>
+      <tr><td>定制化课程</td><td>融合业务现状的企业内训，面向集团内部兄弟单位</td><td>联合开发</td><td>较低，可快速变现</td></tr>
+      <tr><td>咨询项目</td><td>我方拉关系，Scrum Org CN 出人，我方培养内部咨询师</td><td>联合交付</td><td>按项目分成</td></tr>
+      <tr><td>AI-Native 成熟度评估</td><td>基于 Agent First 方法论的行业级成熟度标准（远期）</td><td>联合推进</td><td>标准制定费用</td></tr>
+    </table>
+    <div class="highlight-box">
+      <p><strong>定制化课程的快速切入点</strong>：一汽丰田和奔腾已表达培训需求，都是兄弟单位，领导也熟。投入不大，可快速变现。</p>
+      <p style="margin-top: 8px;"><strong>可选短期成果：SEMM 认证</strong>：若领导短期内需要行业影响力成果，SEMM 战略投资组合级认证（国内首个）可作为独立项目快速推进，不纳入飞轮一主路线。参照信通院 DevOps 成熟度评估模式，切入汽车制造业这一尚未覆盖的垂直领域。</p>
+      <p style="margin-top: 8px;"><strong>国家海外战略支撑</strong>：行业联盟生态可承接国家部委的制造业 AI 转型标准制定需求，为"一带一路"等海外战略输出中国制造业敏捷方法论。</p>
+    </div>
+
+    <div class="section-subtitle">飞轮二：AI 原生平台</div>
+    <table>
+      <tr><th style="width:20%;">维度</th><th style="width:80%;">内容</th></tr>
+      <tr><td><strong>本质</strong></td><td>智能体工程方法论的外化，基于方法论孵化企业需要的各种 AI-Native 业务平台</td></tr>
+      <tr><td><strong>定位</strong></td><td>AI-Native 价值流操作系统——所有 AI-Native 业务平台跑在上面的底座</td></tr>
+      <tr><td><strong>核心能力</strong></td><td>AI 资产管理（Token 管控、模型选型、成本优化）+ AI-Native 业务孵化</td></tr>
+      <tr><td><strong>壁垒</strong></td><td>背靠一汽国企政策优势，别人复制不了</td></tr>
+    </table>
+
+    <div class="highlight-box">
+      <p><strong>吃自己的狗粮</strong>：FDE 战队是 AI 原生平台的第一用户。平台建设过程中，每一个功能模块都先在内部验证，再对外输出。任何一项建设成果，都天然具备反哺内外部客户的双重价值。</p>
+    </div>
+  </div>
+
+  <!-- 商业模式 -->
+  <div class="section">
+    <div class="section-title">五、商业模式</div>
+
+    <div class="bmc-grid">
+      <div class="bmc-cell kp">
+        <h5>关键合作伙伴</h5>
+        <p>Scrum Org CN</p>
+        <p>信通院</p>
+        <p>行业协会</p>
+        <p>腾讯/字节/阿里（Token 议价）</p>
+      </div>
+      <div class="bmc-cell ka">
+        <h5>关键活动</h5>
+        <p>方法论共创</p>
+        <p>认证与课程交付</p>
+        <p>平台研发与迭代</p>
+        <p>咨询项目执行</p>
+      </div>
+      <div class="bmc-cell vp" style="grid-row: span 2;">
+        <h5>价值主张</h5>
+        <p><strong>AI-Native 敏捷转型</strong></p>
+        <p>用 AI Agent 解决规模化敏捷治理复杂度问题，降低转型门槛、提升执行一致性</p>
+        <p style="margin-top: 6px;">· 一套方法论：人与 AI 协同</p>
+        <p>· 一条认证链：国际认可</p>
+        <p>· 一个平台：AI 资产管理 + 业务孵化</p>
+      </div>
+      <div class="bmc-cell cr">
+        <h5>客户关系</h5>
+        <p>认证培训（一次性）</p>
+        <p>咨询项目（周期性）</p>
+        <p>平台订阅（持续性）</p>
+        <p>Token 聚合（规模化）</p>
+      </div>
+      <div class="bmc-cell cs">
+        <h5>客户细分</h5>
+        <p><strong>内部</strong>：一汽丰田、奔腾、解放</p>
+        <p><strong>行业</strong>：汽车制造业国企</p>
+        <p><strong>政策</strong>：国家部委、信通院</p>
+        <p><strong>海外</strong>：国际客户</p>
+      </div>
+      <div class="bmc-cell kr">
+        <h5>核心资源</h5>
+        <p>智能体工程方法论</p>
+        <p>Scrum Org CN 认证体系</p>
+        <p>一汽国企政策优势</p>
+        <p>FDE 团队</p>
+        <p>灵犀 31 个战队实战数据</p>
+      </div>
+      <div class="bmc-cell ch">
+        <h5>渠道通路</h5>
+        <p>内部兄弟单位直推</p>
+        <p>行业峰会与白皮书</p>
+        <p>Scrum Org CN 存量客户转化</p>
+        <p>信通院标准发布</p>
+      </div>
+      <div class="bmc-cell ct">
+        <h5>成本结构</h5>
+        <p>认证考试费用</p>
+        <p>课程开发与讲师</p>
+        <p>平台研发（FDE 团队）</p>
+        <p>标准制定与推广</p>
+      </div>
+      <div class="bmc-cell rs">
+        <h5>收入来源</h5>
+        <p>课程费（快速变现）</p>
+        <p>咨询项目分成</p>
+        <p>平台订阅费</p>
+        <p>Token 聚合差价</p>
+        <p>成熟度评估费</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 启动资源与下一步 -->
+  <div class="section">
+    <div class="section-title">六、启动资源与下一步</div>
+
+    <div class="section-subtitle">现有资源</div>
+    <table>
+      <tr><th>资源</th><th>说明</th></tr>
+      <tr><td><strong>启动资金</strong></td><td>年初申请 20 万 SEMM 认证预算可调整用途，投向：认证授权（考试费用）、定制化课程（开发与讲师）、标准制定（前期投入）</td></tr>
+      <tr><td><strong>团队</strong></td><td>FDE 已在招聘中</td></tr>
+      <tr><td><strong>领导支持</strong></td><td>领导希望看到 AI 方面的标杆项目</td></tr>
+      <tr><td><strong>内部共识</strong></td><td>与多位高管沟通过，一致认为"把方法融入平台"才能更受控地驱动企业转型</td></tr>
+      <tr><td><strong>潜在客户</strong></td><td>一汽丰田、奔腾已表达培训需求，都是兄弟单位，可作为定制化课程首批客户</td></tr>
+    </table>
+
+    <div class="section-subtitle">待推进事项</div>
+    <table>
+      <tr><th>优先级</th><th>事项</th><th>时间</th></tr>
+      <tr><td><span class="tag tag-red">P0</span></td><td>与朝阳总讨论确认方向</td><td>本周内</td></tr>
+      <tr><td><span class="tag tag-red">P0</span></td><td>与 Scrum Org CN 正式交流</td><td>7 月底</td></tr>
+      <tr><td><span class="tag tag-orange">P1</span></td><td>与一汽丰田/奔腾接触，推进定制化课程</td><td>8 月</td></tr>
+      <tr><td><span class="tag tag-orange">P1</span></td><td>明确第一阶段路线和里程碑</td><td>讨论后</td></tr>
+      <tr><td><span class="tag tag-orange">P1</span></td><td>20 万认证预算用途调整</td><td>讨论后</td></tr>
+      <tr><td><span class="tag tag-green">P2</span></td><td>FDE 团队组建</td><td>持续</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>汽车行业 AI-Native 规模化敏捷生态建设 · 战略方案 V5.3</p>
+  <p>2026-07-22 · 讨论稿</p>
+</div>
+
+</body>
+</html>

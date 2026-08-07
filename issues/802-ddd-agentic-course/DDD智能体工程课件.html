@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDD × 智能体工程 定制课程</title>
+<style>
+  :root{
+    --ink:#1f2937;
+    --ink-soft:#475569;
+    --bg:#f6f8fb;
+    --primary:#2b4c7e;
+    --primary-dark:#16263f;
+    --primary-soft:#e8eef7;
+    --accent:#e8833a;
+    --accent-soft:#fdeede;
+    --line:#dce3ec;
+    --good:#2f9e6f;
+    --bad:#d35b54;
+    --shadow:0 10px 30px rgba(20,38,63,.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+    color:var(--ink);background:var(--bg);overflow:hidden;line-height:1.7;
+  }
+  .progress{position:fixed;top:0;left:0;height:4px;background:var(--accent);width:0;z-index:50;transition:width .35s ease;}
+  .deck{position:relative;height:100vh;width:100vw;}
+  .slide{
+    position:absolute;inset:0;display:none;
+    flex-direction:column;justify-content:center;
+    padding:7vh 8vw;overflow-y:auto;
+  }
+  .slide.active{display:flex;animation:fade .45s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* 封面 / 章节页 */
+  .slide.cover,.slide.section{background:var(--primary-dark);color:#fff;justify-content:center;}
+  .slide.cover .kicker,.slide.section .kicker{
+    color:var(--accent);font-weight:700;letter-spacing:.18em;font-size:15px;margin-bottom:18px;text-transform:uppercase;
+  }
+  .slide.cover h1{font-size:clamp(34px,5vw,60px);line-height:1.15;font-weight:800;margin-bottom:20px;}
+  .slide.cover .sub{font-size:20px;color:#c4d2e6;max-width:760px;}
+  .slide.cover .meta{margin-top:36px;display:flex;gap:28px;flex-wrap:wrap;color:#9fb3cd;font-size:15px;}
+  .slide.cover .meta b{color:#fff;font-weight:600;}
+
+  .slide.section .num{font-size:90px;font-weight:800;color:rgba(232,131,58,.35);line-height:1;margin-bottom:6px;}
+  .slide.section h2{font-size:clamp(28px,4vw,46px);font-weight:800;max-width:900px;}
+
+  /* 普通页 */
+  .slide h2.title{font-size:clamp(24px,3vw,34px);font-weight:800;color:var(--primary);margin-bottom:6px;}
+  .slide .lead{color:var(--ink-soft);font-size:16px;margin-bottom:22px;}
+  .slide h3{font-size:19px;color:var(--primary);margin:18px 0 8px;font-weight:700;}
+  .tag{display:inline-block;background:var(--primary-soft);color:var(--primary);font-size:13px;font-weight:600;padding:3px 11px;border-radius:20px;margin-bottom:14px;}
+
+  ul.b{list-style:none;display:grid;gap:12px;margin-top:6px;}
+  ul.b li{position:relative;padding-left:26px;font-size:17px;}
+  ul.b li::before{content:"";position:absolute;left:4px;top:11px;width:9px;height:9px;border-radius:3px;background:var(--accent);transform:rotate(45deg);}
+  ul.b.two{grid-template-columns:1fr 1fr;}
+
+  /* 表格 */
+  table{width:100%;border-collapse:collapse;font-size:15px;margin-top:10px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top;}
+  thead th{background:var(--primary);color:#fff;font-weight:600;font-size:14px;}
+  tbody tr:nth-child(even){background:#fafcff;}
+  tbody tr:last-child td{border-bottom:none;}
+
+  /* 卡片网格 */
+  .cards{display:grid;gap:14px;margin-top:8px;}
+  .cards.c2{grid-template-columns:1fr 1fr;}
+  .cards.c3{grid-template-columns:repeat(3,1fr);}
+  .card{background:#fff;border:1px solid var(--line);border-left:4px solid var(--primary);border-radius:10px;padding:14px 16px;box-shadow:0 4px 14px rgba(20,38,63,.06);}
+  .card h4{font-size:16px;color:var(--primary);margin-bottom:4px;}
+  .card p{font-size:14px;color:var(--ink-soft);}
+
+  /* 流程图 */
+  .flow{display:flex;flex-direction:column;align-items:center;gap:0;margin-top:10px;}
+  .flow-node{background:#fff;border:1px solid var(--line);border-radius:10px;padding:11px 20px;font-size:15.5px;font-weight:600;color:var(--primary);box-shadow:0 4px 12px rgba(20,38,63,.07);text-align:center;min-width:280px;}
+  .flow-node small{display:block;font-weight:400;color:var(--ink-soft);font-size:13px;margin-top:2px;}
+  .flow-arrow{color:var(--accent);font-size:13px;font-weight:600;padding:5px 0;letter-spacing:.04em;}
+
+  /* 颜色约定 */
+  .legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:14px;}
+  .legend .chip{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:30px;padding:7px 15px;font-size:14px;box-shadow:0 3px 10px rgba(20,38,63,.05);}
+  .legend .dot{width:16px;height:16px;border-radius:5px;}
+
+  /* 数据高亮 */
+  .stats{display:flex;gap:18px;margin-top:8px;flex-wrap:wrap;}
+  .stat{flex:1;min-width:150px;background:#fff;border-radius:12px;padding:18px;text-align:center;box-shadow:var(--shadow);border-top:4px solid var(--accent);}
+  .stat .n{font-size:30px;font-weight:800;color:var(--accent);line-height:1.1;}
+  .stat .t{font-size:13.5px;color:var(--ink-soft);margin-top:6px;}
+
+  .checklist{list-style:none;display:grid;gap:11px;margin-top:8px;}
+  .checklist li{display:flex;gap:12px;align-items:flex-start;font-size:16px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:11px 15px;box-shadow:0 3px 10px rgba(20,38,63,.05);}
+  .checklist li .box{flex:0 0 20px;height:20px;border:2px solid var(--primary);border-radius:5px;margin-top:2px;}
+
+  .note{margin-top:14px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;font-size:14.5px;color:#8a4a1e;}
+
+  /* 导航 */
+  .nav{position:fixed;bottom:0;left:0;right:0;height:48px;background:rgba(255,255,255,.92);backdrop-filter:blur(6px);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;z-index:40;font-size:13px;color:var(--ink-soft);}
+  .nav .mid{display:flex;align-items:center;gap:10px;}
+  .nav button{background:var(--primary);color:#fff;border:none;border-radius:7px;padding:7px 13px;cursor:pointer;font-size:13px;font-weight:600;transition:.15s;}
+  .nav button:hover{background:var(--primary-dark);}
+  .nav button:disabled{background:#c2ccd8;cursor:not-allowed;}
+  .dots{display:flex;gap:5px;flex-wrap:wrap;max-width:55vw;justify-content:center;}
+  .dots .d{width:8px;height:8px;border-radius:50%;background:#cbd5e1;cursor:pointer;transition:.15s;}
+  .dots .d.on{background:var(--accent);transform:scale(1.25);}
+  .hint{position:fixed;top:14px;right:18px;background:rgba(22,38,63,.85);color:#fff;font-size:12px;padding:5px 11px;border-radius:20px;z-index:50;opacity:.0;transition:opacity .3s;}
+  .hint.show{opacity:1;}
+  .pageinfo{font-variant-numeric:tabular-nums;}
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="hint" id="hint">← → 翻页 · 空格下一页 · Home/End 跳首尾</div>
+<div class="deck" id="deck">
+
+  <!-- 1 封面 -->
+  <section class="slide cover active">
+    <div class="kicker">定制课程 · 半天培训</div>
+    <h1>DDD × 智能体工程<br>高质量交付的方法与引擎</h1>
+    <div class="sub">一条管"做对的事"（DDD 融合方法），一条管"把事做对"（智能体工程）——两线合一，让小团队也能高质量交付。</div>
+    <div class="meta">
+      <div>培训对象：<b>河北产权交易中心业务系统建设团队</b></div>
+      <div>团队规模：<b>1 产品 + 3 前端 + 4-5 后端</b></div>
+      <div>时长：<b>约 4 小时（含两次休息）</b></div>
+      <div>日期：<b>2026-08-07</b></div>
+    </div>
+  </section>
+
+  <!-- 2 课程信息 -->
+  <section class="slide">
+    <span class="tag">课程目标</span>
+    <h2 class="title">今天我们一起来解决什么</h2>
+    <p class="lead">这是一个"从 SaaS 迁自建"的项目，最大的风险不是技术，而是用 SaaS 的"功能思维"去做自建系统。</p>
+    <div class="cards c3">
+      <div class="card"><h4>认知目标</h4><p>建立对"DDD 融合方法论"和"智能体工程"的基本认知，知道有什么、什么时候用。</p></div>
+      <div class="card"><h4>应用目标</h4><p>让团队有意识地在项目中有选择地应用，支撑 SaaS 迁自建的高质量交付。</p></div>
+      <div class="card"><h4>带走目标</h4><p>拿到一份可落地的实践清单与第一周行动项，知道"第一步做什么"。</p></div>
+    </div>
+    <div class="note">一下午做不到"实操级"，目标是 <b>建立认知 + 给出可带走的清单</b>。</div>
+  </section>
+
+  <!-- 3 议程总览 -->
+  <section class="slide">
+    <span class="tag">Agenda</span>
+    <h2 class="title">课程结构总览</h2>
+    <p class="lead">约 210 分钟正课 + 30 分钟弹性讨论。</p>
+    <table>
+      <thead><tr><th style="width:90px">模块</th><th>主题</th><th style="width:80px">时长</th><th>核心交付物</th></tr></thead>
+      <tbody>
+        <tr><td>开场</td><td>破冰 + 我们今天解决什么问题</td><td>15 min</td><td>问题共识</td></tr>
+        <tr><td>第一篇</td><td>为什么你们现在最需要的不是 DDD 本身</td><td>40 min</td><td>DDD 融合方法全景图</td></tr>
+        <tr><td>第二篇</td><td>Modern DDD：从业务到领域模型的完整路径</td><td>50 min</td><td>四方法串联流程</td></tr>
+        <tr><td>—</td><td>休息</td><td>10 min</td><td>—</td></tr>
+        <tr><td>第三篇</td><td>智能体工程：让小团队也能高质量交付</td><td>45 min</td><td>工具链 + 实践清单</td></tr>
+        <tr><td>第四篇</td><td>两线合一：快速原型法驱动项目交付</td><td>30 min</td><td>项目落地路线图</td></tr>
+        <tr><td>收尾</td><td>你们的下一步行动 + Q&A</td><td>20 min</td><td>第一周行动清单</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4 开场 -->
+  <section class="slide">
+    <span class="tag">开场 · 15 min</span>
+    <h2 class="title">破冰：我们今天解决什么问题</h2>
+    <ul class="b">
+      <li><b>三句话定位场景</b>：你们正在从 SaaS 迁移到自建系统；团队 8-9 人；朋友说要做 DDD 培训，但聊下来发现你们更需要的是"怎么把项目高质量交付"。</li>
+      <li><b>抛出核心问题</b>：SaaS 用了那么久，你们真的知道"客户要什么"吗？还是只知道"点哪个按钮"？</li>
+      <li><b>今天的承诺</b>：不讲纯理论，给你们两条可落地的线——一条管"做对的事"（DDD 融合方法），一条管"把事做对"（智能体工程）。</li>
+    </ul>
+    <div class="note">交付物：学员对"今天解决什么"的共识。</div>
+  </section>
+
+  <!-- 5 第一篇章节 -->
+  <section class="slide section">
+    <div class="num">01</div>
+    <div class="kicker">第一篇 · 40 min</div>
+    <h2>为什么你们现在最需要的不是 DDD 本身</h2>
+  </section>
+
+  <!-- 6 1.1 -->
+  <section class="slide">
+    <span class="tag">1.1 · 10 min</span>
+    <h2 class="title">DDD 是什么、不是什么</h2>
+    <div class="cards c2">
+      <div class="card"><h4>是什么</h4><p>Eric Evans 2003 年提出，以领域模型为核心的软件设计方法论。分战略设计（限界上下文、上下文映射）和战术设计（实体、值对象、聚合、Repository）。</p></div>
+      <div class="card"><h4>不是什么</h4><p>不是架构风格，不是微服务的同义词，不是"写一堆 Service"。</p></div>
+    </div>
+    <div class="note">本命场景：<b>业务复杂、需要长期演进的核心系统</b>。</div>
+  </section>
+
+  <!-- 7 1.2 -->
+  <section class="slide">
+    <span class="tag">1.2 · 15 min</span>
+    <h2 class="title">单纯 DDD 的三个致命缺陷</h2>
+    <p class="lead">为什么 Eric Evans 的书读完还是不会用？</p>
+    <table>
+      <thead><tr><th>缺陷</th><th>表现</th><th>你们项目的对应风险</th></tr></thead>
+      <tbody>
+        <tr><td>缺乏"如何开始"的方法</td><td>书告诉你限界上下文是什么，没告诉你怎么"发现"它</td><td>团队会直接拿 SaaS 的功能模块当限界上下文，错的</td></tr>
+        <tr><td>缺乏客户视角</td><td>偏开发者-领域专家对话，忽略最终用户</td><td>产品是 UI 转岗，容易陷入"画界面"而非"理业务"</td></tr>
+        <tr><td>与现代架构脱节</td><td>2003 年成书，早于微服务</td><td>聚合怎么变成服务、事件怎么流转，书里没有</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 8 1.3 -->
+  <section class="slide">
+    <span class="tag">1.3 · 15 min</span>
+    <h2 class="title">Modern DDD：融合方法才完整</h2>
+    <p class="lead">业界通称 <b>Modern DDD / Collaborative Modelling（协作建模）</b>，由 Event Storming 发明者 Alberto Brandolini 等人推动。</p>
+    <table>
+      <thead><tr><th>DDD 的缺口</th><th>补位方法</th><th>一句话作用</th></tr></thead>
+      <tbody>
+        <tr><td>怎么理解客户视角的业务流程</td><td>客户旅程图</td><td>从客户视角描绘触点和痛点</td></tr>
+        <tr><td>怎么把客户体验与后台对齐</td><td>服务蓝图</td><td>5 层泳道揭示后台流程和跨部门交接</td></tr>
+        <tr><td>怎么快速发现领域事件和边界</td><td>事件风暴</td><td>用便利贴协作，以事件为锚点建模</td></tr>
+        <tr><td>怎么从事件推导命令和聚合</td><td>命令风暴</td><td>Event Storming 的流程建模层级</td></tr>
+      </tbody>
+    </table>
+    <div class="note">交付物：Modern DDD 融合方法全景图（一页纸）；学员理解"为什么单纯 DDD 不够"。</div>
+  </section>
+
+  <!-- 9 第二篇章节 -->
+  <section class="slide section">
+    <div class="num">02</div>
+    <div class="kicker">第二篇 · 50 min</div>
+    <h2>Modern DDD：从业务到领域模型的完整路径</h2>
+  </section>
+
+  <!-- 10 2.1 流程 -->
+  <section class="slide">
+    <span class="tag">2.1 · 10 min</span>
+    <h2 class="title">端到端流程总览</h2>
+    <p class="lead">从业务问题到可落地模型的完整路径：</p>
+    <div class="flow">
+      <div class="flow-node">客户旅程<small>客户视角</small></div>
+      <div class="flow-arrow">↓ 触点与痛点</div>
+      <div class="flow-node">服务蓝图<small>客户 + 组织视角</small></div>
+      <div class="flow-arrow">↓ 后台流程与跨部门交接</div>
+      <div class="flow-node">事件风暴 Big Picture<small>领域视角</small></div>
+      <div class="flow-arrow">↓ 领域事件时间线 + 候选限界上下文</div>
+      <div class="flow-node">命令风暴<small>流程视角</small></div>
+      <div class="flow-arrow">↓ 命令、策略、读模型</div>
+      <div class="flow-node">事件风暴 Software Design<small>设计视角</small></div>
+      <div class="flow-arrow">↓ 聚合边界</div>
+      <div class="flow-node">DDD 战术设计<small>代码视角</small></div>
+      <div class="flow-arrow">↓ 实体、值对象、Repository</div>
+      <div class="flow-node" style="border-color:var(--accent);color:var(--accent)">可落地的微服务架构</div>
+    </div>
+  </section>
+
+  <!-- 11 2.2 -->
+  <section class="slide">
+    <span class="tag">2.2 · 10 min</span>
+    <h2 class="title">客户旅程图：从客户视角出发</h2>
+    <ul class="b two">
+      <li><b>输入</b>：客户访谈、客服记录</li>
+      <li><b>输出</b>：触点序列 + 情绪曲线 + 痛点</li>
+      <li><b>对你们的价值</b>：出让方、受让方、中介、监管各自旅程不同，先画旅程再谈功能</li>
+      <li><b>反模式</b>：直接拿 SaaS 的功能清单当需求</li>
+    </ul>
+  </section>
+
+  <!-- 12 2.3 -->
+  <section class="slide">
+    <span class="tag">2.3 · 10 min</span>
+    <h2 class="title">服务蓝图：揭示后台流程</h2>
+    <ul class="b">
+      <li><b>5 层泳道</b>：物理证据 / 客户行为 / 前台 / 后台 / 支持流程</li>
+      <li><b>三条线</b>：互动线 / 可见线（最核心） / 内部互动线</li>
+      <li><b>对你们的价值</b>：产权的"挂牌-报名-竞价-结算"流程，可见线之下有大量审批、公告、资金监管，服务蓝图让后台流程显形</li>
+      <li><b>关键洞察</b>：服务蓝图的"后台 + 支持流程"层直接暴露候选限界上下文</li>
+    </ul>
+  </section>
+
+  <!-- 13 2.4 -->
+  <section class="slide">
+    <span class="tag">2.4 · 15 min</span>
+    <h2 class="title">事件风暴：以事件为锚点建模</h2>
+    <ul class="b">
+      <li><b>Big Picture 层级</b>：全员便利贴协作，橙色 = 领域事件，按时间线排列</li>
+      <li><b>三个官方层级</b>：Big Picture → Process Modeling → Software Design</li>
+      <li><b>核心产物</b>：领域事件时间线 + 关键事件（Pivotal Events）+ 候选限界上下文</li>
+      <li><b>对你们的价值</b>：一次 2-3 小时工作坊，让全员对"产权交易到底发生什么"达成共识</li>
+    </ul>
+    <h3>便利贴颜色约定（业界标准）</h3>
+    <div class="legend">
+      <div class="chip"><span class="dot" style="background:#e8833a"></span>橙色 = 领域事件</div>
+      <div class="chip"><span class="dot" style="background:#f2c744"></span>黄色 = 角色/用户</div>
+      <div class="chip"><span class="dot" style="background:#3b82c4"></span>蓝色 = 命令</div>
+      <div class="chip"><span class="dot" style="background:#8b5cf6"></span>紫色 = 策略</div>
+      <div class="chip"><span class="dot" style="background:#e98ab0"></span>粉色 = 系统</div>
+      <div class="chip"><span class="dot" style="background:#4caf6d"></span>绿色 = 读模型</div>
+    </div>
+  </section>
+
+  <!-- 14 2.5 -->
+  <section class="slide">
+    <span class="tag">2.5 · 5 min</span>
+    <h2 class="title">命令风暴 + Software Design：走向可落地模型</h2>
+    <ul class="b">
+      <li><b>命令风暴</b> = Event Storming 的 Process Modeling 层级，从"发生了什么"推导"谁让什么发生"</li>
+      <li><b>核心语法</b>：<code>Event → Policy → Command → System → Event</code></li>
+      <li><b>Software Design 层级</b>：粉色系统 → 黄色聚合，聚合边界 = 微服务候选</li>
+      <li><b>关键原则</b>：聚合是一致性边界，不是数据库表；一个聚合对应一个微服务候选</li>
+    </ul>
+    <div class="note">交付物：四方法串联流程图 · 每种方法的输入输出对照表 · 产权交易场景颜色约定速查。</div>
+  </section>
+
+  <!-- 15 休息 -->
+  <section class="slide section">
+    <div class="num">☕</div>
+    <div class="kicker">休息 · 10 min</div>
+    <h2>休息一下，回来进入智能体工程</h2>
+  </section>
+
+  <!-- 16 第三篇章节 -->
+  <section class="slide section">
+    <div class="num">03</div>
+    <div class="kicker">第三篇 · 45 min</div>
+    <h2>智能体工程：让小团队也能高质量交付</h2>
+  </section>
+
+  <!-- 17 3.1 -->
+  <section class="slide">
+    <span class="tag">3.1 · 10 min</span>
+    <h2 class="title">先认识 Vibe Coding</h2>
+    <ul class="b">
+      <li><b>定义</b>：Karpathy 2025 年 2 月提出，自然语言意图驱动、AI 自动生成代码、对话迭代</li>
+      <li><b>擅长</b>：从零搭原型、MVP、个人工具、简单 CRUD</li>
+      <li><b>关键分界线</b>：不审查 = vibe coding；审查理解 = LLM 辅助编程</li>
+    </ul>
+    <div class="stats">
+      <div class="stat"><div class="n">1.7×</div><div class="t">AI 协作代码的"重大问题"比纯人工多（CodeRabbit 2025.12）</div></div>
+      <div class="stat"><div class="n">2.74×</div><div class="t">安全漏洞更多</div></div>
+      <div class="stat"><div class="n">−19%</div><div class="t">成熟代码库增量修改，AI 反而拖慢（METR 2025.7）</div></div>
+    </div>
+  </section>
+
+  <!-- 18 3.2 -->
+  <section class="slide">
+    <span class="tag">3.2 · 15 min</span>
+    <h2 class="title">智能体工程：从"凭感觉"到"可复利"</h2>
+    <p class="lead">一句话定义：把非确定性的 LLM 协作，演化为可靠的、可复利的工程体系。</p>
+    <table>
+      <thead><tr><th>维度</th><th>Vibe Coding（术）</th><th>智能体工程（道）</th></tr></thead>
+      <tbody>
+        <tr><td>产出</td><td>单次对话的代码</td><td>可复用的知识资产（Skill、Prompt 模板、规范）</td></tr>
+        <tr><td>Prompt</td><td>凭感觉写</td><td>结构化、有版本</td></tr>
+        <tr><td>改进</td><td>出问题再改</td><td>持续改进引擎：发现→学习→锻造→沉淀</td></tr>
+        <tr><td>能做什么</td><td>能做 Demo</td><td>能持续进化</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 19 3.2 四层 -->
+  <section class="slide">
+    <span class="tag">3.2 · 15 min</span>
+    <h2 class="title">智能体工程的四层结构</h2>
+    <div class="flow">
+      <div class="flow-node">L1 业务层<small>你们交付的业务系统</small></div>
+      <div class="flow-arrow">↑ 问题在此暴露</div>
+      <div class="flow-node">L2 Agent 团队层<small>Prompt、协作流程、工作规范</small></div>
+      <div class="flow-arrow">↑ 根因在此</div>
+      <div class="flow-node">L3 工具平台层<small>Copilot / Cursor、MCP 等</small></div>
+      <div class="flow-arrow">↑</div>
+      <div class="flow-node">L4 治理层<small>质量门禁、复盘机制</small></div>
+    </div>
+    <div class="note">核心洞察：<b>问题总在 L1 暴露，根因总在上层。</b></div>
+  </section>
+
+  <!-- 20 3.3 -->
+  <section class="slide">
+    <span class="tag">3.3 · 10 min</span>
+    <h2 class="title">工具链：小团队怎么起步</h2>
+    <ul class="b">
+      <li><b>后端（Java）</b>：GitHub Copilot / 通义灵码 / Cursor 三选一，建议先用免费档</li>
+      <li><b>前端（Vue）</b>：同上，Copilot 对 Vue 支持较好</li>
+      <li><b>协作层</b>：把团队的 Prompt 经验、踩坑记录沉淀成共享文档（哪怕只是个 Markdown）</li>
+      <li><b>不要一上来就</b>：搞 MCP Server、搞 Agent 编排、搞复杂工具链</li>
+    </ul>
+  </section>
+
+  <!-- 21 3.4 清单 -->
+  <section class="slide">
+    <span class="tag">3.4 · 10 min</span>
+    <h2 class="title">可带走的实践清单</h2>
+    <table>
+      <thead><tr><th style="width:110px">阶段</th><th>动作</th><th style="width:130px">验收标志</th></tr></thead>
+      <tbody>
+        <tr><td>第一周</td><td>每人装好一个 AI 编程工具，写一个简单 CRUD</td><td>工具能跑通</td></tr>
+        <tr><td>第二周</td><td>用 AI 工具辅助写单元测试，覆盖率到 40%</td><td>测试能跑</td></tr>
+        <tr><td>第一个月</td><td>团队共建一份 Prompt 经验文档</td><td>文档有 10 条以上经验</td></tr>
+        <tr><td>第二个月</td><td>引入事件风暴工作坊，对核心流程做一次 Big Picture</td><td>产出事件时间线</td></tr>
+        <tr><td>第三个月</td><td>用 DDD 战术设计重构一个核心模块</td><td>至少一个聚合落地</td></tr>
+      </tbody>
+    </table>
+    <div class="note">交付物：Vibe Coding vs 智能体工程对照表 · 渐进式实践清单 · 工具链起步建议。</div>
+  </section>
+
+  <!-- 22 第四篇章节 -->
+  <section class="slide section">
+    <div class="num">04</div>
+    <div class="kicker">第四篇 · 30 min</div>
+    <h2>两线合一：快速原型法驱动项目交付</h2>
+  </section>
+
+  <!-- 23 4.1 循环 -->
+  <section class="slide">
+    <span class="tag">4.1 · 10 min</span>
+    <h2 class="title">快速原型法 = DDD 建模 + 智能体加速</h2>
+    <p class="lead">一个完整的迭代循环：</p>
+    <div class="cards c2">
+      <div class="card"><h4>① 事件风暴工作坊（2-3h）</h4><p>→ 领域事件时间线</p></div>
+      <div class="card"><h4>② 识别限界上下文和聚合（1h）</h4><p>→ 候选微服务边界</p></div>
+      <div class="card"><h4>③ AI 工具快速生成原型（半天）</h4><p>→ 可运行 MVP</p></div>
+      <div class="card"><h4>④ 客户验证 → 反馈 → 调整</h4><p>→ 模型持续演进</p></div>
+    </div>
+    <div class="note">⑤ 沉淀 Prompt 和经验到团队知识库——让每一步都"可复利"。</div>
+  </section>
+
+  <!-- 24 4.2 落地 -->
+  <section class="slide">
+    <span class="tag">4.2 · 15 min</span>
+    <h2 class="title">针对"产权交易中心"的落地建议</h2>
+    <ul class="b">
+      <li><b>第一步（本周）</b>：做一次"产权交易全流程"事件风暴 Big Picture，邀请业务方参加</li>
+      <li><b>第二步（两周内）</b>：从事件时间线识别 3-5 个限界上下文（候选：挂牌、报名、竞价、结算、公告）</li>
+      <li><b>第三步（一个月内）</b>：选一个核心上下文（建议从"挂牌"开始，相对独立），用 DDD 战术设计 + AI 工具做出可运行原型</li>
+      <li><b>第四步（持续）</b>：每个迭代用事件风暴回顾一次，模型持续演进</li>
+    </ul>
+    <div class="note">特别提醒：<b>不要试图一次性设计全部微服务，按业务优先级逐个突破。</b></div>
+  </section>
+
+  <!-- 25 4.3 反模式 -->
+  <section class="slide">
+    <span class="tag">4.3 · 5 min</span>
+    <h2 class="title">反模式警示</h2>
+    <table>
+      <thead><tr><th>反模式</th><th>表现</th><th>后果</th></tr></thead>
+      <tbody>
+        <tr><td>功能思维迁移</td><td>直接照搬 SaaS 的功能模块设计</td><td>把 SaaS 的设计缺陷一起搬过来</td></tr>
+        <tr><td>过度建模</td><td>一上来就画全量领域模型</td><td>分析瘫痪，迟迟不能产出代码</td></tr>
+        <tr><td>Vibe Coding 滥用</td><td>不审查 AI 生成的代码</td><td>技术债累积，后期无法维护</td></tr>
+        <tr><td>工具崇拜</td><td>一上来搞复杂 Agent 工具链</td><td>投入产出比低，团队抵触</td></tr>
+        <tr><td>单打独斗</td><td>Prompt 经验不共享</td><td>团队能力不均，关键人依赖</td></tr>
+      </tbody>
+    </table>
+    <div class="note">交付物：快速原型法迭代循环图 · 产权交易中心落地四步建议 · 反模式清单。</div>
+  </section>
+
+  <!-- 26 收尾 行动 -->
+  <section class="slide">
+    <span class="tag">收尾 · 20 min</span>
+    <h2 class="title">第一周行动清单（可带走）</h2>
+    <ul class="checklist">
+      <li><span class="box"></span>全员安装一个 AI 编程工具（Copilot 免费档 / 通义灵码免费档）</li>
+      <li><span class="box"></span>用 AI 工具完成一个简单的 CRUD 练习，感受一下</li>
+      <li><span class="box"></span>约一次 2-3 小时的事件风暴工作坊，主题："产权交易全流程"</li>
+      <li><span class="box"></span>指定一个人负责记录工作坊产出（拍照 + 整理事件清单）</li>
+    </ul>
+  </section>
+
+  <!-- 27 学习资源 -->
+  <section class="slide">
+    <span class="tag">收尾</span>
+    <h2 class="title">可带走的学习资源</h2>
+    <ul class="b">
+      <li>《领域驱动设计》Eric Evans（战略设计部分必读）</li>
+      <li>《Introducing EventStorming》Alberto Brandolini（Leanpub，持续更新）</li>
+      <li>Event Storming 官网：eventstorming.com</li>
+      <li>事件风暴便利贴颜色约定速查（本课程附件）</li>
+    </ul>
+  </section>
+
+  <!-- 28 QA -->
+  <section class="slide cover">
+    <div class="kicker">Q & A</div>
+    <h1>答疑 & 讨论</h1>
+    <div class="sub">你们项目里最不确定的一个点是什么？我们现在就聊。</div>
+  </section>
+
+  <!-- 29 附件 -->
+  <section class="slide">
+    <span class="tag">附件清单</span>
+    <h2 class="title">本课程的附件</h2>
+    <ul class="b">
+      <li>Modern DDD 融合方法全景图（一页纸）</li>
+      <li>事件风暴便利贴颜色约定速查</li>
+      <li>渐进式实践清单（第一周 / 月 / 季度）</li>
+      <li>产权交易中心落地四步建议</li>
+      <li>反模式清单</li>
+    </ul>
+    <div class="note">本次课件已将上述内容整合进各章节，可直接作为讲师放映稿使用。</div>
+  </section>
+
+</div>
+
+<div class="nav">
+  <button id="prev">← 上一页</button>
+  <div class="mid">
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="pageinfo"><span id="cur">1</span> / <span id="total">1</span></div>
+  <button id="next">下一页 →</button>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const total=slides.length;
+  let i=0;
+  const progress=document.getElementById('progress');
+  const cur=document.getElementById('cur');
+  const totalEl=document.getElementById('total');
+  const prev=document.getElementById('prev');
+  const next=document.getElementById('next');
+  const dotsWrap=document.getElementById('dots');
+  totalEl.textContent=total;
+
+  slides.forEach((_,n)=>{
+    const d=document.createElement('span');
+    d.className='d';d.title=(n+1);
+    d.addEventListener('click',()=>go(n));
+    dotsWrap.appendChild(d);
+  });
+  const dots=[...dotsWrap.children];
+
+  function go(n){
+    slides[i].classList.remove('active');
+    dots[i].classList.remove('on');
+    i=(n+total)%total;
+    slides[i].classList.add('active');
+    dots[i].classList.add('on');
+    progress.style.width=((i+1)/total*100)+'%';
+    cur.textContent=i+1;
+    prev.disabled=(i===0);
+    next.disabled=(i===total-1);
+    slides[i].scrollTop=0;
+  }
+  prev.addEventListener('click',()=>go(i-1));
+  next.addEventListener('click',()=>go(i+1));
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(i+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}
+    else if(e.key==='Home'){go(0);}
+    else if(e.key==='End'){go(total-1);}
+  });
+
+  // 首次提示
+  const hint=document.getElementById('hint');
+  hint.classList.add('show');
+  setTimeout(()=>hint.classList.remove('show'),3500);
+
+  go(0);
+</script>
+</body>
+</html>

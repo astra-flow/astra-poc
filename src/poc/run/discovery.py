@@ -82,11 +82,30 @@ def _load_poc_class(
     """
     # 将 POC 目录加入 sys.path，使其内部 import 能解析同目录模块
     parent_dir = str(module_path.parent)
-    if parent_dir not in sys.path:
+    path_added = parent_dir not in sys.path
+    if path_added:
         sys.path.insert(0, parent_dir)
 
-    # 执行 poc.py，捕获全局命名空间
-    globals_dict = runpy.run_path(str(module_path))
+    # 记录加载前的 sys.modules 快照，加载后清理 POC 本地引入的模块
+    # （如 config.py 被缓存为 sys.modules['config']，会污染后续 POC 的同名 import）
+    modules_before = set(sys.modules.keys())
+
+    try:
+        # 执行 poc.py，捕获全局命名空间
+        globals_dict = runpy.run_path(str(module_path))
+    finally:
+        # 加载完成后移除当前 POC 目录，避免污染后续 POC 的同名模块解析
+        # （如多个 issue 目录下都有 config.py 时，不清理会导致误 import 前一个）
+        if path_added:
+            try:
+                sys.path.remove(parent_dir)
+            except ValueError:
+                pass
+        # 清理本次加载引入的本地模块缓存（如 config、evaluate 等 POC 私有模块）
+        for mod_name in list(sys.modules.keys() - modules_before):
+            # 仅清理 POC 本地模块，保留 poc.* 框架模块和标准库
+            if not mod_name.startswith("poc.") and "." not in mod_name:
+                sys.modules.pop(mod_name, None)
 
     candidates: list[type] = []
     for obj in globals_dict.values():

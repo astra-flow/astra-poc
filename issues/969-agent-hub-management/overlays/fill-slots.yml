@@ -1,0 +1,19 @@
+id: fill-slots
+extends: astra-delivery
+priority: 10
+enabled: true
+edits:
+- replace: post-implement
+  step:
+    id: post-implement
+    type: gate
+    message: '[Prog] 技术互审：代码质量 + 测试充分？'
+    options:
+    - approve
+    - reject
+    on_reject: retry
+- replace: maintain
+  step:
+    id: maintain
+    type: shell
+    run: 'echo ''Maintain: control-band 检测（治理循环挂载点）'''
